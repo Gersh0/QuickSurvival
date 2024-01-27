@@ -8,16 +8,16 @@ import org.bukkit.plugin.java.JavaPlugin;
 public class QuickSurvival extends JavaPlugin {
     @Override
     public void onEnable() {
-        Bukkit.getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&',"&bPlugin enabled."));//Versión, Prefix PluginName
+        Bukkit.getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', "&bPlugin enabled."));//Versión, Prefix PluginName
         registerCommand();
     }
 
     @Override
     public void onDisable() {
-        Bukkit.getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&',"&bPlugin disabled"));
+        Bukkit.getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', "&bPlugin disabled"));
     }
 
-    public void registerCommand(){
+    public void registerCommand() {
         this.getCommand("test").setExecutor(new TestCommand());
     }
 }

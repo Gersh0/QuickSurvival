@@ -1,5 +1,6 @@
 package co.com.cofees.commands;
 
+import co.com.cofees.tools.TextTools;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -9,13 +10,44 @@ import org.bukkit.entity.Player;
 public class TestCommand implements CommandExecutor {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String alias, String[] args) {
-        if(!(sender instanceof Player)){
-            sender.sendMessage(ChatColor.translateAlternateColorCodes('&',"&4Can't use this command from console."));
+        //Issued from console
+        if (!(sender instanceof Player)) {
+            sender.sendMessage(text("&4Can't use this command from console."));
             return true;
         }
 
-        sender.sendMessage(ChatColor.translateAlternateColorCodes('&',"&4Test Successfull."));
+        //Player issued command
+        Player player = (Player) sender;
+        if (args.length <= 0) {
+            player.sendMessage(text("&bTest Successfull."));
+            return true;
+        }
+
+        switch (args[0]) {
+            case "help":
+                player.sendMessage(text("&b&kiii&rHelp menu&b&kiii"));
+                break;
+            case "xp":
+                if(!player.getAllowFlight()){
+                    player.sendMessage(text("&bFly mode enabled for " + String.valueOf(player.getName())));
+                    player.setAllowFlight(true);
+                }else{
+                    player.sendMessage(text("&bFly mode disabled for " + String.valueOf(player.getName())));
+                    player.setAllowFlight(false);
+                }
+                break;
+            default:
+                noArgs(player);
+        }
 
         return true;
+    }
+
+    public void noArgs(CommandSender sender) {
+        sender.sendMessage(text("&4&lUse &r/test help &4&lfor usage of command"));
+    }
+
+    public String text(String text) {
+        return TextTools.coloredText(text);
     }
 }
