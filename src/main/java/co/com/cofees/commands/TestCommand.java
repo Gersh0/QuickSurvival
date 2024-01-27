@@ -1,7 +1,6 @@
 package co.com.cofees.commands;
 
 import co.com.cofees.tools.TextTools;
-import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -31,10 +30,10 @@ public class TestCommand implements CommandExecutor {
                 if(!player.getAllowFlight()){
                     player.sendMessage(text("&bFly mode enabled for " + String.valueOf(player.getName())));
                     player.setAllowFlight(true);
-                }else{
-                    player.sendMessage(text("&bFly mode disabled for " + String.valueOf(player.getName())));
-                    player.setAllowFlight(false);
+                    break;
                 }
+                player.sendMessage(text("&bFly mode disabled for " + String.valueOf(player.getName())));
+                player.setAllowFlight(false);
                 break;
             default:
                 noArgs(player);
