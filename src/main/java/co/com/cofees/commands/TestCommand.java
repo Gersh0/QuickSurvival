@@ -7,6 +7,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 public class TestCommand implements CommandExecutor {
+    // hee hee
     @Override
     public boolean onCommand(CommandSender sender, Command command, String alias, String[] args) {
         //Issued from console
