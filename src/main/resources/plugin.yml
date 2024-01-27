@@ -5,3 +5,8 @@ authors:
   - GerMinatorCofee
   - PyroSoul
   - Strom
+commands:
+  test:
+    description: Pruebas para plugin.
+    aliases:
+      - prueba
