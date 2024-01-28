@@ -27,7 +27,7 @@ public class TestCommand implements CommandExecutor {
                 player.sendMessage(text("&b&kiii&rHelp menu&b&kiii"));
                 break;
             case "xp":
-                if(!player.getAllowFlight()){
+                if (!player.getAllowFlight()) {
                     player.sendMessage(text("&bFly mode enabled for " + String.valueOf(player.getName())));
                     player.setAllowFlight(true);
                     break;
@@ -37,6 +37,7 @@ public class TestCommand implements CommandExecutor {
                 break;
             default:
                 noArgs(player);
+                break;
         }
 
         return true;
