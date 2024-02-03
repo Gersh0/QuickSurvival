@@ -1,5 +1,6 @@
 package co.com.cofees.commands;
 
+import co.com.cofees.events.VacaNagasaki;
 import co.com.cofees.tools.TextTools;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -7,19 +8,20 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 public class TestCommand implements CommandExecutor {
-    // hee hee
+
+
     @Override
     public boolean onCommand(CommandSender sender, Command command, String alias, String[] args) {
         //Issued from console
         if (!(sender instanceof Player)) {
-            sender.sendMessage(text("&4Can't use this command from console."));
+            sender.sendMessage(text("&4Can't use this command from console!"));
             return true;
         }
 
         //Player issued command
         Player player = (Player) sender;
         if (args.length <= 0) {
-            player.sendMessage(text("&bTest Successfull."));
+            player.sendMessage(text("&bTest Successful."));
             return true;
         }
 
@@ -29,11 +31,11 @@ public class TestCommand implements CommandExecutor {
                 break;
             case "xp":
                 if(!player.getAllowFlight()){
-                    player.sendMessage(text("&bFly mode enabled for " + String.valueOf(player.getName())));
+                    player.sendMessage(text("&bFlight mode enabled for " + String.valueOf(player.getName())));
                     player.setAllowFlight(true);
                     break;
                 }
-                player.sendMessage(text("&bFly mode disabled for " + String.valueOf(player.getName())));
+                player.sendMessage(text("&bFlight mode disabled for " + String.valueOf(player.getName())));
                 player.setAllowFlight(false);
                 break;
             default:
