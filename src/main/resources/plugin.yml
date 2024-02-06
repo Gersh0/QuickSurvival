@@ -7,7 +7,11 @@ authors:
   - PyroSoul
   - Strom
 commands:
+  inventory:
+    description: inventario de prueba
+
   test:
     description: Pruebas para plugin.
     aliases:
       - prueba
+
