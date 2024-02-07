@@ -1,20 +1,17 @@
 package co.com.cofees.events;
 
-import co.com.cofees.QuickSurvival;
+
 import org.bukkit.*;
-import org.bukkit.block.Beacon;
+
 import org.bukkit.block.Block;
 import org.bukkit.entity.*;
-import org.bukkit.entity.Entity;
+
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
-import org.bukkit.event.player.PlayerInteractAtEntityEvent;
+
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.metadata.MetadataValue;
-import org.bukkit.plugin.Plugin;
 
 import net.md_5.bungee.api.ChatColor;
 
@@ -29,7 +26,6 @@ public class WaystoneInteractEvent implements Listener {
             Block clickedBlock = event.getClickedBlock();
 
 
-
             if (clickedBlock != null && isWaystoneBlock(clickedBlock)) {
                 openWaystoneInventory(event.getPlayer());
             }
@@ -38,6 +34,7 @@ public class WaystoneInteractEvent implements Listener {
 
     //CUIDADO NO ESTA LISTO ESTE METODO
     private boolean isWaystoneBlock(Block block) {
+
         // Verifica si el bloque tiene los metadatos de "Waystone"
         block.getBlockData().getMaterial().getData().getName();
         return block.hasMetadata(WAYSTONE_KEY);
@@ -47,7 +44,7 @@ public class WaystoneInteractEvent implements Listener {
 
     private void openWaystoneInventory(Player player) {
         // Crear el inventario del "Waystone"
-        Inventory waystoneInventory = Bukkit.createInventory(null, 54, ChatColor.translateAlternateColorCodes('&', "&6Inventario del Waystone"));
+        Inventory waystoneInventory = Bukkit.createInventory(null, 54, ChatColor.translateAlternateColorCodes('&', "&6Inventario Waystone"));
 
         // Puedes agregar elementos u opciones al inventario según sea necesario
 
