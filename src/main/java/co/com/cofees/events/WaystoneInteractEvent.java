@@ -36,7 +36,7 @@ public class WaystoneInteractEvent implements Listener {
     private boolean isWaystoneBlock(Block block) {
 
         // Verifica si el bloque tiene los metadatos de "Waystone"
-        block.getBlockData().getMaterial().getData().getName();
+
         return block.hasMetadata(WAYSTONE_KEY);
 
 
