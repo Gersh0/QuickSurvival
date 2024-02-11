@@ -27,18 +27,19 @@ public class QuickSurvival extends JavaPlugin {
     public void registerCommand() {
         this.getCommand("test").setExecutor(new TestCommand());
         this.getCommand("inventory").setExecutor(new WaystoneCommand());
+        this.getCommand("waystone").setExecutor(new WaystoneBannerInteract());
 
     }
 
     public void registerEvents() {
         getServer().getPluginManager().registerEvents(new TestEvent(), this);
         getServer().getPluginManager().registerEvents(new WaystoneMenu(),this);
-        getServer().getPluginManager().registerEvents(new WaystoneInteractEvent(), this);
         getServer().getPluginManager().registerEvents(new BackpackInteract(), this);
+        getServer().getPluginManager().registerEvents(new WaystoneInteract(),this);
+
     }
 
-    public static QuickSurvival getInstance() {
-        return QuickSurvival.getPlugin(QuickSurvival.class);
+    public static QuickSurvival getInstance(){
+        return getPlugin(QuickSurvival.class);
     }
-
 }

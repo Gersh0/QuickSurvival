@@ -10,6 +10,8 @@ commands:
   inventory:
     description: inventario de prueba
 
+  waystone:
+    description: Interactuar Con Waystones
   test:
     description: Pruebas para plugin.
     aliases:
