@@ -6,6 +6,8 @@ import org.bukkit.Bukkit;
 import org.bukkit.block.Block;
 import org.bukkit.block.TileState;
 import org.bukkit.entity.Player;
+import org.bukkit.event.Cancellable;
+import org.bukkit.event.EventException;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractEvent;
@@ -15,28 +17,29 @@ import org.bukkit.persistence.PersistentDataType;
 
 public class WaystoneInteract implements Listener {
     @EventHandler
+    public void onPlayerWaystoneClick(PlayerInteractEvent e) throws EventException {
+        if (e instanceof Cancellable && ((Cancellable) e).isCancelled()) {
+            e.setCancelled(false);
+        }
 
+        Player p = e.getPlayer();
+        Block b = null;
 
-    public void onPlayerWaystoneClick(PlayerInteractEvent e) {
+        if (p.getTargetBlockExact(5) != null) {
+            b = p.getTargetBlockExact(5);
+        } else {
+            return;
+        }
+        TileState tileState = (TileState) b.getState();
+        PersistentDataContainer container = tileState.getPersistentDataContainer();
 
+        if (e.getAction().name().contains("RIGHT") && container.has(Keys.WAYSTONE, PersistentDataType.STRING)) {
+            p.sendMessage("menu abierto correctamente");
+            openWaystoneInventory(p);
 
-            Player p = e.getPlayer();
-            Block b = null;
-
-            if (p.getTargetBlockExact(5) != null) {
-                b = p.getTargetBlockExact(5);
-            } else {
-            }
-            TileState tileState = (TileState) b.getState();
-            PersistentDataContainer container = tileState.getPersistentDataContainer();
-
-            if (e.getAction().name().contains("RIGHT") && container.has(Keys.WAYSTONE, PersistentDataType.STRING)) {
-                p.sendMessage("menu abierto correctamente");
-                openWaystoneInventory(p);
-
-            } else {
-
-            }
+        } else {
+            return;
+        }
     }
 
     private void openWaystoneInventory(Player player) {

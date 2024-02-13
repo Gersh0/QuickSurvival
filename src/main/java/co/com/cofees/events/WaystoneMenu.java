@@ -9,6 +9,7 @@ import org.bukkit.block.TileState;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventException;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -20,7 +21,7 @@ import org.bukkit.persistence.PersistentDataType;
 public class WaystoneMenu implements Listener {
 
     @EventHandler
-    public void onWaystoneMenuClick(InventoryClickEvent event) {
+    public void onWaystoneMenuClick(InventoryClickEvent event) throws EventException {
         if (event.getInventory().getHolder() == null) {
             // Verifica si el inventario es el que abriste
             if (event.getView().getTitle().equals(ChatColor.translateAlternateColorCodes('&', "&2Inventario Prueba"))) {
