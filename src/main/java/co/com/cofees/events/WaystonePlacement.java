@@ -22,30 +22,43 @@ public class WaystonePlacement implements Listener {
     public void onPlayerInteract(PlayerInteractEvent event) {
         Player player = event.getPlayer();
 
-        if (event.getAction().name().contains("RIGHT") && event.getClickedBlock() != null && event.getMaterial() == Material.BLACK_BANNER) {
-            if (player.getInventory().getItemInMainHand().getItemMeta().getPersistentDataContainer().has(Keys.WAYSTONE, PersistentDataType.STRING)) {
-                Location blockLocation = event.getClickedBlock().getLocation();
-                //blockLocation.setZ(blockLocation.getZ() + 10);
+        ItemStack waypointStack = player.getInventory().getItemInMainHand();
+        if (waypointStack != null) {
+            PersistentDataContainer container = waypointStack.getItemMeta().getPersistentDataContainer();
+
+            if (event.getAction().name().contains("RIGHT") && event.getClickedBlock() != null && container.has(Keys.WAYSTONE, PersistentDataType.STRING)) {
+
+                Location blockLocation = event.getClickedBlock().getLocation().clone();
+                blockLocation.setY(blockLocation.getY() + 1);
 
                 // Carga el chunk antes de aplicar cambios al bloque
                 blockLocation.getWorld().getChunkAt(blockLocation).load();
 
-                // Crea un nuevo bloque en la misma ubicación
-                Block newBlock = blockLocation.getWorld().getBlockAt(blockLocation);
-                newBlock.setType(Material.BLACK_BANNER);
+                // Verifica si el bloque en la ubicación deseada está vacío
+                if (blockLocation.getBlock().getType() == Material.AIR) {
 
-                // Guarda la información en el nuevo bloque
-                TileState tileState = (TileState) newBlock.getState();
-                PersistentDataContainer container = tileState.getPersistentDataContainer();
-                container.set(Keys.WAYSTONE, PersistentDataType.STRING, "true");
-                tileState.update();
+                    ItemStack itemInHand = player.getInventory().getItemInMainHand();
+                    itemInHand.setAmount(itemInHand.getAmount() - 1);
 
-               ItemStack iteminHand= player.getInventory().getItemInMainHand();
-               iteminHand.setAmount(iteminHand.getAmount()-1);
-                player.sendMessage(ChatColor.GREEN + "Se ha colocado un nuevo Waystone correctamente.");
+                    // Crea un nuevo bloque en la misma ubicación
+                    Block newBlock = blockLocation.getBlock();
+                    newBlock.setType(Material.BLACK_BANNER);
+
+                    // Guarda la información en el nuevo bloque
+                    TileState tileState = (TileState) newBlock.getState();
+                    PersistentDataContainer newContainer = tileState.getPersistentDataContainer();
+                    newContainer.set(Keys.WAYSTONE, PersistentDataType.STRING, "true");
+                    tileState.update();
+
+                    player.sendMessage(ChatColor.GREEN + "Se ha colocado un nuevo Waystone correctamente.");
+                } else {
+                    player.sendMessage(ChatColor.RED + "No se puede colocar el Waystone aquí. El bloque no está vacío.");
+                }
             }
         }
+
         event.setCancelled(true);
     }
+
 }
 
