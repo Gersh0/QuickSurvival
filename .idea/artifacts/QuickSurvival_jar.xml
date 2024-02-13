@@ -1,6 +1,6 @@
 <component name="ArtifactManager">
   <artifact type="jar" name="QuickSurvival:jar">
-    <output-path>E:/Proyecto2/Server/plugins</output-path>
+    <output-path>$USER_HOME$/Documents/proyecto2/server/plugins</output-path>
     <root id="archive" name="QuickSurvival.jar">
       <element id="module-output" name="QuickSurvival" />
     </root>
