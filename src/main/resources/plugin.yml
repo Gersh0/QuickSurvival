@@ -7,6 +7,9 @@ authors:
   - PyroSoul
   - Strom
 commands:
+  Backpack:
+    description: abre el backpack manualmente
+
   inventory:
     description: inventario de prueba
 

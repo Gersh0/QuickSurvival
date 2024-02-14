@@ -3,6 +3,7 @@ package co.com.cofees;
 
 import co.com.cofees.commands.*;
 import co.com.cofees.events.*;
+import co.com.cofees.recipes.CustomRecipes;
 import org.bukkit.*;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -14,6 +15,7 @@ public class QuickSurvival extends JavaPlugin {
     public void onEnable() {
         Bukkit.getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', "&bPlugin enabled."));//Versión, Prefix PluginName
         registerCommand();
+        CustomRecipes.registerCustomCrafting();
 
         registerEvents();
         this.prueba = true;
@@ -28,6 +30,7 @@ public class QuickSurvival extends JavaPlugin {
         this.getCommand("test").setExecutor(new TestCommand());
         this.getCommand("inventory").setExecutor(new WaystoneCommand());
         this.getCommand("waystone").setExecutor(new WaystoneBannerInteract());
+        this.getCommand("backpack").setExecutor(new BackpackCommand());
 
     }
 
