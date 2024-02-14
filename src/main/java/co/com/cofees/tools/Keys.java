@@ -13,4 +13,8 @@ public class Keys {
     public static final NamespacedKey BACKPACKLV3Recipe = new NamespacedKey(QuickSurvival.getInstance(), "BackpackLv3Recipe");
     public static final NamespacedKey BACKPACKLV4 = new NamespacedKey(QuickSurvival.getInstance(), "BackpackLv4");
     public static final NamespacedKey BACKPACKLV4Recipe = new NamespacedKey(QuickSurvival.getInstance(), "BackpackLv4Recipe");
+
+    public static final NamespacedKey BACKPACKLV5 = new NamespacedKey(QuickSurvival.getInstance(), "BackpackLv5");
+    public static final NamespacedKey BACKPACKLV5Recipe = new NamespacedKey(QuickSurvival.getInstance(), "BackpackLv5Recipe");
+    public static final NamespacedKey BACKPACKLV5RecipeSmithing = new NamespacedKey(QuickSurvival.getInstance(), "BackpackLv5RecipeSmithing");
 }

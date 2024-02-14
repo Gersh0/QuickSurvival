@@ -5,10 +5,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
-import org.bukkit.inventory.ItemFlag;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.RecipeChoice;
-import org.bukkit.inventory.ShapedRecipe;
+import org.bukkit.inventory.*;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
 
@@ -90,7 +87,7 @@ public class CustomRecipes {
         // Registrar el crafteo
         Bukkit.addRecipe(bl3);
 
-        //backpack lv3
+        //backpack lv4
 
         // Crear el ítem que se obtendrá al realizar el crafteo
         ItemStack backpackLv4 = new ItemStack(Material.TOTEM_OF_UNDYING);
@@ -115,6 +112,29 @@ public class CustomRecipes {
         // Registrar el crafteo
         Bukkit.addRecipe(bl4);
 
-    }
+        //backpack lv4
 
+        // Crear el ítem que se obtendrá al realizar el crafteo
+        ItemStack backpackLv5 = new ItemStack(Material.TOTEM_OF_UNDYING);
+        ItemMeta backpackLv5Meta = backpackLv5.getItemMeta();
+        backpackLv5Meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
+        backpackLv5Meta.addEnchant(Enchantment.ARROW_DAMAGE, 1, true);
+        backpackLv5Meta.setDisplayName(ChatColor.BLUE + "" + ChatColor.MAGIC + "Backpack lv5");
+
+        backpackLv5Meta.getPersistentDataContainer().set(Keys.BACKPACKLV5, PersistentDataType.STRING, "true");
+        backpackLv5Meta.setLore(List.of("LA MOCHILA DEFINITIVA"));
+        backpackLv5.setAmount(1);
+        //setear meta
+        backpackLv5.setItemMeta(backpackLv5Meta);
+
+        // Crear el crafteo personalizado
+        ShapedRecipe bl5 = new ShapedRecipe(Keys.BACKPACKLV5Recipe, backpackLv5);
+        bl5.shape("GMN");
+        bl5.setIngredient('N', Material.NETHERITE_INGOT);
+        bl5.setIngredient('M', new RecipeChoice.ExactChoice(backpackLv4));
+        bl5.setIngredient('G', Material.GOLD_INGOT);
+
+        // Registrar el crafteo
+        Bukkit.addRecipe(bl5);
+    }
 }
