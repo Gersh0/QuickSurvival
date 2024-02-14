@@ -16,7 +16,7 @@ import org.bukkit.persistence.PersistentDataType;
 public class BackpackInteract implements Listener {
 
     @EventHandler
-    public void onPlayerInteract(PlayerInteractEvent event) throws EventException {
+    public void onPlayerInteract(PlayerInteractEvent event) {
 
 
         Player player = event.getPlayer();
@@ -38,9 +38,13 @@ public class BackpackInteract implements Listener {
             } else if (container.has(Keys.BACKPACKLV3, PersistentDataType.STRING)) {
                 openBackpackInventory(player, 3);
                 event.setCancelled(true);
-            }if (container.has(Keys.BACKPACKLV4, PersistentDataType.STRING)) {
+            }else if (container.has(Keys.BACKPACKLV4, PersistentDataType.STRING)) {
                 // Abrir el inventario de la mochila
                 openBackpackInventory(player, 4);
+                event.setCancelled(true);
+            }else if (container.has(Keys.BACKPACKLV5, PersistentDataType.STRING)) {
+                // Abrir el inventario de la mochila
+                openBackpackInventory(player, 6);
                 event.setCancelled(true);
             }
 
