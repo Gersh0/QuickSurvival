@@ -1,5 +1,6 @@
 package co.com.cofees;
 
+import co.com.cofees.commands.NewTestCommand;
 import co.com.cofees.commands.TestCommand;
 import co.com.cofees.events.TestEvent;
 import org.bukkit.Bukkit;
@@ -27,7 +28,7 @@ public class QuickSurvival extends JavaPlugin {
 
     public void registerCommand() {
 
-        this.getCommand("test").setExecutor(new TestCommand());
+        this.getCommand("test").setExecutor(new NewTestCommand(this));
     }
 
     public void registerEvents() {
