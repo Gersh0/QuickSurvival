@@ -6,6 +6,8 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.util.Objects;
+
 public class QuickSurvival extends JavaPlugin {
 
     private boolean prueba;
@@ -24,6 +26,7 @@ public class QuickSurvival extends JavaPlugin {
     }
 
     public void registerCommand() {
+
         this.getCommand("test").setExecutor(new TestCommand());
     }
 
