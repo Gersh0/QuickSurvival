@@ -31,11 +31,12 @@ public class QuickSurvival extends JavaPlugin {
         this.getCommand("inventory").setExecutor(new WaystoneCommand());
         this.getCommand("waystone").setExecutor(new WaystoneBannerInteract());
         this.getCommand("backpack").setExecutor(new BackpackCommand());
-
+        this.getCommand("qspanel").setExecutor(new ControlPanelCommmand());
     }
 
     public void registerEvents() {
         getServer().getPluginManager().registerEvents(new TestEvent(), this);
+        getServer().getPluginManager().registerEvents(new ControlPanelListener(),this);
         getServer().getPluginManager().registerEvents(new WaystoneMenu(),this);
         getServer().getPluginManager().registerEvents(new BackpackInteract(), this);
         getServer().getPluginManager().registerEvents(new WaystonePlacement(),this);
