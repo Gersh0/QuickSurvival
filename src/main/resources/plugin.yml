@@ -7,7 +7,19 @@ authors:
   - PyroSoul
   - Strom
 commands:
+  qspanel:
+    description: abre un panel de control
+
+  Backpack:
+    description: abre el backpack manualmente
+
+  inventory:
+    description: inventario de prueba
+
+  waystone:
+    description: Interactuar Con Waystones
   test:
     description: Pruebas para plugin.
     aliases:
       - prueba
+
