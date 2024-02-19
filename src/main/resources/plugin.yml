@@ -7,6 +7,9 @@ authors:
   - PyroSoul
   - Strom
 commands:
+  qspanel:
+    description: abre un panel de control
+
   Backpack:
     description: abre el backpack manualmente
 

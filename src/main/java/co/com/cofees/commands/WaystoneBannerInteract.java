@@ -115,7 +115,7 @@ public class WaystoneBannerInteract implements CommandExecutor, TabCompleter {
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
         if (command.getName().equalsIgnoreCase("waystone") && args.length == 1) {
-            // Si el comando es /inventory y estamos en el primer argumento, sugerir /waystone
+
             List<String> completions = new ArrayList<>();
             completions.add("open");
             completions.add("set");
