@@ -1,11 +1,13 @@
 package co.com.cofees;
 
-
-import co.com.cofees.commands.*;
-import co.com.cofees.events.*;
+import co.com.cofees.commands.TestCommand;
+import co.com.cofees.events.TestEvent;
 import co.com.cofees.recipes.CustomRecipes;
-import org.bukkit.*;
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.plugin.java.JavaPlugin;
+import co.com.cofees.events.*;
+import co.com.cofees.commands.*;
 
 public class QuickSurvival extends JavaPlugin {
 
@@ -15,9 +17,9 @@ public class QuickSurvival extends JavaPlugin {
     public void onEnable() {
         Bukkit.getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', "&bPlugin enabled."));//Versión, Prefix PluginName
         registerCommand();
+        registerEvents();
         CustomRecipes.registerCustomCrafting();
 
-        registerEvents();
         this.prueba = true;
     }
 
@@ -27,7 +29,7 @@ public class QuickSurvival extends JavaPlugin {
     }
 
     public void registerCommand() {
-        this.getCommand("test").setExecutor(new TestCommand());
+        this.getCommand("test").setExecutor(new NewTestCommand(this));
         this.getCommand("inventory").setExecutor(new WaystoneCommand());
         this.getCommand("waystone").setExecutor(new WaystoneBannerInteract());
         this.getCommand("backpack").setExecutor(new BackpackCommand());
