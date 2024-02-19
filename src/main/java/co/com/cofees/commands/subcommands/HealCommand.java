@@ -3,14 +3,14 @@ package co.com.cofees.commands.subcommands;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
-public class HealCommand implements CommandExecutor {
+public class HealCommand implements CommandExecutor, TabCompleter {
     private final Map<String, CommandExecutor> subCommands = new HashMap<>();
 
     public HealCommand() {
@@ -35,10 +35,11 @@ public class HealCommand implements CommandExecutor {
         if (args.length == 1) {
             player = getPlayer(getOnlinePlayerByNickname(sender, args[0].toLowerCase()));
             if (player.isPresent()) {
+                player.get().sendMessage("You have been healed!");
                 sender.getServer().getLogger().info(player.get().getName() + " healed!");
                 player.get().setHealth(20);
                 return true;
-            }else{
+            } else {
                 sender.getServer().getLogger().warning(args[0] + " is not online!");
                 return false;
             }
@@ -69,5 +70,17 @@ public class HealCommand implements CommandExecutor {
                 .orElse(null);
     }
 
+    @Nullable
+    @Override
+    public List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
 
+        if (!command.getName().equalsIgnoreCase("heal") && args.length == 1) {
+            return Collections.emptyList();
+        }
+
+        List<String> completions = new ArrayList<>();
+        completions.add("<nickname>");
+        completions.add("<enter>");
+        return completions;
+    }
 }

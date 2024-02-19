@@ -1,35 +1,63 @@
 package co.com.cofees.commands.subcommands;
 
+import co.com.cofees.tools.TextTools;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.Objects;
 
 public class FlyCommand implements CommandExecutor {
-    private final Map<String, CommandExecutor> subCommands = new HashMap<>();
 
     public FlyCommand() {
         // Add more subcommands as needed
     }
 
+    public String text(String text) {
+        return TextTools.coloredText(text);
+    }
+
     @Override
-    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+    public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, String[] args) {
+
+        if ((!(sender instanceof Player)) && args.length == 0) {
+            sender.getServer().getLogger().warning("Can't use this command from console.");
+            return true;
+        }
+
+        if (!(sender instanceof Player)) {
+            sender.getServer().getLogger().info("Fly mode enabled for " + args[0]);
+            return toggleFly(Objects.requireNonNull(sender.getServer().getPlayer(args[0])));
+        }
+
+        Player player = (Player) sender;
         if (args.length == 0) {
-            return false; // Handle the case where no subcommand is provided
+            return toggleFly(player);
         }
 
-        String subCommandName = args[0];
-        CommandExecutor subCommand = subCommands.get(subCommandName);
+        if (sender.getServer().getOnlinePlayers().stream()
+                .map(Player::getName)
+                .noneMatch(name -> name.equalsIgnoreCase(args[0]))) {
+            sender.sendMessage("Hi");
 
-        if (subCommand == null) {
-            return false; // Handle the case where the subcommand does not exist
+            return false;
         }
+        sender.sendMessage("Fly mode toggled for " + args[0]);
+        toggleFly(Objects.requireNonNull(sender.getServer().getPlayer(args[0])));
 
-        // Execute the subcommand, passing the remaining arguments
-        String[] subCommandArgs = new String[args.length - 1];
-        System.arraycopy(args, 1, subCommandArgs, 0, subCommandArgs.length);
-        return subCommand.onCommand(sender, command, label, subCommandArgs);
+        return false;
+    }
+
+    public boolean toggleFly(Player player) {
+        if (!player.getAllowFlight()) {
+            player.sendMessage(text("&bFly mode enabled for " + player.getName()));
+            player.setAllowFlight(true);
+            return true;
+        }
+        player.sendMessage(text("&bFly mode disabled for " + player.getName()));
+        player.setAllowFlight(false);
+        return true;
     }
 }
