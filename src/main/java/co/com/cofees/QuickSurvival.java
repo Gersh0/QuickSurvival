@@ -1,10 +1,9 @@
 package co.com.cofees;
 
-
-import co.com.cofees.commands.*;
-import co.com.cofees.events.*;
-import co.com.cofees.recipes.CustomRecipes;
-import org.bukkit.*;
+import co.com.cofees.commands.TestCommand;
+import co.com.cofees.events.TestEvent;
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class QuickSurvival extends JavaPlugin {
@@ -15,8 +14,6 @@ public class QuickSurvival extends JavaPlugin {
     public void onEnable() {
         Bukkit.getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', "&bPlugin enabled."));//Versión, Prefix PluginName
         registerCommand();
-        CustomRecipes.registerCustomCrafting();
-
         registerEvents();
         this.prueba = true;
     }
@@ -28,24 +25,9 @@ public class QuickSurvival extends JavaPlugin {
 
     public void registerCommand() {
         this.getCommand("test").setExecutor(new TestCommand());
-        this.getCommand("inventory").setExecutor(new WaystoneCommand());
-        this.getCommand("waystone").setExecutor(new WaystoneBannerInteract());
-        this.getCommand("backpack").setExecutor(new BackpackCommand());
-        this.getCommand("qspanel").setExecutor(new ControlPanelCommmand());
     }
 
     public void registerEvents() {
         getServer().getPluginManager().registerEvents(new TestEvent(), this);
-        getServer().getPluginManager().registerEvents(new ControlPanelListener(),this);
-        getServer().getPluginManager().registerEvents(new WaystoneMenu(),this);
-        getServer().getPluginManager().registerEvents(new BackpackInteract(), this);
-        getServer().getPluginManager().registerEvents(new WaystonePlacement(),this);
-        getServer().getPluginManager().registerEvents(new WaystoneInteract(),this);
-
-
-    }
-
-    public static QuickSurvival getInstance(){
-        return getPlugin(QuickSurvival.class);
     }
 }

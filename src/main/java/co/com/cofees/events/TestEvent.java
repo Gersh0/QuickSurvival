@@ -1,5 +1,6 @@
 package co.com.cofees.events;
 
+import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.CreatureSpawner;
 import org.bukkit.enchantments.Enchantment;
@@ -13,16 +14,39 @@ import org.bukkit.inventory.meta.BlockStateMeta;
 public class TestEvent implements Listener {
     @EventHandler
     public void onSpawner(BlockBreakEvent e) {
-        Block block = e.getBlock();
         Player player = e.getPlayer();
-        if ((player.getInventory().getItemInMainHand().getItemMeta().hasEnchant(Enchantment.SILK_TOUCH))) {
-            CreatureSpawner x = (CreatureSpawner) block.getState();
-            ItemStack spawner = new ItemStack(block.getType());
-            BlockStateMeta blockMeta = (BlockStateMeta) spawner.getItemMeta();
-            blockMeta.setBlockState(x);
-            spawner.setItemMeta(blockMeta);
-            block.getWorld().dropItem(e.getBlock().getLocation(), spawner);
+        Block block = e.getBlock();
+
+        // Guard clause to check for the SILK_TOUCH enchantment and SPAWNER block
+        if (!hasSilkTouchPickaxe(player, block) ) {
+            return;
         }
+
+        CreatureSpawner spawner = (CreatureSpawner) block.getState();
+
+        //Create block and metadata for new Spawner
+        ItemStack newSpawner = new ItemStack(block.getType());
+        BlockStateMeta blockMeta = (BlockStateMeta) newSpawner.getItemMeta();
+
+        assert blockMeta != null; //Metadata exists
+
+        //Add data to new spawner
+        blockMeta.setBlockState(spawner);
+        newSpawner.setItemMeta(blockMeta);
+
+        //Drop item
+        block.getWorld().dropItem(e.getBlock().getLocation(), newSpawner);
+
+    }
+
+    private boolean hasSilkTouchPickaxe(Player player, Block block) {
+        ItemStack mainHandItem = player.getInventory().getItemInMainHand();
+        /*Testing
+        player.sendMessage(String.valueOf(mainHandItem.getType()));
+        player.sendMessage(String.valueOf(block.getType().compareTo(Material.SPAWNER)));
+         */
+
+        return mainHandItem.getItemMeta().hasEnchant(Enchantment.SILK_TOUCH) && block.getType().compareTo(Material.SPAWNER)==0;
     }
 }
 
