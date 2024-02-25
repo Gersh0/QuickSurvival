@@ -13,7 +13,6 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
-import java.util.Objects;
 
 public class QuickSurvival extends JavaPlugin {
 
@@ -25,7 +24,7 @@ public class QuickSurvival extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        Bukkit.getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', "&bPlugin enabled, ver: "+desc.getVersion()));//Versión, Prefix PluginName
+        Bukkit.getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', "&bPlugin enabled, ver: " + desc.getVersion()));//Versión, Prefix PluginName
         registerCommands();
         registerEvents();
         Bukkit.getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', "&bPlugin enabled."));//Versión, Prefix PluginName
@@ -35,7 +34,7 @@ public class QuickSurvival extends JavaPlugin {
         changeSleepingPlayers("50");
     }
 
-    public void changeSleepingPlayers(String percentage){
+    public void changeSleepingPlayers(String percentage) {
         Bukkit.getScheduler().runTaskLater(this, () -> {
             Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "gamerule playersSleepingPercentage " + percentage);
         }, 1);
@@ -58,9 +57,7 @@ public class QuickSurvival extends JavaPlugin {
     }
 
     public void registerCommands() {
-
         this.getCommand("test").setExecutor(new TestCommand());
-
         this.getCommand("explosivecows").setExecutor(new ExplosiveCows(cowEvent));
         this.getCommand("test").setExecutor(new NewTestCommand(this));
         this.getCommand("home").setExecutor(new HomeCommand(this, homesConfig));
@@ -68,7 +65,8 @@ public class QuickSurvival extends JavaPlugin {
         this.getCommand("waystone").setExecutor(new WaystoneBannerInteract());
         this.getCommand("backpack").setExecutor(new BackpackCommand());
         this.getCommand("qspanel").setExecutor(new ControlPanelCommmand());
-}
+    }
+
     public void registerEvents() {
         getServer().getPluginManager().registerEvents(new TestEvent(), this);
         getServer().getPluginManager().registerEvents(new ControlPanelListener(), this);
@@ -76,9 +74,8 @@ public class QuickSurvival extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new BackpackInteract(), this);
         getServer().getPluginManager().registerEvents(new WaystonePlacement(), this);
         getServer().getPluginManager().registerEvents(new WaystoneInteract(), this);
-            getServer().getPluginManager().registerEvents(cowEvent, this);
-        }
-
+        getServer().getPluginManager().registerEvents(cowEvent, this);
+    }
 
 
     public static QuickSurvival getInstance() {
