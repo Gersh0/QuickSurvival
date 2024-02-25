@@ -25,6 +25,9 @@ public class WaystonePlacement implements Listener {
         Player player = event.getPlayer();
 
         ItemStack waypointStack = player.getInventory().getItemInMainHand();
+
+        if (waypointStack.getItemMeta() == null) return;//el mismo guard clause
+
         if (isWaystoneItem(waypointStack)) {
             PersistentDataContainer container = Objects.requireNonNull(waypointStack.getItemMeta()).getPersistentDataContainer();
 

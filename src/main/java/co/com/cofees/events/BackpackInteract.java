@@ -10,6 +10,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 
@@ -18,9 +19,12 @@ public class BackpackInteract implements Listener {
     @EventHandler
     public void onPlayerInteract(PlayerInteractEvent event) {
 
-
         Player player = event.getPlayer();
         ItemStack handItem = player.getInventory().getItemInMainHand();
+
+        if (handItem.getItemMeta() == null) return;
+
+
         player.sendMessage("Objeto:" + handItem.getItemMeta().getPersistentDataContainer().getKeys());
 
 
