@@ -1,27 +1,29 @@
 package co.com.cofees.commands;
 
-import co.com.cofees.events.VacaNagasaki;
 import co.com.cofees.tools.TextTools;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 
 public class TestCommand implements CommandExecutor {
 
+    public TestCommand() {
+    }
 
     @Override
-    public boolean onCommand(CommandSender sender, Command command, String alias, String[] args) {
+    public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, String[] args) {
         //Issued from console
         if (!(sender instanceof Player)) {
-            sender.sendMessage(text("&4Can't use this command from console!"));
+            sender.sendMessage(text("Can't use this command from console."));
             return true;
         }
 
         //Player issued command
         Player player = (Player) sender;
         if (args.length <= 0) {
-            player.sendMessage(text("&bTest Successful."));
+            player.sendMessage(text("&bTest Successfull."));
             return true;
         }
 
@@ -30,16 +32,17 @@ public class TestCommand implements CommandExecutor {
                 player.sendMessage(text("&b&kiii&rHelp menu&b&kiii"));
                 break;
             case "xp":
-                if(!player.getAllowFlight()){
-                    player.sendMessage(text("&bFlight mode enabled for " + String.valueOf(player.getName())));
+                if (!player.getAllowFlight()) {
+                    player.sendMessage(text("&bFly mode enabled for " + String.valueOf(player.getName())));
                     player.setAllowFlight(true);
                     break;
                 }
-                player.sendMessage(text("&bFlight mode disabled for " + String.valueOf(player.getName())));
+                player.sendMessage(text("&bFly mode disabled for " + String.valueOf(player.getName())));
                 player.setAllowFlight(false);
                 break;
             default:
                 noArgs(player);
+                break;
         }
 
         return true;

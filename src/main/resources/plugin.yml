@@ -12,6 +12,23 @@ commands:
     usage: "/explosivecows [true, false]"
     permission: explosivecows.command.cow
     permission-message: "You're not powerful enough to change the cows!!"
+  home:
+    description: Teleport to your home
+    usage: /<command> [home]
+    aliases:
+      - homes
+      - h
+  qspanel:
+    description: abre un panel de control
+
+  Backpack:
+    description: abre el backpack manualmente
+
+  inventory:
+    description: inventario de prueba
+
+  waystone:
+    description: Interactuar Con Waystones
   test:
     description: "Pruebas para plugin."
     aliases:
