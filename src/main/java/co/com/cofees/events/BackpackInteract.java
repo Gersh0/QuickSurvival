@@ -33,7 +33,7 @@ public class BackpackInteract implements Listener {
         Player player = event.getPlayer();
         ItemStack handItem = player.getInventory().getItemInMainHand();
 
-        if(handItem.getItemMeta() == null) return;
+        if (handItem.getItemMeta() == null) return;
 
         player.sendMessage("Objeto:" + Objects.requireNonNull(handItem.getItemMeta()).getPersistentDataContainer().getKeys());
 
@@ -65,6 +65,7 @@ public class BackpackInteract implements Listener {
     }
 
     private int roundInventorySize(int size) {
+        if (size == 0) return 9;
         // Redondear hacia arriba al múltiplo de 9 más cercano
         return (int) Math.ceil((double) size / 9) * 9;
     }
@@ -100,28 +101,34 @@ public class BackpackInteract implements Listener {
 
     @EventHandler
     public void onInventoryClose(InventoryCloseEvent event) throws IOException {
+        if (event.getInventory().getHolder() != null) return;
+
+
         Player player = (Player) event.getPlayer();
         Inventory inventory = event.getInventory();
 
         ItemStack handItem = player.getInventory().getItemInMainHand();
 
+        if (handItem.getItemMeta() == null)return;
+
         PersistentDataContainer container = Objects.requireNonNull(handItem.getItemMeta()).getPersistentDataContainer();
 
-        if (container.has(Keys.BACKPACKLV1, PersistentDataType.STRING)) {
+        if (container.has(Keys.BACKPACK_CODE, PersistentDataType.STRING)) {
 
             saveInventory(player, inventory);
 
+            player.sendMessage("tipo de inventario cerrado: " + event.getInventory().getType().name());
+
+            player.sendMessage("nombre de la clase: " + inventory.getClass().getName());
+
+            player.sendMessage("holder: " + inventory.getHolder());
+
         }
 
-       /* player.sendMessage("tipo de inventario cerrado: " + event.getInventory().getType().name());
-
-        player.sendMessage("nombre de la clase: " + inventory.getClass().getName());
-
-        player.sendMessage("holder: " + inventory.getHolder());*/
 
     }
 
-    @EventHandler
+  /*  @EventHandler
     public void onInventoryOpen(InventoryOpenEvent event) throws IOException {
 
         Player player = (Player) event.getPlayer();
@@ -132,11 +139,10 @@ public class BackpackInteract implements Listener {
         PersistentDataContainer container = Objects.requireNonNull(handItem.getItemMeta()).getPersistentDataContainer();
         player.sendMessage("inventario abierto");
         // Cargar el inventario al abrir la mochila
-        if (container.has(Keys.BACKPACKLV1, PersistentDataType.STRING)) {
+        if (container.has(Keys.BACKPACK_CODE, PersistentDataType.STRING)) {
             restoreInventory(player);
         }
-    }
-
+    }*/
 
 
     private File getInventoryFolder() {
@@ -150,8 +156,24 @@ public class BackpackInteract implements Listener {
         return inventoryFolder;
     }
 
+
+    //OBTENER UUID DEL BACKPACK
+    public String getBackpackUUID(Player player) {
+        PersistentDataContainer container = Objects.requireNonNull(player.getInventory().getItemInMainHand().getItemMeta()).getPersistentDataContainer();
+
+        String UUIDbackpack = null;
+        if (container.has(Keys.BACKPACK_CODE, PersistentDataType.STRING)) {
+            UUIDbackpack = player.getInventory().getItemInMainHand().getItemMeta().getPersistentDataContainer().get(Keys.BACKPACK_CODE, PersistentDataType.STRING);
+        } else {
+            return null;
+        }
+        return UUIDbackpack;
+    }
+
     public void saveInventory(Player p, Inventory inventory) throws IOException {
-        File f = new File(getInventoryFolder(), p.getName() + "BInventory" + ".yml");
+        String UUIDbackpack = getBackpackUUID(p);
+
+        File f = new File(getInventoryFolder(), p.getName() + UUIDbackpack + "BInventory" + ".yml");
         FileConfiguration c = YamlConfiguration.loadConfiguration(f);
 
         List<Map<String, Object>> items = new ArrayList<>();
@@ -169,13 +191,16 @@ public class BackpackInteract implements Listener {
 
 
     public Inventory restoreInventory(Player p) throws IOException {
-        File f = new File(getInventoryFolder(), p.getName() + "BInventory" + ".yml");
+
+        String UUIDbackpack = getBackpackUUID(p);
+
+        File f = new File(getInventoryFolder(), p.getName() + UUIDbackpack + "BInventory" + ".yml");
         FileConfiguration c = YamlConfiguration.loadConfiguration(f);
 
         List<Map<String, Object>> items = (List<Map<String, Object>>) c.get("inventory.backpack");
         if (items != null) {
             // Ajustar el tamaño para que sea un múltiplo de 9
-            int adjustedSize = ((items.size() + 8) / 9) * 9;
+            int adjustedSize = roundInventorySize(items.size());
             Inventory inventory = Bukkit.createInventory(null, adjustedSize, ChatColor.translateAlternateColorCodes('&', "&6Mochila Restaurada"));
 
             for (int i = 0; i < items.size(); i++) {

@@ -8,13 +8,16 @@ import org.bukkit.NamespacedKey;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.*;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
+import org.jetbrains.annotations.Nullable;
 
 import java.security.Key;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.function.Predicate;
 
 public class CustomRecipes {
 
@@ -49,7 +52,7 @@ public class CustomRecipes {
 
 
     // NO ESTA TERMINADO
-    public static void addCustomRecipe(ItemStack itemStack, NamespacedKey key, String shape1, String shape2, String shape3, HashMap<Character,Material> ingredientMap){
+    public static void addCustomRecipe(ItemStack itemStack, NamespacedKey key, String shape1, String shape2, String shape3, HashMap<Character, Material> ingredientMap) {
         ShapedRecipe backpack = new ShapedRecipe(key, itemStack);
         backpack.shape(shape1, shape2, shape3); //Controlar casos que no se puedan
         backpack.setIngredient('H', Material.CHEST);//1
@@ -62,11 +65,12 @@ public class CustomRecipes {
 
     public static void backpacks() {
         // Crear el ítem que se obtendrá al realizar el crafteo
-        ItemStack backpackLv1 = new ItemStack(Material.TOTEM_OF_UNDYING);
+        ItemStack backpackLv1 = new ItemStack(Material.CLOCK);
         ItemMeta backpackLv1Meta = backpackLv1.getItemMeta();
         backpackLv1Meta.setDisplayName(ChatColor.BOLD + "Backpack lv1");
 
         backpackLv1Meta.getPersistentDataContainer().set(Keys.BACKPACKLV1, PersistentDataType.STRING, "true");
+        backpackLv1Meta.getPersistentDataContainer().set(Keys.BACKPACK_CODE, PersistentDataType.STRING, "true");
         backpackLv1Meta.setLore(List.of("UNA MOCHILA EN MAICRA?"));
         backpackLv1.setAmount(1);
         //setear meta
@@ -85,11 +89,12 @@ public class CustomRecipes {
         //backpack lv2
 
         // Crear el ítem que se obtendrá al realizar el crafteo
-        ItemStack backpackLv2 = new ItemStack(Material.TOTEM_OF_UNDYING);
+        ItemStack backpackLv2 = new ItemStack(Material.CLOCK);
         ItemMeta backpackLv2Meta = backpackLv2.getItemMeta();
         backpackLv2Meta.setDisplayName(ChatColor.DARK_GRAY + "" + ChatColor.BOLD + "Backpack lv2");
 
         backpackLv2Meta.getPersistentDataContainer().set(Keys.BACKPACKLV2, PersistentDataType.STRING, "true");
+
         backpackLv2Meta.setLore(List.of("UNA MOCHILA MAS GRANDE"));
         backpackLv2.setAmount(1);
         //setear meta
@@ -100,7 +105,17 @@ public class CustomRecipes {
         ShapedRecipe bl2 = new ShapedRecipe(Keys.BACKPACKLV2Recipe, backpackLv2);
         bl2.shape("HHH", "HMH", "HHH");
         bl2.setIngredient('H', Material.IRON_INGOT);
-        bl2.setIngredient('M', new RecipeChoice.ExactChoice(backpackLv1));
+        bl2.setIngredient('M', new RecipeChoice.MaterialChoice(Material.CLOCK) {
+            @Override
+            public boolean test(@Nullable ItemStack itemStack) {
+                if (itemStack == null) {
+                    return false;
+                }
+                PersistentDataContainer container = Objects.requireNonNull(itemStack.getItemMeta()).getPersistentDataContainer();
+                return container.has(Keys.BACKPACKLV1, PersistentDataType.STRING);
+            }
+        });
+
 
         // Registrar el crafteo
         Bukkit.addRecipe(bl2);
@@ -108,7 +123,7 @@ public class CustomRecipes {
         //backpack lv3
 
         // Crear el ítem que se obtendrá al realizar el crafteo
-        ItemStack backpackLv3 = new ItemStack(Material.TOTEM_OF_UNDYING);
+        ItemStack backpackLv3 = new ItemStack(Material.CLOCK);
         ItemMeta backpackLv3Meta = backpackLv3.getItemMeta();
         backpackLv3Meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
         backpackLv3Meta.addEnchant(Enchantment.ARROW_DAMAGE, 1, true);
@@ -125,15 +140,23 @@ public class CustomRecipes {
         ShapedRecipe bl3 = new ShapedRecipe(Keys.BACKPACKLV3Recipe, backpackLv3);
         bl3.shape("OOO", "OMO", "OOO");
         bl3.setIngredient('O', Material.GOLD_INGOT);
-        bl3.setIngredient('M', new RecipeChoice.ExactChoice(backpackLv2));
-
+        bl3.setIngredient('M', new RecipeChoice.MaterialChoice(Material.CLOCK) {
+            @Override
+            public boolean test(@Nullable ItemStack itemStack) {
+                if (itemStack == null) {
+                    return false;
+                }
+                PersistentDataContainer container = Objects.requireNonNull(itemStack.getItemMeta()).getPersistentDataContainer();
+                return container.has(Keys.BACKPACKLV2, PersistentDataType.STRING);
+            }
+        });
         // Registrar el crafteo
         Bukkit.addRecipe(bl3);
 
         //backpack lv4
 
         // Crear el ítem que se obtendrá al realizar el crafteo
-        ItemStack backpackLv4 = new ItemStack(Material.TOTEM_OF_UNDYING);
+        ItemStack backpackLv4 = new ItemStack(Material.CLOCK);
         ItemMeta backpackLv4Meta = backpackLv4.getItemMeta();
         backpackLv4Meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
         backpackLv4Meta.addEnchant(Enchantment.ARROW_DAMAGE, 1, true);
@@ -150,15 +173,23 @@ public class CustomRecipes {
         ShapedRecipe bl4 = new ShapedRecipe(Keys.BACKPACKLV4Recipe, backpackLv4);
         bl4.shape("DDD", "DMD", "DDD");
         bl4.setIngredient('D', Material.DIAMOND);
-        bl4.setIngredient('M', new RecipeChoice.ExactChoice(backpackLv3));
-
+        bl4.setIngredient('M', new RecipeChoice.MaterialChoice(Material.CLOCK) {
+            @Override
+            public boolean test(@Nullable ItemStack itemStack) {
+                if (itemStack == null) {
+                    return false;
+                }
+                PersistentDataContainer container = Objects.requireNonNull(itemStack.getItemMeta()).getPersistentDataContainer();
+                return container.has(Keys.BACKPACKLV3, PersistentDataType.STRING);
+            }
+        });
         // Registrar el crafteo
         Bukkit.addRecipe(bl4);
 
         //backpack lv4
 
         // Crear el ítem que se obtendrá al realizar el crafteo
-        ItemStack backpackLv5 = new ItemStack(Material.TOTEM_OF_UNDYING);
+        ItemStack backpackLv5 = new ItemStack(Material.CLOCK);
         ItemMeta backpackLv5Meta = backpackLv5.getItemMeta();
         backpackLv5Meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
         backpackLv5Meta.addEnchant(Enchantment.ARROW_DAMAGE, 1, true);
@@ -175,7 +206,16 @@ public class CustomRecipes {
         bl5.shape("GMN");
         bl5.setIngredient('N', Material.NETHERITE_INGOT);
         bl5.setIngredient('M', new RecipeChoice.ExactChoice(backpackLv4));
-        bl5.setIngredient('G', Material.GOLD_INGOT);
+        bl5.setIngredient('M', new RecipeChoice.MaterialChoice(Material.CLOCK) {
+            @Override
+            public boolean test(@Nullable ItemStack itemStack) {
+                if (itemStack == null) {
+                    return false;
+                }
+                PersistentDataContainer container = Objects.requireNonNull(itemStack.getItemMeta()).getPersistentDataContainer();
+                return container.has(Keys.BACKPACKLV4, PersistentDataType.STRING);
+            }
+        });
 
         // Registrar el crafteo
         Bukkit.addRecipe(bl5);
