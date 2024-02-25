@@ -4,18 +4,61 @@ import co.com.cofees.tools.Keys;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.*;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
 
+import java.security.Key;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 public class CustomRecipes {
 
     public static void registerCustomCrafting() {
         backpacks();
     }
+
+    public static ItemStack createCustomItem(Material material, String displayName, String lore, NamespacedKey key, String keyValue, int amount) {
+        // Crear el ítem
+        ItemStack item = new ItemStack(material, amount);
+        ItemMeta itemMeta = item.getItemMeta();
+
+        // Configurar el nombre visible del ítem
+
+        Objects.requireNonNull(itemMeta).setDisplayName(ChatColor.BOLD + displayName);
+
+        // Configurar la persistencia de datos
+        if (key != null && keyValue != null) {
+            itemMeta.getPersistentDataContainer().set(key, PersistentDataType.STRING, keyValue);
+        }
+
+        // Configurar el lore del ítem
+        if (lore != null && !lore.isEmpty()) {
+            itemMeta.setLore(List.of(lore));
+        }
+
+        // Establecer la meta del ítem
+        item.setItemMeta(itemMeta);
+
+        return item;
+    }
+
+
+    // NO ESTA TERMINADO
+    public static void addCustomRecipe(ItemStack itemStack, NamespacedKey key, String shape1, String shape2, String shape3, HashMap<Character,Material> ingredientMap){
+        ShapedRecipe backpack = new ShapedRecipe(key, itemStack);
+        backpack.shape(shape1, shape2, shape3); //Controlar casos que no se puedan
+        backpack.setIngredient('H', Material.CHEST);//1
+        backpack.setIngredient('C', Material.LEATHER);//2
+        backpack.setIngredient('S', Material.STRING);//3  esos 3 se pueden recibir en un hashmap
+        // Registrar el crafteo
+        Bukkit.addRecipe(backpack);
+    }
+
 
     public static void backpacks() {
         // Crear el ítem que se obtendrá al realizar el crafteo
@@ -137,4 +180,6 @@ public class CustomRecipes {
         // Registrar el crafteo
         Bukkit.addRecipe(bl5);
     }
+
+
 }

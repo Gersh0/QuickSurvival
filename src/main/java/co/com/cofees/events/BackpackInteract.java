@@ -32,6 +32,9 @@ public class BackpackInteract implements Listener {
 
         Player player = event.getPlayer();
         ItemStack handItem = player.getInventory().getItemInMainHand();
+
+        if(handItem.getItemMeta() == null) return;
+
         player.sendMessage("Objeto:" + Objects.requireNonNull(handItem.getItemMeta()).getPersistentDataContainer().getKeys());
 
 
@@ -61,9 +64,13 @@ public class BackpackInteract implements Listener {
         }
     }
 
+    private int roundInventorySize(int size) {
+        // Redondear hacia arriba al múltiplo de 9 más cercano
+        return (int) Math.ceil((double) size / 9) * 9;
+    }
 
     private void openBackpackInventory(Player player, int backpackLevel) throws IOException {
-        int inventorySize = 9 * backpackLevel;
+        int inventorySize = roundInventorySize(9 * backpackLevel);
 
         Inventory backpackInventory = Bukkit.createInventory(null, inventorySize, ChatColor.translateAlternateColorCodes('&', "&6Mochila Nivel " + backpackLevel));
         // Crear el inventario de la mochila
