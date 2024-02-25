@@ -7,6 +7,12 @@ authors:
   - PyroSoul
   - Strom
 commands:
+  home:
+    description: Teleport to your home
+    usage: /<command> [home]
+    aliases:
+      - homes
+      - h
   qspanel:
     description: abre un panel de control
 
