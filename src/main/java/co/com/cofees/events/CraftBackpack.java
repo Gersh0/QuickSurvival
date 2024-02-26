@@ -55,7 +55,7 @@ public class CraftBackpack implements Listener {
             Inventory craftingInventory = event.getInventory();
 
             ItemStack backpack = Arrays.stream(craftingInventory.getContents()).toList().stream().filter(
-                            (item -> item.getItemMeta().getPersistentDataContainer().has(Keys.BACKPACKLV1,PersistentDataType.STRING)))
+                            (item -> item.getItemMeta().getPersistentDataContainer().has(Keys.BACKPACKLV1, PersistentDataType.STRING)))
                     .findFirst().orElse(null);
 
 
@@ -75,14 +75,14 @@ public class CraftBackpack implements Listener {
             Player player = (Player) event.getWhoClicked();
             player.sendMessage("Se creó un backpack con código adicional: " + BackpackUUID);
 
-        }else if (event.getCurrentItem() != null &&
+        } else if (event.getCurrentItem() != null &&
                 Objects.requireNonNull(event.getCurrentItem().getItemMeta()).getPersistentDataContainer().has(Keys.BACKPACKLV3, PersistentDataType.STRING)) {
 
 
             Inventory craftingInventory = event.getInventory();
 
             ItemStack backpack = Arrays.stream(craftingInventory.getContents()).toList().stream().filter(
-                            (item -> item.getItemMeta().getPersistentDataContainer().has(Keys.BACKPACKLV2,PersistentDataType.STRING)))
+                            (item -> item.getItemMeta().getPersistentDataContainer().has(Keys.BACKPACKLV2, PersistentDataType.STRING)))
                     .findFirst().orElse(null);
 
 
@@ -102,14 +102,14 @@ public class CraftBackpack implements Listener {
             Player player = (Player) event.getWhoClicked();
             player.sendMessage("Se creó un backpack con código adicional: " + BackpackUUID);
 
-        }else if (event.getCurrentItem() != null &&
+        } else if (event.getCurrentItem() != null &&
                 Objects.requireNonNull(event.getCurrentItem().getItemMeta()).getPersistentDataContainer().has(Keys.BACKPACKLV4, PersistentDataType.STRING)) {
 
 
             Inventory craftingInventory = event.getInventory();
 
             ItemStack backpack = Arrays.stream(craftingInventory.getContents()).toList().stream().filter(
-                            (item -> item.getItemMeta().getPersistentDataContainer().has(Keys.BACKPACKLV3,PersistentDataType.STRING)))
+                            (item -> item.getItemMeta().getPersistentDataContainer().has(Keys.BACKPACKLV3, PersistentDataType.STRING)))
                     .findFirst().orElse(null);
 
 
@@ -129,15 +129,20 @@ public class CraftBackpack implements Listener {
             Player player = (Player) event.getWhoClicked();
             player.sendMessage("Se creó un backpack con código adicional: " + BackpackUUID);
 
-        }else if (event.getCurrentItem() != null && //STINKYYYYYYYYYY
+        } else if (event.getCurrentItem() != null &&
                 Objects.requireNonNull(event.getCurrentItem().getItemMeta()).getPersistentDataContainer().has(Keys.BACKPACKLV5, PersistentDataType.STRING)) {
 
 
             Inventory craftingInventory = event.getInventory();
 
-            ItemStack backpack = Arrays.stream(craftingInventory.getContents()).toList().stream().filter(
-                            (item -> item.getItemMeta().getPersistentDataContainer().has(Keys.BACKPACKLV4,PersistentDataType.STRING)))
-                    .findFirst().orElse(null);
+            ItemStack backpack = Arrays.stream(craftingInventory.getContents())
+                    .filter(Objects::nonNull) // Filtra elementos nulos
+                    .filter(item ->
+                            item.getItemMeta() != null &&
+                                    item.getItemMeta().getPersistentDataContainer() != null &&
+                                    item.getItemMeta().getPersistentDataContainer().has(Keys.BACKPACKLV4, PersistentDataType.STRING))
+                    .findFirst()
+                    .orElse(null);
 
 
             // Obtener la meta del ítem

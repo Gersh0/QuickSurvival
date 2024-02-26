@@ -6,18 +6,18 @@ import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.enchantments.Enchantment;
-import org.bukkit.inventory.*;
+import org.bukkit.inventory.ItemFlag;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.RecipeChoice;
+import org.bukkit.inventory.ShapedRecipe;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.Nullable;
 
-import java.security.Key;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
-import java.util.function.Predicate;
 
 public class CustomRecipes {
 
@@ -108,11 +108,7 @@ public class CustomRecipes {
         bl2.setIngredient('M', new RecipeChoice.MaterialChoice(Material.CLOCK) {
             @Override
             public boolean test(@Nullable ItemStack itemStack) {
-                if (itemStack == null) {
-                    return false;
-                }
-                PersistentDataContainer container = Objects.requireNonNull(itemStack.getItemMeta()).getPersistentDataContainer();
-                return container.has(Keys.BACKPACKLV1, PersistentDataType.STRING);
+                return canCraftLv2(itemStack);
             }
         });
 
@@ -140,7 +136,7 @@ public class CustomRecipes {
         ShapedRecipe bl3 = new ShapedRecipe(Keys.BACKPACKLV3Recipe, backpackLv3);
         bl3.shape("OOO", "OMO", "OOO");
         bl3.setIngredient('O', Material.GOLD_INGOT);
-        bl3.setIngredient('M', new RecipeChoice.MaterialChoice(Material.CLOCK) {
+        bl3.setIngredient('M', new RecipeChoice.MaterialChoice(backpackLv2.getType()) {
             @Override
             public boolean test(@Nullable ItemStack itemStack) {
                 if (itemStack == null) {
@@ -203,9 +199,8 @@ public class CustomRecipes {
 
         // Crear el crafteo personalizado
         ShapedRecipe bl5 = new ShapedRecipe(Keys.BACKPACKLV5Recipe, backpackLv5);
-        bl5.shape("GMN");
+        bl5.shape("NM ");
         bl5.setIngredient('N', Material.NETHERITE_INGOT);
-        bl5.setIngredient('M', new RecipeChoice.ExactChoice(backpackLv4));
         bl5.setIngredient('M', new RecipeChoice.MaterialChoice(Material.CLOCK) {
             @Override
             public boolean test(@Nullable ItemStack itemStack) {
@@ -220,6 +215,41 @@ public class CustomRecipes {
         // Registrar el crafteo
         Bukkit.addRecipe(bl5);
     }
+
+    // Métodos para verificar las condiciones de crafteo de cada mochila
+    private static boolean canCraftLv2(ItemStack itemStack) {
+        if (itemStack == null) {
+            return false;
+        }
+        PersistentDataContainer container = itemStack.getItemMeta().getPersistentDataContainer();
+        return container.has(Keys.BACKPACKLV1, PersistentDataType.STRING);
+    }
+
+    private static boolean canCraftLv3(ItemStack itemStack) {
+        if (itemStack == null) {
+            return false;
+        }
+        PersistentDataContainer container = itemStack.getItemMeta().getPersistentDataContainer();
+        return container.has(Keys.BACKPACKLV2, PersistentDataType.STRING);
+    }
+
+    private static boolean canCraftLv4(ItemStack itemStack) {
+        if (itemStack == null) {
+            return false;
+        }
+        PersistentDataContainer container = itemStack.getItemMeta().getPersistentDataContainer();
+        return container.has(Keys.BACKPACKLV3, PersistentDataType.STRING);
+    }
+
+    private static boolean canCraftLv5(ItemStack itemStack) {
+        if (itemStack == null) {
+            return false;
+        }
+        PersistentDataContainer container = itemStack.getItemMeta().getPersistentDataContainer();
+        return container.has(Keys.BACKPACKLV4, PersistentDataType.STRING);
+    }
+
+
 
 
 }
