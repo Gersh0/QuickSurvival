@@ -7,8 +7,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.HashMap;
 
-public abstract class LocationHandler {
-
+public final class LocationHandler {
 
     public static HashMap<String, Location> loadLocations(YamlConfiguration config, JavaPlugin core, String section) {
         HashMap<String, Location> homes = new HashMap<>();
