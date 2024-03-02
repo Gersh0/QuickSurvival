@@ -2,7 +2,9 @@
   <artifact type="jar" name="QuickSurvival:jar">
     <output-path>$PROJECT_DIR$/../Server/plugins</output-path>
     <root id="archive" name="QuickSurvival.jar">
-      <element id="module-output" name="QuickSurvival" />
+      <element id="directory" name="META-INF">
+        <element id="file-copy" path="$PROJECT_DIR$/META-INF/MANIFEST.MF" />
+      </element>
     </root>
   </artifact>
 </component>

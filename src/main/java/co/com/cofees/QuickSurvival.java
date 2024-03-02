@@ -1,21 +1,21 @@
 package co.com.cofees;
 
-import co.com.cofees.commands.ExplosiveCows;
-import co.com.cofees.commands.TestCommand;
-import co.com.cofees.events.VacaNagasaki;
 import co.com.cofees.commands.*;
 import co.com.cofees.events.*;
 import co.com.cofees.recipes.CustomRecipes;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.java.JavaPlugin;
+
 
 import java.io.File;
 
 public class QuickSurvival extends JavaPlugin {
 
+
+    private static QuickSurvival plugin;
     PluginDescriptionFile desc = getDescription();
     VacaNagasaki cowEvent = new VacaNagasaki();
 
@@ -24,6 +24,8 @@ public class QuickSurvival extends JavaPlugin {
 
     @Override
     public void onEnable() {
+        plugin = this;
+        Bukkit.getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', "&bPlugin enabled, ver: "+desc.getVersion()));//Versión, Prefix PluginName
         Bukkit.getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', "&bPlugin enabled, ver: " + desc.getVersion()));//Versión, Prefix PluginName
         registerCommands();
         registerEvents();
@@ -75,6 +77,10 @@ public class QuickSurvival extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new WaystonePlacement(), this);
         getServer().getPluginManager().registerEvents(new WaystoneInteract(), this);
         getServer().getPluginManager().registerEvents(cowEvent, this);
+    }
+
+    public static QuickSurvival getPlugin(){
+        return plugin;
     }
 
 
