@@ -77,6 +77,8 @@ public class QuickSurvival extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new WaystonePlacement(), this);
         getServer().getPluginManager().registerEvents(new WaystoneInteract(), this);
         getServer().getPluginManager().registerEvents(cowEvent, this);
+        getServer().getPluginManager().registerEvents(new VeinMiner(), this);
+        getServer().getPluginManager().registerEvents(new TreeCapitator(), this);
     }
 
     public static QuickSurvival getPlugin(){
