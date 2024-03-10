@@ -31,11 +31,10 @@ public class FlyCommand implements CommandExecutor {
         // If the sender is not a player
         if (!(sender instanceof Player)) {
             // Log an info message indicating that fly mode has been enabled for the player specified in the arguments
-            sender.getServer().getLogger().info("Fly mode enabled for " + args[0]);
+            sender.getServer().getLogger().info("Fly mode toggled for " + args[0]);
             // Toggle fly mode for the player specified in the arguments
             return toggleFly(Objects.requireNonNull(sender.getServer().getPlayer(args[0])));
         }
-
         // Cast the sender to a Player
         Player player = (Player) sender;
         // If no arguments are provided
@@ -49,16 +48,13 @@ public class FlyCommand implements CommandExecutor {
                 .map(Player::getName)
                 .noneMatch(name -> name.equalsIgnoreCase(args[0]))) {
             // Send a message to the sender
-            sender.sendMessage("Hi");
+            sender.sendMessage("There is no player online with that name.");
 
             return false;
         }
-        // Send a message to the sender indicating that fly mode has been toggled for the player specified in the arguments
-        sender.sendMessage("Fly mode toggled for " + args[0]);
         // Toggle fly mode for the player specified in the arguments
         toggleFly(Objects.requireNonNull(sender.getServer().getPlayer(args[0])));
-
-        return false;
+        return true;
     }
 
     public boolean toggleFly(Player player) {

@@ -5,14 +5,15 @@ import co.com.cofees.commands.subcommands.DeleteHomeCommand;
 import co.com.cofees.commands.subcommands.SetHomeCommand;
 import co.com.cofees.completers.DeleteHomeCompleter;
 import co.com.cofees.completers.SetHomeCompleter;
+import co.com.cofees.tools.LocationHandler;
 import org.bukkit.Location;
-import org.bukkit.World;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -47,7 +48,7 @@ public class HomeCommand implements CommandExecutor, TabCompleter {
             return false;
         }
         // Get the list of homes for the player
-        HashMap<String, Location> homes = getHome(player);
+        HashMap<String, Location> homes = getHome(player, homesConfig, core);
 
         if (args.length == 0) {//If player sends /home
 
@@ -88,18 +89,16 @@ public class HomeCommand implements CommandExecutor, TabCompleter {
         return subCommand.onCommand(sender, command, label, subCommandArgs);
     }
 
-    public HashMap<String, Location> getHome(Player player) {
-        homesConfig.getKeys(true);
+    private HashMap<String, Location> getHome(Player player, YamlConfiguration config, JavaPlugin core) {
+        if (player == null || config == null) {
+            return new HashMap<>();
+        }
 
-        return null;
-    }
+        if (!config.contains("homes") || !config.contains("homes." + player.getName())) {
+            return new HashMap<>();
+        }
 
-    public World buildWorld(Player player) {
-        String expectedWorld = homesConfig.getString("homes." + player.getName() + ".world");
-        return player.getServer()
-                .getWorlds()
-                .stream()
-                .filter(w -> w.getName().equalsIgnoreCase(expectedWorld)).findFirst().orElse(null);
+        return LocationHandler.loadLocations(config, core, "homes." + player.getName());
     }
 
     @Nullable
