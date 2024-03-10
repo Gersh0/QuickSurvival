@@ -11,11 +11,11 @@ public final class LocationHandler {
 
     public static HashMap<String, Location> loadLocations(YamlConfiguration config, JavaPlugin core, String section) {
         HashMap<String, Location> homes = new HashMap<>();
-        ConfigurationSection LocationSection = config.getConfigurationSection(section);
+        ConfigurationSection locationSection = config.getConfigurationSection(section);
 
-        if (LocationSection != null) {
-            LocationSection.getKeys(false).forEach(locationName -> {
-                Location location = createLocationFromConfig(LocationSection, locationName, core);
+        if (locationSection != null) {
+            locationSection.getKeys(false).forEach(locationName -> {
+                Location location = createLocationFromConfig(locationSection, locationName, core);
                 homes.put(locationName, location);
             });
         }
@@ -37,4 +37,3 @@ public final class LocationHandler {
         return new Location(core.getServer().getWorld(world), x, y, z, yaw, pitch);
     }
 }
-
