@@ -6,6 +6,7 @@ import co.com.cofees.commands.subcommands.SetHomeCommand;
 import co.com.cofees.completers.DeleteHomeCompleter;
 import co.com.cofees.completers.SetHomeCompleter;
 import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -62,7 +63,10 @@ public class HomeCommand implements CommandExecutor, TabCompleter {
             }
 
             // If the player has only one home
-            Location home = homes.values().stream().findFirst().orElse(null); // Get the home
+            Location home = homes.values()
+                    .stream()
+                    .findFirst()
+                    .orElse(null); // Get the home
             player.teleport(home); // Teleport the player to the home
             return true;
 
@@ -85,18 +89,17 @@ public class HomeCommand implements CommandExecutor, TabCompleter {
     }
 
     public HashMap<String, Location> getHome(Player player) {
-        List<?> homesList = homesConfig.getList("homes." + player.getName() + ".locations");
-        if (homesList != null && !homesList.isEmpty()) {
-            HashMap<String, Location> homeMap = new HashMap<>();
-            for (Object obj : homesList) {
-                if (obj instanceof Location) {
-                    String homeName = "myHome"; // Replace with actual home name
-                    homeMap.put(homeName, (Location) obj);
-                }
-            }
-            return homeMap;
-        }
+        homesConfig.getKeys(true);
+
         return null;
+    }
+
+    public World buildWorld(Player player) {
+        String expectedWorld = homesConfig.getString("homes." + player.getName() + ".world");
+        return player.getServer()
+                .getWorlds()
+                .stream()
+                .filter(w -> w.getName().equalsIgnoreCase(expectedWorld)).findFirst().orElse(null);
     }
 
     @Nullable

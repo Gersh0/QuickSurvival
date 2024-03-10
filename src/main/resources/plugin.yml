@@ -7,6 +7,11 @@ authors:
   - PyroSoul
   - Strom
 commands:
+  explosivecows:
+    description: "ahora las vacas son explosivas con el click derecho"
+    usage: "/explosivecows [true, false]"
+    permission: explosivecows.command.cow
+    permission-message: "You're not powerful enough to change the cows!!"
   home:
     description: Teleport to your home
     usage: /<command> [home]

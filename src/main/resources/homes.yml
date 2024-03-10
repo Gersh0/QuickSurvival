@@ -1,9 +1,16 @@
 homes:
   GerMinatorCofee:
-    casa:
+    home:
       world: world
       x: 0.0
       y: 100.0
       z: 0.0
+      yaw: 0.0
+      pitch: 0.0
+    gf:
+      world: world
+      x: 1.0
+      y: 100
+      z: 1.0
       yaw: 0.0
       pitch: 0.0
