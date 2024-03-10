@@ -74,6 +74,7 @@ public class CustomRecipes {
         backpackLv1Meta.setLore(List.of("UNA MOCHILA EN MAICRA?"));
         backpackLv1.setAmount(1);
         //setear meta
+        backpackLv1Meta.setCustomModelData(1);
         backpackLv1.setItemMeta(backpackLv1Meta);
 
 
@@ -98,6 +99,7 @@ public class CustomRecipes {
         backpackLv2Meta.setLore(List.of("UNA MOCHILA MAS GRANDE"));
         backpackLv2.setAmount(1);
         //setear meta
+        backpackLv2Meta.setCustomModelData(2);
         backpackLv2.setItemMeta(backpackLv2Meta);
 
 
@@ -129,6 +131,7 @@ public class CustomRecipes {
         backpackLv3Meta.setLore(List.of("UNA MOCHILA AUN MAS GRANDE"));
         backpackLv3.setAmount(1);
         //setear meta
+        backpackLv3Meta.setCustomModelData(3);
         backpackLv3.setItemMeta(backpackLv3Meta);
 
 
@@ -162,6 +165,7 @@ public class CustomRecipes {
         backpackLv4Meta.setLore(List.of("UNA MOCHILA INCLUSO MAS GRANDE? CUANDO TERMINA?"));
         backpackLv4.setAmount(1);
         //setear meta
+        backpackLv4Meta.setCustomModelData(4);
         backpackLv4.setItemMeta(backpackLv4Meta);
 
 
@@ -195,6 +199,7 @@ public class CustomRecipes {
         backpackLv5Meta.setLore(List.of("LA MOCHILA DEFINITIVA"));
         backpackLv5.setAmount(1);
         //setear meta
+        backpackLv5Meta.setCustomModelData(5);
         backpackLv5.setItemMeta(backpackLv5Meta);
 
         // Crear el crafteo personalizado
