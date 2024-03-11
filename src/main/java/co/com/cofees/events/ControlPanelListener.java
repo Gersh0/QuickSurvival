@@ -18,19 +18,47 @@ public class ControlPanelListener implements Listener {
             event.setCancelled(true); // Cancelar la interacción
             Player player = (Player) event.getWhoClicked();
 
-            if (event.getSlot() == 3) {
-                changeWoolColor(player, ChatColor.RED, 3); // Slot de la lana roja
-            } else if (event.getSlot() == 5) {
-                changeWoolColor(player, ChatColor.GREEN, 5); // Slot de la lana verde
-            }
+           changeWoolColor(player, event.getSlot());
         }
     }
 
-    private void changeWoolColor(Player player, ChatColor color, int slot) {
-        ItemStack wool = player.getOpenInventory().getItem(slot);
-        ItemMeta meta = wool.getItemMeta();
-        meta.setDisplayName(color + "Lana");
-        wool.setItemMeta(meta);
-        player.updateInventory();
+    public boolean isActivated (ChatColor color) {
+        return color == ChatColor.GREEN;
     }
-}
+
+
+    private void changeWoolColor(Player player, int slot) {
+        Inventory inventory = player.getOpenInventory().getTopInventory();
+
+        // Verificar si el slot está en el rango del inventario
+
+            ItemStack clickedItem = inventory.getItem(slot);
+
+            if (clickedItem != null && clickedItem.getType() == Material.GREEN_WOOL) {
+                player.sendMessage("Lana verde clickeada");
+                player.sendMessage(clickedItem.getType().toString());
+                // Cambiar lana verde a roja
+                ItemStack newWool = new ItemStack(Material.RED_WOOL, 1);
+                ItemMeta meta = newWool.getItemMeta();
+                meta.setDisplayName(ChatColor.RED + "Lana Desactivada");
+                newWool.setItemMeta(meta);
+
+                inventory.setItem(slot, newWool);
+                player.updateInventory();
+            } else {
+                player.sendMessage("Lana roja clickeada");
+                // Cambiar lana roja a verde
+                ItemStack newWool = new ItemStack(Material.GREEN_WOOL, 1);
+                ItemMeta meta = newWool.getItemMeta();
+                meta.setDisplayName(ChatColor.GREEN + "Lana Activada");
+                newWool.setItemMeta(meta);
+
+                inventory.setItem(slot, newWool);
+                player.updateInventory();
+            }
+
+        }
+    }
+
+
+
