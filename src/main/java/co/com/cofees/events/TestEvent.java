@@ -18,7 +18,7 @@ public class TestEvent implements Listener {
         Block block = e.getBlock();
 
         // Guard clause to check for the SILK_TOUCH enchantment and SPAWNER block
-        if (!hasSilkTouchPickaxe(player, block) ) {
+        if (!hasSilkTouchPickaxe(player, block)) {
             return;
         }
 
@@ -37,6 +37,7 @@ public class TestEvent implements Listener {
         //Drop item
         block.getWorld().dropItem(e.getBlock().getLocation(), newSpawner);
 
+
     }
 
     private boolean hasSilkTouchPickaxe(Player player, Block block) {
@@ -45,8 +46,9 @@ public class TestEvent implements Listener {
         player.sendMessage(String.valueOf(mainHandItem.getType()));
         player.sendMessage(String.valueOf(block.getType().compareTo(Material.SPAWNER)));
          */
-
-        return mainHandItem.getItemMeta().hasEnchant(Enchantment.SILK_TOUCH) && block.getType().compareTo(Material.SPAWNER)==0;
+        if(mainHandItem.getItemMeta() == null)return false;
+        if(mainHandItem.getType().compareTo(Material.AIR)==0)return false;
+        return mainHandItem.getItemMeta().hasEnchant(Enchantment.SILK_TOUCH) && block.getType().compareTo(Material.SPAWNER) == 0;
     }
 }
 

@@ -15,8 +15,13 @@ public final class LocationHandler {
 
         if (locationSection != null) {
             locationSection.getKeys(false).forEach(locationName -> {
+                // Create a location from the config, checking for null values
                 Location location = createLocationFromConfig(locationSection, locationName, core);
-                homes.put(locationName, location);
+                if (location != null) { // Ensure the location is not null before adding
+                    homes.put(locationName, location);
+                } else {
+                    core.getLogger().warning("Invalid location for: " + locationName);
+                }
             });
         }
 

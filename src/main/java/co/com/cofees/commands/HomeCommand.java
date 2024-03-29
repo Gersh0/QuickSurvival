@@ -5,15 +5,12 @@ import co.com.cofees.commands.subcommands.DeleteHomeCommand;
 import co.com.cofees.commands.subcommands.SetHomeCommand;
 import co.com.cofees.completers.DeleteHomeCompleter;
 import co.com.cofees.completers.SetHomeCompleter;
-import co.com.cofees.tools.LocationHandler;
 import org.bukkit.Location;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
-import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -25,12 +22,10 @@ public class HomeCommand implements CommandExecutor, TabCompleter {
 
     private final Map<String, CommandExecutor> subCommands = new HashMap<>();
     private final Map<String, TabCompleter> subCommandCompleter = new HashMap<>();
-    private final QuickSurvival core;
-    private final YamlConfiguration homesConfig;
+    private final Map<String, HashMap<String, Location>> homes;
 
-    public HomeCommand(QuickSurvival core, YamlConfiguration homesConfig) {
-        this.core = core;
-        this.homesConfig = homesConfig;
+    public HomeCommand(HashMap<String, HashMap<String, Location>> homes) {
+        this.homes = homes;
         register("set", new SetHomeCommand(), new SetHomeCompleter());//home set <name>
         register("delete", new DeleteHomeCommand(), new DeleteHomeCompleter());//home delete <name>
     }
@@ -48,23 +43,23 @@ public class HomeCommand implements CommandExecutor, TabCompleter {
             return false;
         }
         // Get the list of homes for the player
-        HashMap<String, Location> homes = getHome(player, homesConfig, core);
+        HashMap<String, Location> playerHomes = homes.get(player.getName());
 
         if (args.length == 0) {//If player sends /home
 
 
-            if (homes.isEmpty()) { // If the list is empty, send a message to the player
+            if (playerHomes.isEmpty()) { // If the list is empty, send a message to the player
                 player.sendMessage("You don't have any homes set");
                 return false;
             }
 
-            if (homes.size() != 1) { // If the player has more than one home
+            if (playerHomes.size() != 1) { // If the player has more than one home
                 player.sendMessage("You have more than one home set. Please specify which one you want to go to.");
                 return false;
             }
 
             // If the player has only one home
-            Location home = homes.values()
+            Location home = playerHomes.values()
                     .stream()
                     .findFirst()
                     .orElse(null); // Get the home
@@ -78,7 +73,11 @@ public class HomeCommand implements CommandExecutor, TabCompleter {
         CommandExecutor subCommand = subCommands.get(subCommandName);//check if the subcommand exists in the HashMap
 
         if (subCommand == null) {//If the subcommand does not exist in HashMap teleports the player to the home with the name of the subcommand
-            player.teleport(homes.get(subCommandName));
+            if (!playerHomes.containsKey(subCommandName)) {
+                player.sendMessage("Home " + subCommandName + " does not exist");
+                return false;
+            }
+            player.teleport(playerHomes.get(subCommandName));
             return true;
         }
 
@@ -87,18 +86,6 @@ public class HomeCommand implements CommandExecutor, TabCompleter {
         System.arraycopy(args, 1, subCommandArgs, 0, subCommandArgs.length);
         // Execute the subcommand with the remaining arguments
         return subCommand.onCommand(sender, command, label, subCommandArgs);
-    }
-
-    private HashMap<String, Location> getHome(Player player, YamlConfiguration config, JavaPlugin core) {
-        if (player == null || config == null) {
-            return new HashMap<>();
-        }
-
-        if (!config.contains("homes") || !config.contains("homes." + player.getName())) {
-            return new HashMap<>();
-        }
-
-        return LocationHandler.loadLocations(config, core, "homes." + player.getName());
     }
 
     @Nullable

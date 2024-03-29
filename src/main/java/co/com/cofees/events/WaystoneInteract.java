@@ -30,7 +30,13 @@ public class WaystoneInteract implements Listener {
         } else {
             return;
         }
+
+        if(!(b.getState() instanceof TileState))return;
+
+
         TileState tileState = (TileState) b.getState();
+
+
         PersistentDataContainer container = tileState.getPersistentDataContainer();
 
         if (e.getAction().name().contains("RIGHT") && container.has(Keys.WAYSTONE, PersistentDataType.STRING)) {
