@@ -9,7 +9,7 @@ authors:
 commands:
   home:
     description: Teleport to your home
-    usage: /<command> [home]
+    usage: Use /<command> [home]
     aliases:
       - homes
       - h

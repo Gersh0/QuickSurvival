@@ -23,6 +23,7 @@ public class DeleteHomeCommand implements CommandExecutor {
             commandSender.sendMessage("The name of the home can't have spaces");
             return false;
         }
+
         if (args[0].equalsIgnoreCase("list")) {
             commandSender.sendMessage("You can't use 'list' as a home name");
             return false;
@@ -43,6 +44,7 @@ public class DeleteHomeCommand implements CommandExecutor {
                 // Save the updated configuration back to the file
                 try {
                     QuickSurvival.homesConfig.save(new File(QuickSurvival.getPlugin(QuickSurvival.class).getDataFolder(), "homes.yml"));
+                    player.sendMessage("Home " + args[0] + " deleted.");
                     return true; // Return true if deletion is successful
                 } catch (IOException e) {
                     player.sendMessage("An error occurred while saving the homes file.");

@@ -32,6 +32,12 @@ public class HomeCommand implements CommandExecutor, TabCompleter {
         subCommandCompleters.put(name, completer);
     }
 
+    public Location getHomeLocation(HashMap<String, Location> homes){
+        return homes.values()
+                .stream()
+                .findFirst()
+                .orElse(null); // Get the home location
+    }
 
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, String[] args) {
@@ -51,19 +57,13 @@ public class HomeCommand implements CommandExecutor, TabCompleter {
             }
 
             if (playerHomes.size() != 1) { // If the player has more than one home
-                player.sendMessage("You have more than one home set. Please specify which one you want to go to.");
-                return false;
+                player.teleport(getHomeLocation(playerHomes)); // Teleport the player to the home
+                return true;
             }
-
-            // If the player has only one home
-            Location home = playerHomes.values()
-                    .stream()
-                    .findFirst()
-                    .orElse(null); // Get the home
-            player.teleport(home); // Teleport the player to the home
+            player.teleport(getHomeLocation(playerHomes));
             return true;
-
         }
+        //todo: check if args[0] is named "set" or "delete" and teleport the player to the home with the name of args[0]
 
         // if player sends /home <subcommand> or /home <homeName>
         String subCommandName = args[0];
@@ -78,7 +78,9 @@ public class HomeCommand implements CommandExecutor, TabCompleter {
                 player.sendMessage("Home " + subCommandName + " does not exist");
                 return false;
             }
-            TextTools.sendMessage(player, Optional.of("Teleporting to home " + playerHomes.get(subCommandName).toString()), "", QuickSurvival.getPlugin(QuickSurvival.class));
+            // Just debug
+            // TextTools.sendMessage(player, Optional.of("Teleporting to home " + playerHomes.get(subCommandName).toString()), "", QuickSurvival.getPlugin(QuickSurvival.class));
+            TextTools.sendMessage(player, Optional.of("Teleporting to home " + subCommandName), "", QuickSurvival.getPlugin(QuickSurvival.class));
             player.teleport(playerHomes.get(subCommandName));
             return true;
         }
