@@ -7,7 +7,6 @@ import org.bukkit.block.Block;
 import org.bukkit.block.TileState;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
-import org.bukkit.event.EventException;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractEvent;
@@ -17,7 +16,7 @@ import org.bukkit.persistence.PersistentDataType;
 
 public class WaystoneInteract implements Listener {
     @EventHandler
-    public void onPlayerWaystoneClick(PlayerInteractEvent e) throws EventException {
+    public void onPlayerWaystoneClick(PlayerInteractEvent e) {
         if (e instanceof Cancellable && ((Cancellable) e).isCancelled()) {
             e.setCancelled(false);
         }
@@ -31,7 +30,7 @@ public class WaystoneInteract implements Listener {
             return;
         }
 
-        if(!(b.getState() instanceof TileState))return;
+        if (!(b.getState() instanceof TileState)) return;
 
 
         TileState tileState = (TileState) b.getState();
@@ -44,7 +43,7 @@ public class WaystoneInteract implements Listener {
             openWaystoneInventory(p);
 
         } else {
-            return;
+            p.sendMessage("No es un waystone");
         }
     }
 
