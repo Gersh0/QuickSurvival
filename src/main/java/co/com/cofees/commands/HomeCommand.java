@@ -5,6 +5,7 @@ import co.com.cofees.commands.subcommands.DeleteHomeCommand;
 import co.com.cofees.commands.subcommands.SetHomeCommand;
 import co.com.cofees.completers.DeleteHomeCompleter;
 import co.com.cofees.completers.SetHomeCompleter;
+import co.com.cofees.tools.TextTools;
 import org.bukkit.Location;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -14,25 +15,21 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class HomeCommand implements CommandExecutor, TabCompleter {
 
     private final Map<String, CommandExecutor> subCommands = new HashMap<>();
-    private final Map<String, TabCompleter> subCommandCompleter = new HashMap<>();
-    private final Map<String, HashMap<String, Location>> homes;
+    private final Map<String, TabCompleter> subCommandCompleters = new HashMap<>();
 
-    public HomeCommand(HashMap<String, HashMap<String, Location>> homes) {
-        this.homes = homes;
+    public HomeCommand() {
         register("set", new SetHomeCommand(), new SetHomeCompleter());//home set <name>
         register("delete", new DeleteHomeCommand(), new DeleteHomeCompleter());//home delete <name>
     }
 
     public void register(String name, CommandExecutor cmd, TabCompleter completer) {
         subCommands.put(name, cmd);
-        subCommandCompleter.put(name, completer);
+        subCommandCompleters.put(name, completer);
     }
 
 
@@ -43,7 +40,7 @@ public class HomeCommand implements CommandExecutor, TabCompleter {
             return false;
         }
         // Get the list of homes for the player
-        HashMap<String, Location> playerHomes = homes.get(player.getName());
+        HashMap<String, Location> playerHomes = QuickSurvival.homes.get(player.getName());
 
         if (args.length == 0) {//If player sends /home
 
@@ -73,10 +70,15 @@ public class HomeCommand implements CommandExecutor, TabCompleter {
         CommandExecutor subCommand = subCommands.get(subCommandName);//check if the subcommand exists in the HashMap
 
         if (subCommand == null) {//If the subcommand does not exist in HashMap teleports the player to the home with the name of the subcommand
+            if (playerHomes == null || playerHomes.isEmpty()) {
+                player.sendMessage("You don't have any homes set");
+                return false;
+            }
             if (!playerHomes.containsKey(subCommandName)) {
                 player.sendMessage("Home " + subCommandName + " does not exist");
                 return false;
             }
+            TextTools.sendMessage(player, Optional.of("Teleporting to home " + playerHomes.get(subCommandName).toString()), "", QuickSurvival.getPlugin(QuickSurvival.class));
             player.teleport(playerHomes.get(subCommandName));
             return true;
         }
@@ -90,7 +92,30 @@ public class HomeCommand implements CommandExecutor, TabCompleter {
 
     @Nullable
     @Override
-    public List<String> onTabComplete(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String s, @NotNull String[] strings) {
+    public List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String alias, @NotNull String[] args) {
+        // If the sender is not a player, return null
+        if (!(sender instanceof Player)) return null;
+        if (QuickSurvival.homes.isEmpty()) return null;
+
+        // If the user has only typed the command but not the subcommand
+        if (args.length == 1) {
+            // Return a list of all available subcommands for auto-completion
+            List<String> completions = new ArrayList<>(subCommands.keySet());
+            if (!QuickSurvival.homes.get(sender.getName()).isEmpty()) {
+                completions.addAll(QuickSurvival.homes.get(sender.getName()).keySet());
+            }
+            return completions;
+        } else if (args.length > 1) {
+            // If a subcommand has been typed
+            // Retrieve the corresponding TabCompleter for the subcommand
+            TabCompleter completer = subCommandCompleters.get(args[0]);
+            // If the TabCompleter exists
+            if (completer != null) {
+                // Delegate to the TabCompleter to provide auto-completion options
+                return completer.onTabComplete(sender, command, alias, args);
+            }
+        }
+        // If no conditions are met, return null
         return null;
     }
 }

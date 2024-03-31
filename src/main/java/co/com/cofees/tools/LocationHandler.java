@@ -1,11 +1,13 @@
 package co.com.cofees.tools;
 
 import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.HashMap;
+import java.util.UUID;
 
 public final class LocationHandler {
 
@@ -29,9 +31,9 @@ public final class LocationHandler {
     }
 
     private static Location createLocationFromConfig(ConfigurationSection section, String locationName, JavaPlugin core) {
-        String world = section.getString(locationName + ".world");
-
-        if (world == null) return null;
+        String worldUUIDString = section.getString(locationName + ".worldUUID");
+        UUID worldUUID = UUID.fromString(worldUUIDString); // Convert the string to UUID
+        World world = core.getServer().getWorld(worldUUID);
 
         double x = section.getDouble(locationName + ".x");
         double y = section.getDouble(locationName + ".y");
@@ -39,6 +41,17 @@ public final class LocationHandler {
         float yaw = (float) section.getDouble(locationName + ".yaw");
         float pitch = (float) section.getDouble(locationName + ".pitch");
 
-        return new Location(core.getServer().getWorld(world), x, y, z, yaw, pitch);
+        return new Location(world, x, y, z, yaw, pitch);
     }
+
+    public static void serializeLocation(Location home, YamlConfiguration config, String path) {
+        config.set(path + ".worldUUID", home.getWorld().getUID().toString()); // Store the UUID as a string
+        config.set(path + ".x", home.getX());
+        config.set(path + ".y", home.getY());
+        config.set(path + ".z", home.getZ());
+        config.set(path + ".yaw", home.getYaw());
+        config.set(path + ".pitch", home.getPitch());
+    }
+
+
 }
