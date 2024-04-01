@@ -91,6 +91,3 @@ public class WaystonePlacement implements Listener {
         tileState.update();
     }
 }
-
-
-

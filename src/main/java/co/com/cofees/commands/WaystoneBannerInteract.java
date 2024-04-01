@@ -125,4 +125,3 @@ public class WaystoneBannerInteract implements CommandExecutor, TabCompleter {
         return Collections.emptyList();
     }
 }
-

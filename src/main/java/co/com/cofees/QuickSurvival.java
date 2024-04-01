@@ -4,7 +4,6 @@ import co.com.cofees.commands.*;
 import co.com.cofees.events.*;
 import co.com.cofees.recipes.CustomRecipes;
 import co.com.cofees.tools.LocationHandler;
-import com.sun.source.tree.Tree;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -26,9 +25,6 @@ public class QuickSurvival extends JavaPlugin {
     private static VacaNagasaki cowEvent = new VacaNagasaki();
     private static VeinMiner veinMiner = new VeinMiner();
     private static TreeCapitator treeCapitator = new TreeCapitator();
-
-
-    public YamlConfiguration homesConfig, backpackConfig;
 
     @Override
     public void onEnable() {
@@ -56,7 +52,7 @@ public class QuickSurvival extends JavaPlugin {
         }, 3);
     }
 
-    public void changeSleepingPlayers(String percentage){
+    public void changeSleepingPlayers(String percentage) {
         Bukkit.getScheduler().runTaskLater(this, () -> {
             Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "gamerule playersSleepingPercentage " + percentage);
         }, 1);
@@ -101,7 +97,7 @@ public class QuickSurvival extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new ControlMenuHandler(), this);
     }
 
-    public static QuickSurvival getPlugin(){
+    public static QuickSurvival getPlugin() {
         return plugin;
     }
 
@@ -109,27 +105,27 @@ public class QuickSurvival extends JavaPlugin {
         return getPlugin(QuickSurvival.class);
     }
 
-    public static void toggleExplosiveCows(){
+    public static void toggleExplosiveCows() {
         cowEvent.toggleExplosiveCows();
     }
 
-    public static boolean areCowsExplosive(){
+    public static boolean areCowsExplosive() {
         return cowEvent.areCowsExplosive();
     }
 
-    public static void toggleVeinMiner(){
+    public static void toggleVeinMiner() {
         veinMiner.toggleVeinMiner();
     }
 
-    public static boolean isVeinMinerActive(){
+    public static boolean isVeinMinerActive() {
         return veinMiner.isActive();
     }
 
-    public static void toggleTreeCapitator(){
+    public static void toggleTreeCapitator() {
         treeCapitator.toggleTreeCapitator();
     }
 
-    public static boolean isTreeCapitatorActive(){
+    public static boolean isTreeCapitatorActive() {
         return treeCapitator.isActive();
     }
 

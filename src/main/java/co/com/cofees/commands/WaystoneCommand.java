@@ -101,7 +101,7 @@ public class WaystoneCommand implements CommandExecutor, Listener, TabCompleter 
 
         return true;
     }
-//COMPLETAR COMANDO
+    //COMPLETAR COMANDO
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
         if (command.getName().equalsIgnoreCase("inventory") && args.length == 1) {
@@ -127,17 +127,3 @@ public class WaystoneCommand implements CommandExecutor, Listener, TabCompleter 
 
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
