@@ -14,8 +14,9 @@ import java.io.File;
 import java.util.HashMap;
 
 public class QuickSurvival extends JavaPlugin {
-    public YamlConfiguration homesConfig, backpackConfig;
-    public HashMap<String, HashMap<String, Location>> homes = new HashMap<>();
+    public static YamlConfiguration homesConfig;
+    public YamlConfiguration backpackConfig;
+    public static HashMap<String, HashMap<String, Location>> homes = new HashMap<>();
 
     @Override
     public void onEnable() {
@@ -32,12 +33,16 @@ public class QuickSurvival extends JavaPlugin {
     public void getHomes() {
         //Uncomment this if you want to test if the players are loaded correctly from the config
         //this.getLogger().warning(homesConfig.getKeys(false).toString());
-        homesConfig.getKeys(false).forEach(playerName -> {
-            //Load the homes for each player and add them to the homes map
-            HashMap<String, Location> playerHomes = LocationHandler.loadLocations(homesConfig, this, playerName);
-            homes.put(playerName, playerHomes);
-        });
+        Bukkit.getScheduler().runTaskLater(this, () -> {
+            homesConfig.getKeys(false).forEach(playerName -> {
+                //Load the homes for each player and add them to the homes map
+                HashMap<String, Location> playerHomes = LocationHandler.loadLocations(homesConfig, this, playerName);
+                homes.put(playerName, playerHomes);
+                this.getServer().getLogger().info("Loaded homes for: " + playerName);
+            });
+        }, 3);
     }
+
     public void changeSleepingPlayers(String percentage) {
         Bukkit.getScheduler().runTaskLater(this, () -> {
             Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "gamerule playersSleepingPercentage " + percentage);
@@ -60,10 +65,9 @@ public class QuickSurvival extends JavaPlugin {
         Bukkit.getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', "&bPlugin disabled"));
     }
 
-
     public void registerCommand() {
         this.getCommand("test").setExecutor(new NewTestCommand(this));
-        this.getCommand("home").setExecutor(new HomeCommand(homes));
+        this.getCommand("home").setExecutor(new HomeCommand());
         this.getCommand("inventory").setExecutor(new WaystoneCommand());
         this.getCommand("waystone").setExecutor(new WaystoneBannerInteract());
         this.getCommand("backpack").setExecutor(new BackpackCommand());
