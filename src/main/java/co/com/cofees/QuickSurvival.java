@@ -3,6 +3,7 @@ package co.com.cofees;
 import co.com.cofees.commands.*;
 import co.com.cofees.events.*;
 import co.com.cofees.recipes.CustomRecipes;
+import com.sun.source.tree.Tree;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -17,7 +18,9 @@ public class QuickSurvival extends JavaPlugin {
 
     private static QuickSurvival plugin;
     PluginDescriptionFile desc = getDescription();
-    VacaNagasaki cowEvent = new VacaNagasaki();
+    private static VacaNagasaki cowEvent = new VacaNagasaki();
+    private static VeinMiner veinMiner = new VeinMiner();
+    private static TreeCapitator treeCapitator = new TreeCapitator();
 
 
     public YamlConfiguration homesConfig, backpackConfig;
@@ -60,13 +63,13 @@ public class QuickSurvival extends JavaPlugin {
 
     public void registerCommands() {
         this.getCommand("test").setExecutor(new TestCommand());
-        this.getCommand("explosivecows").setExecutor(new ExplosiveCows(cowEvent));
+        this.getCommand("explosivecows").setExecutor(new ExplosiveCows());
         this.getCommand("test").setExecutor(new NewTestCommand(this));
         this.getCommand("home").setExecutor(new HomeCommand(this, homesConfig));
         this.getCommand("inventory").setExecutor(new WaystoneCommand());
         this.getCommand("waystone").setExecutor(new WaystoneBannerInteract());
         this.getCommand("backpack").setExecutor(new BackpackCommand());
-        this.getCommand("qspanel").setExecutor(new ControlPanelCommmand());
+        this.getCommand("eventmenu").setExecutor(new ControlMenuCommand());
     }
 
     public void registerEvents() {
@@ -77,18 +80,41 @@ public class QuickSurvival extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new WaystonePlacement(), this);
         getServer().getPluginManager().registerEvents(new WaystoneInteract(), this);
         getServer().getPluginManager().registerEvents(cowEvent, this);
-        getServer().getPluginManager().registerEvents(new VeinMiner(), this);
-        getServer().getPluginManager().registerEvents(new TreeCapitator(), this);
+        getServer().getPluginManager().registerEvents(veinMiner, this);
+        getServer().getPluginManager().registerEvents(treeCapitator, this);
+        getServer().getPluginManager().registerEvents(new ControlMenuHandler(), this);
     }
 
     public static QuickSurvival getPlugin(){
         return plugin;
     }
 
-
     public static QuickSurvival getInstance() {
         return getPlugin(QuickSurvival.class);
     }
 
+    public static void toggleExplosiveCows(){
+        cowEvent.toggleExplosiveCows();
+    }
+
+    public static boolean areCowsExplosive(){
+        return cowEvent.areCowsExplosive();
+    }
+
+    public static void toggleVeinMiner(){
+        veinMiner.toggleVeinMiner();
+    }
+
+    public static boolean isVeinMinerActive(){
+        return veinMiner.isActive();
+    }
+
+    public static void toggleTreeCapitator(){
+        treeCapitator.toggleTreeCapitator();
+    }
+
+    public static boolean isTreeCapitatorActive(){
+        return treeCapitator.isActive();
+    }
 
 }

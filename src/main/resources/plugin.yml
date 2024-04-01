@@ -33,3 +33,8 @@ commands:
     description: "Pruebas para plugin."
     aliases:
       - prueba
+  eventmenu:
+    description: "Abre el menú para configurar el plugin"
+    aliases:
+      - configmenu
+      - em

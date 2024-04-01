@@ -12,12 +12,12 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 public class VacaNagasaki implements Listener {
 
-    private boolean areCowsExplosive;
+    private boolean isActive;
 
     @EventHandler
     public void onCowRightClick(PlayerInteractEntityEvent event){
 
-        if(event.getRightClicked().getType() == EntityType.COW && areCowsExplosive){
+        if(event.getRightClicked().getType() == EntityType.COW && isActive){
 
             Cow cow = (Cow)event.getRightClicked();
 
@@ -26,17 +26,17 @@ public class VacaNagasaki implements Listener {
     }
 
     public boolean toggleExplosiveCows(){
-        areCowsExplosive = !areCowsExplosive;
-        if(areCowsExplosive){
+        isActive = !isActive;
+        if(isActive){
             Bukkit.broadcastMessage(ChatColor.RED+"Cows are now dangerous!!!");
         } else{
             Bukkit.broadcastMessage("Cows aren't dangerous anymore");
         }
-        return areCowsExplosive;
+        return isActive;
     }
 
     public boolean areCowsExplosive(){
-        return areCowsExplosive;
+        return isActive;
     }
 
 

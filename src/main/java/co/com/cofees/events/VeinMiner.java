@@ -1,5 +1,7 @@
 package co.com.cofees.events;
 
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
@@ -16,37 +18,40 @@ import java.util.List;
 
 public class VeinMiner implements Listener {
 
+    private boolean isActive;
     @EventHandler
     public void onBlockBreak(BlockBreakEvent event) {
 
-        Player player = event.getPlayer();
-        ItemStack tool = player.getInventory().getItemInMainHand();
-        Block block = event.getBlock();
-        String type = block.getType().name();
+        if(isActive){
+            Player player = event.getPlayer();
+            ItemStack tool = player.getInventory().getItemInMainHand();
+            Block block = event.getBlock();
+            String type = block.getType().name();
 
-        if(!player.getGameMode().equals(GameMode.CREATIVE) && tool.getType().name().endsWith("_PICKAXE") && type.endsWith("_ORE") && (player.isSneaking())){
+            if(!player.getGameMode().equals(GameMode.CREATIVE) && tool.getType().name().endsWith("_PICKAXE") && type.endsWith("_ORE") && (player.isSneaking())){
 
-            //player.sendMessage("You mined: "+type);
+                //player.sendMessage("You mined: "+type);
 
-            List<Block> ores = getOres(block.getLocation(), type);
-            ores.remove(block);
+                List<Block> ores = getOres(block.getLocation(), type);
+                ores.remove(block);
 
-            Damageable meta = (Damageable)tool.getItemMeta();
-            assert meta != null;
-            int dur = tool.getType().getMaxDurability() - 1 - meta.getDamage();
+                Damageable meta = (Damageable)tool.getItemMeta();
+                assert meta != null;
+                int dur = tool.getType().getMaxDurability() - 1 - meta.getDamage();
 
-            //Aqui se cambia si se le va a aplicar config al ignoreDurability
-            if(ores.size()>dur){
-                ores = ores.subList(0,dur);
+                //Aqui se cambia si se le va a aplicar config al ignoreDurability
+                if(ores.size()>dur){
+                    ores = ores.subList(0,dur);
+                }
+
+                meta.setDamage(meta.getDamage() + ores.size());
+                tool.setItemMeta((ItemMeta) meta);
+
+                for(Block ore: ores){
+                    ore.breakNaturally(tool);
+                }
+
             }
-
-            meta.setDamage(meta.getDamage() + ores.size());
-            tool.setItemMeta((ItemMeta) meta);
-
-            for(Block ore: ores){
-                ore.breakNaturally(tool);
-            }
-
         }
 
     }
@@ -89,4 +94,17 @@ public class VeinMiner implements Listener {
         return ores;
     }
 
+    public boolean toggleVeinMiner(){
+        isActive = !isActive;
+        if(isActive){
+            Bukkit.broadcastMessage("VeinMiner is now active!");
+        } else{
+            Bukkit.broadcastMessage("VeinMiner was turned off!");
+        }
+        return isActive;
+    }
+
+    public boolean isActive() {
+        return isActive;
+    }
 }

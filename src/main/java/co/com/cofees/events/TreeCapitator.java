@@ -1,5 +1,6 @@
 package co.com.cofees.events;
 
+import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
@@ -15,47 +16,51 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class TreeCapitator implements Listener {
+
+    private boolean isActive;
     @EventHandler
     public void onBlockBreak(BlockBreakEvent event) {
 
-        Player player = event.getPlayer();
-        ItemStack tool = player.getInventory().getItemInMainHand();
-        Block block = event.getBlock();
-        String type = block.getType().name();
+        if(isActive){
+            Player player = event.getPlayer();
+            ItemStack tool = player.getInventory().getItemInMainHand();
+            Block block = event.getBlock();
+            String type = block.getType().name();
 
-        if(!player.getGameMode().equals(GameMode.CREATIVE) && tool.getType().name().endsWith("_AXE") && type.endsWith("_LOG") && (player.isSneaking())){
+            if(!player.getGameMode().equals(GameMode.CREATIVE) && tool.getType().name().endsWith("_AXE") && type.endsWith("_LOG") && (player.isSneaking())){
 
-            //player.sendMessage("Se entro al if del treeCapitator");
+                //player.sendMessage("Se entro al if del treeCapitator");
 
-            // si el tipo de bloque es stripped, se utilizará solo la parte del nombre después del "Stripped_"
-            if(type.startsWith("STRIPPED_")){
-                type = type.substring(9);
-                player.sendMessage("La madera del primer bloque es stripped");
-            }
-
-            List<Block> logs = getLogs(block.getLocation(), type);
-            logs.remove(block);
-
-            if(hasLeaves(logs, type)){
-                player.sendMessage("el arbol tiene hojas y se inicio el treecapitator");
-
-                Damageable meta = (Damageable)tool.getItemMeta();
-                assert meta != null;
-                int dur = tool.getType().getMaxDurability() - 1 - meta.getDamage();
-
-                //Aqui se cambia si se le va a aplicar config al ignoreDurability
-                if(logs.size()>dur){
-                    logs = logs.subList(0,dur);
+                // si el tipo de bloque es stripped, se utilizará solo la parte del nombre después del "Stripped_"
+                if(type.startsWith("STRIPPED_")){
+                    type = type.substring(9);
+                    player.sendMessage("La madera del primer bloque es stripped");
                 }
 
-                meta.setDamage(meta.getDamage() + logs.size());
-                tool.setItemMeta((ItemMeta) meta);
+                List<Block> logs = getLogs(block.getLocation(), type);
+                logs.remove(block);
 
-                for(Block log: logs){
-                    log.breakNaturally();
+                if(hasLeaves(logs, type)){
+                    player.sendMessage("el arbol tiene hojas y se inicio el treecapitator");
+
+                    Damageable meta = (Damageable)tool.getItemMeta();
+                    assert meta != null;
+                    int dur = tool.getType().getMaxDurability() - 1 - meta.getDamage();
+
+                    //Aqui se cambia si se le va a aplicar config al ignoreDurability
+                    if(logs.size()>dur){
+                        logs = logs.subList(0,dur);
+                    }
+
+                    meta.setDamage(meta.getDamage() + logs.size());
+                    tool.setItemMeta((ItemMeta) meta);
+
+                    for(Block log: logs){
+                        log.breakNaturally();
+                    }
                 }
-            }
 
+            }
         }
 
     }
@@ -109,6 +114,20 @@ public class TreeCapitator implements Listener {
 
         return false;
 
+    }
+
+    public boolean toggleTreeCapitator(){
+        isActive = !isActive;
+        if(isActive){
+            Bukkit.broadcastMessage("TreeCapitator is now active!");
+        } else{
+            Bukkit.broadcastMessage("TreeCapitator was turned off!");
+        }
+        return isActive;
+    }
+
+    public boolean isActive(){
+        return isActive;
     }
 
 }
