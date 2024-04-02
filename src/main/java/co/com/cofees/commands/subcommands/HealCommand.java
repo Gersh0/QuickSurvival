@@ -10,7 +10,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
-public class HealCommand implements CommandExecutor, TabCompleter {
+public class HealCommand implements CommandExecutor{
     private final Map<String, CommandExecutor> subCommands = new HashMap<>();
 
     public HealCommand() {
@@ -89,19 +89,5 @@ public class HealCommand implements CommandExecutor, TabCompleter {
                 .filter(player -> player.getName().equalsIgnoreCase(nickname))
                 .findFirst()
                 .orElse(null);
-    }
-
-    @Nullable
-    @Override
-    public List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
-
-        if (!command.getName().equalsIgnoreCase("heal") && args.length == 1) {
-            return Collections.emptyList();
-        }
-
-        List<String> completions = new ArrayList<>();
-        completions.add("<nickname>");
-        completions.add("<enter>");
-        return completions;
     }
 }

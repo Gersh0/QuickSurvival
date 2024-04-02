@@ -7,9 +7,14 @@ authors:
   - PyroSoul
   - Strom
 commands:
+  explosivecows:
+    description: "ahora las vacas son explosivas con el click derecho"
+    usage: "/explosivecows [true, false]"
+    permission: explosivecows.command.cow
+    permission-message: "You're not powerful enough to change the cows!!"
   home:
     description: Teleport to your home
-    usage: /<command> [home]
+    usage: Use /<command> [home]
     aliases:
       - homes
       - h
@@ -25,7 +30,11 @@ commands:
   waystone:
     description: Interactuar Con Waystones
   test:
-    description: Pruebas para plugin.
+    description: "Pruebas para plugin."
     aliases:
       - prueba
-
+  eventmenu:
+    description: "Abre el menú para configurar el plugin"
+    aliases:
+      - configmenu
+      - em

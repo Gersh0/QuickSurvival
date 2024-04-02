@@ -14,6 +14,8 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
+import static co.com.cofees.tools.TextTools.sendMessage;
+
 public class NewTestCommand implements CommandExecutor, TabCompleter {
     private final Map<String, CommandExecutor> subCommands = new HashMap<>();
     private final Map<String, TabCompleter> subCommandCompleters = new HashMap<>();
@@ -61,23 +63,6 @@ public class NewTestCommand implements CommandExecutor, TabCompleter {
         // Execute the subcommand with the remaining arguments
         return subCommand.onCommand(sender, command, label, subCommandArgs);
     }
-
-
-    private Optional<Player> getPlayer(Object sender) {
-        return (sender instanceof Player) ? Optional.of((Player) sender) : Optional.empty();
-    }
-
-    public boolean sendMessage(Object sender, Optional<String> playerMessage, String otherMessage, QuickSurvival core) {
-        Optional<Player> player = getPlayer(sender);
-        if (player.isPresent()) {
-            player.get().sendMessage(playerMessage.orElse(otherMessage));
-            return true;
-        } else {
-            core.getLogger().info(otherMessage);
-            return false;
-        }
-    }
-
     @Override
     public List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String alias, String[] args) {
         // If the sender is not a player, return null

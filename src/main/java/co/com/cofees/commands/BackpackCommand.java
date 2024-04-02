@@ -21,35 +21,35 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 public class BackpackCommand implements CommandExecutor {
 
-        @Override
-        public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-            if (sender instanceof Player) {
-                Player player = (Player) sender;
+    @Override
+    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+        if (sender instanceof Player) {
+            Player player = (Player) sender;
 
-                // Verificar si el jugador tiene la mochila en la mano
-                ItemStack handItem = player.getInventory().getItemInMainHand();
-                PersistentDataContainer container = handItem.getItemMeta().getPersistentDataContainer();
+            // Verificar si el jugador tiene la mochila en la mano
+            ItemStack handItem = player.getInventory().getItemInMainHand();
+            PersistentDataContainer container = handItem.getItemMeta().getPersistentDataContainer();
 
-                if (container.has(Keys.BACKPACKLV1, PersistentDataType.STRING)) {
-                    // Abrir el inventario de la mochila
-                    openBackpackInventory(player);
-                    return true;
-                } else {
-                    player.sendMessage(ChatColor.RED + "No tienes una mochila en la mano.");
-                }
+            if (container.has(Keys.BACKPACKLV1, PersistentDataType.STRING)) {
+                // Abrir el inventario de la mochila
+                openBackpackInventory(player);
+                return true;
             } else {
-                sender.sendMessage(ChatColor.RED + "Este comando solo puede ser ejecutado por jugadores.");
+                player.sendMessage(ChatColor.RED + "No tienes una mochila en la mano.");
             }
-            return false;
+        } else {
+            sender.sendMessage(ChatColor.RED + "Este comando solo puede ser ejecutado por jugadores.");
         }
-
-        private void openBackpackInventory(Player player) {
-            // Crear el inventario de la mochila
-            Inventory backpackInventory = Bukkit.createInventory(null, 9, ChatColor.translateAlternateColorCodes('&', "&6Mochila"));
-
-            // Agregar elementos al inventario si es necesario
-
-            // Abrir el inventario para el jugador
-            player.openInventory(backpackInventory);
-        }
+        return false;
     }
+
+    private void openBackpackInventory(Player player) {
+        // Crear el inventario de la mochila
+        Inventory backpackInventory = Bukkit.createInventory(null, 9, ChatColor.translateAlternateColorCodes('&', "&6Mochila"));
+
+        // Agregar elementos al inventario si es necesario
+
+        // Abrir el inventario para el jugador
+        player.openInventory(backpackInventory);
+    }
+}
