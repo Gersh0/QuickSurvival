@@ -13,6 +13,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 
@@ -52,6 +53,9 @@ public class WaystoneInteract implements Listener {
     private void openWaystoneInventory(Player player) {
         // Crear el inventario del "Waystone"
         Inventory waystoneInventory = Bukkit.createInventory(null, 54, ChatColor.translateAlternateColorCodes('&', "&4WaystoneMenu"));
+       InventoryHolder waystoneHolder = waystoneInventory.getHolder();
+
+
 
         // agregar elementos
 
