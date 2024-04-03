@@ -4,6 +4,7 @@ import co.com.cofees.commands.*;
 import co.com.cofees.events.*;
 import co.com.cofees.recipes.CustomRecipes;
 import co.com.cofees.tools.LocationHandler;
+import co.com.cofees.tools.Waystone;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -13,11 +14,14 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
 import java.util.HashMap;
+import java.util.List;
 
 public class QuickSurvival extends JavaPlugin {
-    public static YamlConfiguration homesConfig;
-    public YamlConfiguration backpackConfig;
+    public static YamlConfiguration homesConfig, backpackConfig, waystonesConfig;
+
     public static HashMap<String, HashMap<String, Location>> homes = new HashMap<>();
+
+    public static HashMap<String, Waystone> waystones = new HashMap<>();
 
 
     private static QuickSurvival plugin;
@@ -28,9 +32,10 @@ public class QuickSurvival extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        Bukkit.getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', "&bPlugin enabled."));//Versión, Prefix PluginName
+        Bukkit.getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', "&bQUICKSURVIVAL PLUGIN enabled."));//Versión, Prefix PluginName
         homesConfig = getConfigFile("homes.yml", this);//create a file for homes
         backpackConfig = getConfigFile("backpacks.yml", this);
+        waystonesConfig = getConfigFile("waystones.yml", this);
         CustomRecipes.registerCustomCrafting();
         registerCommands();
         registerEvents();
@@ -51,6 +56,27 @@ public class QuickSurvival extends JavaPlugin {
             });
         }, 3);
     }
+
+    //add getWaystones method
+    public void getWaystones() {
+        Bukkit.getScheduler().runTaskLater(this, () -> {
+            waystonesConfig.getKeys(false).forEach(waystoneName -> {
+                //Load the waystones for each player and add them to the waystones map
+                ConfigurationSection section = QuickSurvival.waystonesConfig.getConfigurationSection(waystoneName + ".location");
+                assert section != null;
+                Location waystoneLocation = LocationHandler.createLocationFromConfig(section, waystoneName, this);
+                List<String> players = QuickSurvival.waystonesConfig.getStringList(waystoneName + ".players");
+                ItemStack icon = waystonesConfig.getItemStack(waystoneName + ".icon");
+
+
+                Waystone waystone = new Waystone(waystoneLocation, waystoneName, players, icon);
+
+                waystones.put(waystoneName, waystone);
+                this.getServer().getLogger().info("Loaded waystone: " + waystoneName);
+            });
+        }, 3);
+    }
+
 
     public void changeSleepingPlayers(String percentage) {
         Bukkit.getScheduler().runTaskLater(this, () -> {

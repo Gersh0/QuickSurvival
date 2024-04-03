@@ -1,6 +1,7 @@
 
 package co.com.cofees.events;
 
+import co.com.cofees.QuickSurvival;
 import co.com.cofees.tools.Keys;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
@@ -26,6 +27,9 @@ public class WaystoneInteract implements Listener {
 
         Player p = e.getPlayer();
         Block b = null;
+
+
+
 
         if (p.getTargetBlockExact(5) != null) {
             b = p.getTargetBlockExact(5);
@@ -56,6 +60,10 @@ public class WaystoneInteract implements Listener {
        InventoryHolder waystoneHolder = waystoneInventory.getHolder();
 
 
+       waystoneInventory.addItem();
+
+
+
 
         // agregar elementos
 
@@ -63,5 +71,16 @@ public class WaystoneInteract implements Listener {
         player.openInventory(waystoneInventory);
 
     }
+
+
+    private Inventory loadWaystoneInventory(Inventory inventory) {
+        // Cargar los elementos del inventario
+
+
+        return inventory;
+    }
+
+//
+
 
 }
