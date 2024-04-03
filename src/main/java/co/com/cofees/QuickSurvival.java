@@ -11,96 +11,39 @@ import org.bukkit.Location;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
 import java.util.HashMap;
 import java.util.List;
+import java.util.function.Consumer;
 
 public class QuickSurvival extends JavaPlugin {
+    public static final String PREFIX = ChatColor.translateAlternateColorCodes('&', "&b[QuickSurvival] ");
     public static YamlConfiguration homesConfig, backpackConfig, waystonesConfig;
-
     public static HashMap<String, HashMap<String, Location>> homes = new HashMap<>();
-
     public static HashMap<String, Waystone> waystones = new HashMap<>();
-
-
     private static QuickSurvival plugin;
-    PluginDescriptionFile desc = getDescription();
     private static VacaNagasaki cowEvent = new VacaNagasaki();
     private static VeinMiner veinMiner = new VeinMiner();
     private static TreeCapitator treeCapitator = new TreeCapitator();
 
     @Override
     public void onEnable() {
-        Bukkit.getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', "&bQUICKSURVIVAL PLUGIN enabled."));//Versión, Prefix PluginName
-        homesConfig = getConfigFile("homes.yml", this);//create a file for homes
-        backpackConfig = getConfigFile("backpacks.yml", this);
-        waystonesConfig = getConfigFile("waystones.yml", this);
+        plugin = this;
+        //Register the custom recipes
         CustomRecipes.registerCustomCrafting();
+        registerConfigFiles();
+        registerMaps();
         registerCommands();
         registerEvents();
-        getHomes();
-        getWaystones();
         changeSleepingPlayers("50");
-        Bukkit.getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', "&bPlugin enabled."));//Versión, Prefix PluginName
-    }
-
-    public void getHomes() {
-        //Uncomment this if you want to test if the players are loaded correctly from the config
-        //this.getLogger().warning(homesConfig.getKeys(false).toString());
-        Bukkit.getScheduler().runTaskLater(this, () -> {
-            homesConfig.getKeys(false).forEach(playerName -> {
-                //Load the homes for each player and add them to the homes map
-                HashMap<String, Location> playerHomes = LocationHandler.loadLocations(homesConfig, this, playerName);
-                homes.put(playerName, playerHomes);
-                this.getServer().getLogger().info("Loaded homes for: " + playerName);
-            });
-        }, 3);
-    }
-
-    //add getWaystones method
-    public void getWaystones() {
-        Bukkit.getScheduler().runTaskLater(this, () -> {
-            waystonesConfig.getKeys(false).forEach(waystoneName -> {
-                //Load the waystones for each player and add them to the waystones map
-                ConfigurationSection section = QuickSurvival.waystonesConfig.getConfigurationSection(waystoneName);
-                assert section != null;
-                Location waystoneLocation = LocationHandler.createLocationFromConfig(section, "location", this);
-                List<String> players = QuickSurvival.waystonesConfig.getStringList(waystoneName + ".players");
-                ItemStack icon = waystonesConfig.getItemStack(waystoneName + ".icon");
-
-
-                Waystone waystone = new Waystone(waystoneLocation, waystoneName, players, icon);
-
-                waystones.put(waystoneName, waystone);
-                this.getServer().getLogger().info("Loaded waystone: " + waystoneName);
-            });
-        }, 3);
-    }
-
-
-    public void changeSleepingPlayers(String percentage) {
-        Bukkit.getScheduler().runTaskLater(this, () -> {
-            Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "gamerule playersSleepingPercentage " + percentage);
-        }, 1);
-    }
-
-    public YamlConfiguration getConfigFile(String fileName, JavaPlugin plugin) {
-        File configFile = new File(plugin.getDataFolder(), fileName);
-
-        if (!configFile.exists()) {
-
-            plugin.getLogger().warning(fileName + " doesn't exists. Creating file...");
-            plugin.saveResource(fileName, false);
-        }
-        return YamlConfiguration.loadConfiguration(configFile);
+        Bukkit.getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', PREFIX + "&bPlugin enabled."));//Versión, Prefix PluginName
     }
 
     @Override
     public void onDisable() {
-        Bukkit.getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', "&bPlugin disabled"));
+        Bukkit.getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', PREFIX + "&bPlugin disabled"));
     }
 
     public void registerCommands() {
@@ -125,6 +68,71 @@ public class QuickSurvival extends JavaPlugin {
         getServer().getPluginManager().registerEvents(veinMiner, this);
         getServer().getPluginManager().registerEvents(treeCapitator, this);
         getServer().getPluginManager().registerEvents(new ControlMenuHandler(), this);
+    }
+
+    public void registerConfigFiles() {
+        //Load the configuration files
+        homesConfig = getConfigFile("homes.yml", this);
+        backpackConfig = getConfigFile("backpacks.yml", this);
+        waystonesConfig = getConfigFile("waystones.yml", this);
+    }
+
+    public void registerMaps() {
+        //Fill the information from the configuration files to the maps
+        fillInfoFromYML(homesConfig, getHomes());
+        fillInfoFromYML(waystonesConfig, getWaystones());
+    }
+
+    public void changeSleepingPlayers(String percentage) {
+        Bukkit.getScheduler()
+                .runTaskLater(
+                        this,
+                        () -> Bukkit.dispatchCommand(
+                                Bukkit.getConsoleSender(),
+                                "gamerule playersSleepingPercentage " + percentage
+                        ),
+                        1
+                );
+    }
+
+    public void fillInfoFromYML(YamlConfiguration config, Consumer<String> function) {
+        Bukkit.getScheduler()
+                .runTaskLater(this,
+                        () -> config.getKeys(false)
+                                .forEach(function),
+                        3);
+    }
+
+    public Consumer<String> getHomes() {
+        //Load the homes for each player and add them to the homes map
+        return (playerName) -> {
+            HashMap<String, Location> playerHomes = LocationHandler.loadLocations(homesConfig, this, playerName);
+            homes.put(playerName, playerHomes);
+            this.getServer().getLogger().info("Loaded homes for: " + playerName);
+        };
+    }
+
+    public Consumer<String> getWaystones() {
+        //Load the waystones and add them to the waystones map
+        return (waystoneName) -> {
+            ConfigurationSection waystoneSection = waystonesConfig.getConfigurationSection(waystoneName);
+            Location location = (Location) waystoneSection.get("location");
+            String name = waystoneSection.getString("name");
+            List<String> players = waystoneSection.getStringList("players");
+            ItemStack icon = waystoneSection.getItemStack("icon");
+            Waystone waystone = new Waystone(location, name, players, icon);
+            waystones.put(waystoneName, waystone);
+        };
+
+    }
+
+    public YamlConfiguration getConfigFile(String fileName, JavaPlugin plugin) {
+        File configFile = new File(plugin.getDataFolder(), fileName);
+        if (!configFile.exists()) {
+            plugin.getLogger().warning("File " + fileName + " doesn't exists. Creating file...");
+            plugin.saveResource(fileName, false);
+        }
+        return YamlConfiguration.loadConfiguration(configFile);
     }
 
     public static QuickSurvival getPlugin() {
@@ -158,5 +166,4 @@ public class QuickSurvival extends JavaPlugin {
     public static boolean isTreeCapitatorActive() {
         return treeCapitator.isActive();
     }
-
 }
