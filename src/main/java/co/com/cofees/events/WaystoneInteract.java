@@ -18,6 +18,8 @@ import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 
+import java.util.HashMap;
+
 public class WaystoneInteract implements Listener {
     @EventHandler
     public void onPlayerWaystoneClick(PlayerInteractEvent e) throws EventException {
@@ -29,15 +31,13 @@ public class WaystoneInteract implements Listener {
         Block b = null;
 
 
-
-
         if (p.getTargetBlockExact(5) != null) {
             b = p.getTargetBlockExact(5);
         } else {
             return;
         }
 
-        if(!(b.getState() instanceof TileState))return;
+        if (!(b.getState() instanceof TileState)) return;
 
 
         TileState tileState = (TileState) b.getState();
@@ -46,9 +46,8 @@ public class WaystoneInteract implements Listener {
         PersistentDataContainer container = tileState.getPersistentDataContainer();
 
         if (e.getAction().name().contains("RIGHT") && container.has(Keys.WAYSTONE, PersistentDataType.STRING)) {
-            p.sendMessage("menu abierto correctamente");
             openWaystoneInventory(p);
-
+            p.sendMessage("menu abierto correctamente");
         } else {
             return;
         }
@@ -57,12 +56,10 @@ public class WaystoneInteract implements Listener {
     private void openWaystoneInventory(Player player) {
         // Crear el inventario del "Waystone"
         Inventory waystoneInventory = Bukkit.createInventory(null, 54, ChatColor.translateAlternateColorCodes('&', "&4WaystoneMenu"));
-       InventoryHolder waystoneHolder = waystoneInventory.getHolder();
+        InventoryHolder waystoneHolder = waystoneInventory.getHolder();
 
 
-       waystoneInventory.addItem();
-
-
+        waystoneInventory.addItem();
 
 
         // agregar elementos
@@ -70,11 +67,15 @@ public class WaystoneInteract implements Listener {
         // Abrir el inventario para el jugador
         player.openInventory(waystoneInventory);
 
+
+
+
     }
 
 
     private Inventory loadWaystoneInventory(Inventory inventory) {
         // Cargar los elementos del inventario
+        HashMap inventoryMap = (HashMap) QuickSurvival.waystonesConfig.getConfigurationSection("waystones").getValues(false);
 
 
         return inventory;
