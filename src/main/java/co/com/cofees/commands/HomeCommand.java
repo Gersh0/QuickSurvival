@@ -45,7 +45,7 @@ public class HomeCommand implements CommandExecutor, TabCompleter {
             sender.sendMessage("Only players can use this command");
             return false;
         }
-        // Get the list of homes for the player
+        // Get the list of homes for the player /home <subcommand> or /home <homeName>
         HashMap<String, Location> playerHomes = QuickSurvival.homes.get(player.getName());
 
         if (args.length == 0) {//If player sends /home
@@ -60,6 +60,7 @@ public class HomeCommand implements CommandExecutor, TabCompleter {
                 player.teleport(getHomeLocation(playerHomes)); // Teleport the player to the home
                 return true;
             }
+            //payer has only one home
             player.teleport(getHomeLocation(playerHomes));
             return true;
         }
