@@ -8,7 +8,9 @@ import co.com.cofees.tools.Waystone;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -40,6 +42,7 @@ public class QuickSurvival extends JavaPlugin {
         registerCommands();
         registerEvents();
         getHomes();
+        getWaystones();
         changeSleepingPlayers("50");
         Bukkit.getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', "&bPlugin enabled."));//Versión, Prefix PluginName
     }
@@ -62,9 +65,9 @@ public class QuickSurvival extends JavaPlugin {
         Bukkit.getScheduler().runTaskLater(this, () -> {
             waystonesConfig.getKeys(false).forEach(waystoneName -> {
                 //Load the waystones for each player and add them to the waystones map
-                ConfigurationSection section = QuickSurvival.waystonesConfig.getConfigurationSection(waystoneName + ".location");
+                ConfigurationSection section = QuickSurvival.waystonesConfig.getConfigurationSection(waystoneName);
                 assert section != null;
-                Location waystoneLocation = LocationHandler.createLocationFromConfig(section, waystoneName, this);
+                Location waystoneLocation = LocationHandler.createLocationFromConfig(section, "location", this);
                 List<String> players = QuickSurvival.waystonesConfig.getStringList(waystoneName + ".players");
                 ItemStack icon = waystonesConfig.getItemStack(waystoneName + ".icon");
 

@@ -30,7 +30,7 @@ public final class LocationHandler {
         return homes;
     }
 
-    private static Location createLocationFromConfig(ConfigurationSection section, String locationName, JavaPlugin core) {
+    public static Location createLocationFromConfig(ConfigurationSection section, String locationName, JavaPlugin core) {
         String worldUUIDString = section.getString(locationName + ".worldUUID");
         UUID worldUUID = UUID.fromString(worldUUIDString); // Convert the string to UUID
         World world = core.getServer().getWorld(worldUUID);
