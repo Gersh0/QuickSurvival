@@ -91,8 +91,7 @@ public class QuickSurvival extends JavaPlugin {
                                 Bukkit.getConsoleSender(),
                                 "gamerule playersSleepingPercentage " + percentage
                         ),
-                        1
-                );
+                        1);
     }
 
     public void fillInfoFromYML(YamlConfiguration config, Consumer<String> function) {
