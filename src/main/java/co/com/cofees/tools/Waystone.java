@@ -3,6 +3,7 @@ package co.com.cofees.tools;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.List;
 
@@ -19,8 +20,16 @@ public class Waystone {
         this.location = location;
         this.name = name;
         this.players = players;
+        icon = icon == null ? new ItemStack(Material.GRASS_BLOCK) : icon;
+
+        ItemMeta defaultMeta = icon.getItemMeta();
+        defaultMeta.setDisplayName(name);
+        icon.setItemMeta(defaultMeta);
+
+
         //set the icon to a default icon
-        this.icon = icon == null ? new ItemStack(Material.GRASS_BLOCK) : icon;
+        this.icon = icon;
+
     }
 
     public Location getLocation() {

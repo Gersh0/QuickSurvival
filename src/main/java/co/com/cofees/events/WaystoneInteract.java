@@ -3,10 +3,12 @@ package co.com.cofees.events;
 
 import co.com.cofees.QuickSurvival;
 import co.com.cofees.tools.Keys;
+import co.com.cofees.tools.Waystone;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
 import org.bukkit.block.Block;
 import org.bukkit.block.TileState;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.EventException;
@@ -15,10 +17,16 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 
+import java.io.Console;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.Queue;
 
 public class WaystoneInteract implements Listener {
     @EventHandler
@@ -58,27 +66,39 @@ public class WaystoneInteract implements Listener {
         Inventory waystoneInventory = Bukkit.createInventory(null, 54, ChatColor.translateAlternateColorCodes('&', "&4WaystoneMenu"));
         InventoryHolder waystoneHolder = waystoneInventory.getHolder();
 
+        // Cargar los elementos del inventario
+        Queue<ItemStack> itemStacks = loadWaystoneItems(player);
 
-        waystoneInventory.addItem();
-
-
-        // agregar elementos
-
+        // Agregar los elementos al inventario
+        itemStacks.forEach(waystoneInventory::addItem);
+        //send message to player
+        player.sendMessage("Inventario cargado correctamente");
         // Abrir el inventario para el jugador
         player.openInventory(waystoneInventory);
-
-
 
 
     }
 
 
-    private Inventory loadWaystoneInventory(Inventory inventory) {
+    private Queue<ItemStack> loadWaystoneItems(Player player) {
         // Cargar los elementos del inventario
-        HashMap inventoryMap = (HashMap) QuickSurvival.waystonesConfig.getConfigurationSection("waystones").getValues(false);
+        Queue<ItemStack> itemStacks = new LinkedList<>();
 
+        HashMap<String, Waystone> waystoneHashMap = QuickSurvival.waystones;
 
-        return inventory;
+        waystoneHashMap.keySet().forEach(waystoneName -> {
+            Waystone waystone = waystoneHashMap.get(waystoneName);
+            if (waystone.containsPlayer(player.getName())) {
+                ItemStack icon = waystone.getIcon();
+                ItemMeta meta = icon.getItemMeta();
+                assert meta != null;
+                meta.setDisplayName(waystone.getName());
+                icon.setItemMeta(meta);
+                itemStacks.add(icon);
+            }
+        });
+
+        return itemStacks;
     }
 
 //
