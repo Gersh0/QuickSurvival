@@ -14,6 +14,8 @@ import org.bukkit.event.Cancellable;
 import org.bukkit.event.EventException;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
@@ -29,6 +31,10 @@ import java.util.LinkedList;
 import java.util.Queue;
 
 public class WaystoneInteract implements Listener {
+
+
+
+
     @EventHandler
     public void onPlayerWaystoneClick(PlayerInteractEvent e) throws EventException {
         if (e instanceof Cancellable && ((Cancellable) e).isCancelled()) {
@@ -61,10 +67,34 @@ public class WaystoneInteract implements Listener {
         }
     }
 
+    @EventHandler
+    public void  onPlayerWaystoneMenuClick(InventoryClickEvent e)throws EventException{
+
+        if (!e.getView().getTitle().equalsIgnoreCase("WaystoneMenu")){
+            return;
+        }
+
+        if (e.getClickedInventory() == null) {
+            return;
+        }
+        //get the name of the item who clicked the player
+        String itemName = e.getCurrentItem().getItemMeta().getDisplayName();
+        //search the waystone in the hashmap
+        Waystone waystone = QuickSurvival.waystones.get(itemName);
+
+        //at the moment we will teleport the player to the waystone location
+        teleportPlayer((Player) e.getWhoClicked(), waystone);
+        //send message to player
+        e.getWhoClicked().sendMessage("Teleporting to " +ChatColor.GOLD+ " "+ waystone.getName());
+
+
+    }
+
+
     private void openWaystoneInventory(Player player) {
         // Crear el inventario del "Waystone"
-        Inventory waystoneInventory = Bukkit.createInventory(null, 54, ChatColor.translateAlternateColorCodes('&', "&4WaystoneMenu"));
-        InventoryHolder waystoneHolder = waystoneInventory.getHolder();
+        Inventory waystoneInventory = Bukkit.createInventory(null, 54, "WaystoneMenu");
+
 
         // Cargar los elementos del inventario
         Queue<ItemStack> itemStacks = loadWaystoneItems(player);
@@ -79,6 +109,10 @@ public class WaystoneInteract implements Listener {
 
     }
 
+    private void teleportPlayer(Player player, Waystone waystone) {
+        player.teleport(waystone.getLocation());
+    }
+
 
     private Queue<ItemStack> loadWaystoneItems(Player player) {
         // Cargar los elementos del inventario
@@ -90,10 +124,6 @@ public class WaystoneInteract implements Listener {
             Waystone waystone = waystoneHashMap.get(waystoneName);
             if (waystone.containsPlayer(player.getName())) {
                 ItemStack icon = waystone.getIcon();
-                ItemMeta meta = icon.getItemMeta();
-                assert meta != null;
-                meta.setDisplayName(waystone.getName());
-                icon.setItemMeta(meta);
                 itemStacks.add(icon);
             }
         });

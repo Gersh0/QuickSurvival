@@ -56,7 +56,6 @@ public class WaystonePlacement implements Listener {
 
                     saveWaystone(waystone, QuickSurvival.waystonesConfig, waystone.getName());
 
-
                     player.sendMessage(ChatColor.GREEN + "Se ha colocado un nuevo Waystone correctamente.");
                 } else {
                     player.sendMessage(ChatColor.RED + "No se puede colocar el Waystone aquí. El bloque no está vacío.");
@@ -114,10 +113,11 @@ public class WaystonePlacement implements Listener {
     //this methos will be used to save the waystone to the yml file
     private void saveWaystone(Waystone waystone, YamlConfiguration config, String path) {
     //based on the setHome class in Home command we will addapt the save method to the waystone class
-
-        config.set(path + ".icon", waystone.getIcon().getType().toString());
+        config.set(path + ".name", waystone.getName());
+        config.set(path + ".icon", waystone.getIcon().toString());
         LocationHandler.serializeLocation(waystone.getLocation(), config,path + ".location"); //saves location in waystonConfig.yml
         config.set(path + ".players", waystone.getPlayers());
+
 
         QuickSurvival.waystones.put(waystone.getName(), waystone);
 

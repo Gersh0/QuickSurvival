@@ -122,7 +122,7 @@ public class QuickSurvival extends JavaPlugin {
             ItemStack icon = waystoneSection.getItemStack("icon");
             Waystone waystone = new Waystone(location, name, players, icon);
             waystones.put(waystoneName, waystone);
-            this.getServer().getLogger().info("Loaded waystone: " + waystoneName);
+            this.getServer().getLogger().info("Loaded waystone: " +ChatColor.GREEN+ waystoneName);
         };
 
     }
