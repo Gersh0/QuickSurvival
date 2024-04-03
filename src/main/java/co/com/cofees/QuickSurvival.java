@@ -115,7 +115,8 @@ public class QuickSurvival extends JavaPlugin {
         //Load the waystones and add them to the waystones map
         return (waystoneName) -> {
             ConfigurationSection waystoneSection = waystonesConfig.getConfigurationSection(waystoneName);
-            Location location = (Location) waystoneSection.get("location");
+            assert waystoneSection != null;
+            Location location = LocationHandler.createLocationFromConfig(waystoneSection, "location", this);
             String name = waystoneSection.getString("name");
             List<String> players = waystoneSection.getStringList("players");
             ItemStack icon = waystoneSection.getItemStack("icon");
