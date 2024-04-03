@@ -8,6 +8,7 @@ target/
 .idea/jarRepositories.xml
 .idea/compiler.xml
 .idea/libraries/
+.idea/artifacts/QuickSurvival_jar.xml
 *.iws
 *.iml
 *.ipr
