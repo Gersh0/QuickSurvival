@@ -91,6 +91,21 @@ public class WaystoneInteract implements Listener {
         }
     }
 
+    //event that locks the manipulation of the items in the waystone menu
+    @EventHandler
+    public void onPlayerMenuInteraction(InventoryClickEvent e) throws EventException {
+        if (!e.getView().getTitle().equalsIgnoreCase("WaystoneMenu")) {
+            return;
+        }
+
+        if (e.getClickedInventory() == null) {
+            return;
+        }
+
+        e.setCancelled(true);
+    }
+
+
     //event that if the player uses a warp scroll
     @EventHandler
     public void onPlayerWarpScrollUse(PlayerInteractEvent e) throws EventException {
@@ -219,7 +234,11 @@ public class WaystoneInteract implements Listener {
 
     //method that consumes the warpscroll
     private void consumeWarpScroll(Player player) {
+        //guard clause that sees if the player is looking at a tilestate block
         if(isPlayerLookingAtTileState(player)) return;
+
+        //see if the player is in creative mode
+        if (player.getGameMode().name().contains("CREATIVE")) return;
 
         //get the item in the main hand
         ItemStack item = player.getInventory().getItemInMainHand();
