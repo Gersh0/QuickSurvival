@@ -8,31 +8,23 @@ import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
 import org.bukkit.block.Block;
 import org.bukkit.block.TileState;
-import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.EventException;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 
-import java.io.Console;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Queue;
 
 public class WaystoneInteract implements Listener {
-
-
 
 
     @EventHandler
@@ -61,19 +53,26 @@ public class WaystoneInteract implements Listener {
 
         if (e.getAction().name().contains("RIGHT") && container.has(Keys.WAYSTONE, PersistentDataType.STRING)) {
 
-            TileState blockState = (TileState) e.getClickedBlock().getState();
-            String name = blockState.getPersistentDataContainer().get(Keys.WAYSTONE, PersistentDataType.STRING);
+            String name = tileState.getPersistentDataContainer().get(Keys.WAYSTONE, PersistentDataType.STRING);
             //create the waystone object to add the player
-            Waystone waystone = QuickSurvival.waystones.get(name);
-            p.sendMessage("Clicked Waystone Name: " + name);
 
-            //check if the player is already in the list
+            Waystone waystone = QuickSurvival.waystones.get(name);
+            //check if the waysone is null
+
+            if (waystone == null) {
+                p.sendMessage("Waystone Fail: " + name);
+            } else {
+                p.sendMessage("Clicked Waystone Name: " + name);
+            }
+
+
+
             if (!waystone.containsPlayer(p.getName())) {
                 waystone.addPlayer(p.getName());
                 //e.getItem().getItemMeta().getPersistentDataContainer().set(Keys.WAYSTONE, PersistentDataType.STRING, waystone.getName());
                 WaystonePlacement.saveWaystone(waystone, QuickSurvival.waystonesConfig, name);
 
-            }else {
+            } else {
                 p.sendMessage("Ya estás en la lista de este waystone");
             }
 
@@ -85,9 +84,9 @@ public class WaystoneInteract implements Listener {
     }
 
     @EventHandler
-    public void  onPlayerWaystoneMenuClick(InventoryClickEvent e)throws EventException{
+    public void onPlayerWaystoneMenuClick(InventoryClickEvent e) throws EventException {
 
-        if (!e.getView().getTitle().equalsIgnoreCase("WaystoneMenu")){
+        if (!e.getView().getTitle().equalsIgnoreCase("WaystoneMenu")) {
             return;
         }
 
@@ -102,7 +101,7 @@ public class WaystoneInteract implements Listener {
         //at the moment we will teleport the player to the waystone location
         teleportPlayer((Player) e.getWhoClicked(), waystone);
         //send message to player
-        e.getWhoClicked().sendMessage("Teleporting to " +ChatColor.GOLD+ " "+ waystone.getName());
+        e.getWhoClicked().sendMessage("Teleporting to " + ChatColor.GOLD + " " + waystone.getName());
 
 
     }
