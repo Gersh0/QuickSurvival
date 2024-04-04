@@ -94,6 +94,7 @@ public class WaystoneInteract implements Listener {
     //event that if the player uses a warp scroll
     @EventHandler
     public void onPlayerWarpScrollUse(PlayerInteractEvent e) throws EventException {
+        //guard clause that sees if the event is cancelled
         if (e instanceof Cancellable && ((Cancellable) e).isCancelled()) {
             e.setCancelled(false);
         }
@@ -112,6 +113,7 @@ public class WaystoneInteract implements Listener {
         if (e.getAction().name().contains("RIGHT") && container.has(Keys.WARP_SCROLL, PersistentDataType.STRING)) {
 
             openWaystoneInventory(p);
+            p.sendMessage("menu de warp scroll abierto correctamente");
 
         } else {
             return;
@@ -165,9 +167,18 @@ public class WaystoneInteract implements Listener {
             return;
         }
         //get the name of the item who clicked the player
-        String itemName = e.getCurrentItem().getItemMeta().getDisplayName();
+        ItemStack item = e.getCurrentItem();
+        //guard clause that sees if the item is null
+        if (item == null) return;
+        ItemMeta itemMeta= item.getItemMeta();
+        //guard clause that sees if the item has a meta
+        if (itemMeta == null) return;
+
+        String itemName = itemMeta.getDisplayName();
         //search the waystone in the hashmap
         Waystone waystone = QuickSurvival.waystones.get(itemName);
+        //guard clause that sees if the waystone is null
+        if (waystone == null) return;
 
         //at the moment we will teleport the player to the waystone location
         teleportPlayer((Player) e.getWhoClicked(), waystone);
@@ -197,7 +208,35 @@ public class WaystoneInteract implements Listener {
     }
 
     private void teleportPlayer(Player player, Waystone waystone) {
+        //guard clause that sees if the waystone is null
+        if (waystone == null) return;
+
+        consumeWarpScroll(player);
+        //teleport the player to the waystone location
         player.teleport(waystone.getLocation());
+
+    }
+
+    //method that consumes the warpscroll
+    private void consumeWarpScroll(Player player) {
+        if(isPlayerLookingAtTileState(player)) return;
+
+        //get the item in the main hand
+        ItemStack item = player.getInventory().getItemInMainHand();
+        //guard clause that sees if the item is null
+        if (item == null) return;
+        //get the item meta
+        ItemMeta meta = item.getItemMeta();
+        //guard clause that sees if the item meta is null
+        if (meta == null) return;
+        //get the container
+        PersistentDataContainer container = meta.getPersistentDataContainer();
+        //guard clause that sees if the container has the warp scroll key
+        if (container.has(Keys.WARP_SCROLL, PersistentDataType.STRING)) {
+
+            //remove the item from the inventory
+            player.getInventory().getItemInMainHand().setAmount(item.getAmount() -1);
+        }
     }
 
 
