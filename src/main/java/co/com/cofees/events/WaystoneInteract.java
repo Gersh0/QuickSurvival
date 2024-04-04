@@ -60,6 +60,23 @@ public class WaystoneInteract implements Listener {
         PersistentDataContainer container = tileState.getPersistentDataContainer();
 
         if (e.getAction().name().contains("RIGHT") && container.has(Keys.WAYSTONE, PersistentDataType.STRING)) {
+
+            TileState blockState = (TileState) e.getClickedBlock().getState();
+            String name = blockState.getPersistentDataContainer().get(Keys.WAYSTONE, PersistentDataType.STRING);
+            //create the waystone object to add the player
+            Waystone waystone = QuickSurvival.waystones.get(name);
+            p.sendMessage("Clicked Waystone Name: " + name);
+
+            //check if the player is already in the list
+            if (!waystone.containsPlayer(p.getName())) {
+                waystone.addPlayer(p.getName());
+                //e.getItem().getItemMeta().getPersistentDataContainer().set(Keys.WAYSTONE, PersistentDataType.STRING, waystone.getName());
+                WaystonePlacement.saveWaystone(waystone, QuickSurvival.waystonesConfig, name);
+
+            }else {
+                p.sendMessage("Ya estás en la lista de este waystone");
+            }
+
             openWaystoneInventory(p);
             p.sendMessage("menu abierto correctamente");
         } else {

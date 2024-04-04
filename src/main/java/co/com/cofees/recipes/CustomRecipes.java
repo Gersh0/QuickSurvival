@@ -250,7 +250,7 @@ public class CustomRecipes {
         ItemMeta waystoneMeta = waystone.getItemMeta();
         waystoneMeta.setDisplayName("Waystone");
 
-        waystoneMeta.getPersistentDataContainer().set(Keys.WAYSTONE, PersistentDataType.STRING, "true");
+        waystoneMeta.getPersistentDataContainer().set(Keys.WAYSTONE, PersistentDataType.STRING, waystoneMeta.getDisplayName());
         waystoneMeta.setLore(List.of("Place this to create a waystone"));
         waystone.setAmount(1);
         waystoneMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS);

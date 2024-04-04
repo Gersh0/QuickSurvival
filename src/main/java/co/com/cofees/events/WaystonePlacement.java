@@ -43,8 +43,6 @@ public class WaystonePlacement implements Listener {
                 Location blockLocation = getBlockLocationAbove(Objects.requireNonNull(event.getClickedBlock()).getLocation());
 
                 if (isEmptyBlock(blockLocation)) {
-                    consumeItemInHand(player);
-                    placeNewWaystoneBlock(blockLocation);
 
 
                     //Process to save the waystone to the yml file
@@ -53,6 +51,8 @@ public class WaystonePlacement implements Listener {
                     Waystone waystone = new Waystone(blockLocation, waypointStack.getItemMeta().getDisplayName(), players, null
                     );
 
+                    consumeItemInHand(player);
+                    placeNewWaystoneBlock(waystone, blockLocation);
 
                     saveWaystone(waystone, QuickSurvival.waystonesConfig, waystone.getName());
 
@@ -100,18 +100,20 @@ public class WaystonePlacement implements Listener {
         itemInHand.setAmount(itemInHand.getAmount() - 1);
     }
 
-    private void placeNewWaystoneBlock(Location location) {
+    private void placeNewWaystoneBlock(Waystone waystone, Location location) {
         Block newBlock = location.getBlock();
         newBlock.setType(Material.BLACK_BANNER);
 
         TileState tileState = (TileState) newBlock.getState();
+        //set waystone name to the block
+
         PersistentDataContainer newContainer = tileState.getPersistentDataContainer();
-        newContainer.set(Keys.WAYSTONE, PersistentDataType.STRING, "true");
+        newContainer.set(Keys.WAYSTONE, PersistentDataType.STRING, waystone.getName());
         tileState.update();
     }
 
     //this methos will be used to save the waystone to the yml file
-    private void saveWaystone(Waystone waystone, YamlConfiguration config, String path) {
+    public static void saveWaystone(Waystone waystone, YamlConfiguration config, String path) {
     //based on the setHome class in Home command we will addapt the save method to the waystone class
         config.set(path + ".name", waystone.getName());
         config.set(path + ".icon", waystone.getIcon().toString());

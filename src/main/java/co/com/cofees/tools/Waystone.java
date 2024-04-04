@@ -4,6 +4,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.persistence.PersistentDataType;
 
 import java.util.List;
 
@@ -25,6 +26,7 @@ public class Waystone {
         ItemMeta defaultMeta = icon.getItemMeta();
         defaultMeta.setDisplayName(name);
         icon.setItemMeta(defaultMeta);
+        defaultMeta.getPersistentDataContainer().set(Keys.WAYSTONE, PersistentDataType.STRING, name);
 
 
         //set the icon to a default icon
