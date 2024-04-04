@@ -20,4 +20,6 @@ public class Keys {
     public static final NamespacedKey BACKPACK_CODE = new NamespacedKey(QuickSurvival.getInstance(), "backpack_code");
 
     public static final NamespacedKey ENDER_GEM = new NamespacedKey(QuickSurvival.getInstance(), "EnderGem");
+
+    public static final NamespacedKey WARP_SCROLL = new NamespacedKey(QuickSurvival.getInstance(), "WarpScroll");
 }

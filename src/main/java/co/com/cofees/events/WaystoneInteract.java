@@ -34,8 +34,6 @@ import java.util.Queue;
 public class WaystoneInteract implements Listener {
 
 
-
-
     @EventHandler
     public void onPlayerWaystoneClick(PlayerInteractEvent e) throws EventException {
         if (e instanceof Cancellable && ((Cancellable) e).isCancelled()) {
@@ -77,7 +75,6 @@ public class WaystoneInteract implements Listener {
             }
 
 
-
             if (!waystone.containsPlayer(p.getName())) {
                 waystone.addPlayer(p.getName());
                 //e.getItem().getItemMeta().getPersistentDataContainer().set(Keys.WAYSTONE, PersistentDataType.STRING, waystone.getName());
@@ -93,6 +90,35 @@ public class WaystoneInteract implements Listener {
             return;
         }
     }
+
+    //event that if the player uses a warp scroll
+    @EventHandler
+    public void onPlayerWarpScrollUse(PlayerInteractEvent e) throws EventException {
+        if (e instanceof Cancellable && ((Cancellable) e).isCancelled()) {
+            e.setCancelled(false);
+        }
+
+        Player p = e.getPlayer();
+        //guard Clause that sees if a tilestate block is being looked at
+        if (isPlayerLookingAtTileState(p)) return;
+
+        ItemStack item = p.getInventory().getItemInMainHand();
+        //guard clause that sees if the item has a meta
+        if (item.getItemMeta() == null) return;
+
+        ItemMeta meta = item.getItemMeta();
+        PersistentDataContainer container = meta.getPersistentDataContainer();
+
+        if (e.getAction().name().contains("RIGHT") && container.has(Keys.WARP_SCROLL, PersistentDataType.STRING)) {
+
+            openWaystoneInventory(p);
+
+        } else {
+            return;
+        }
+
+    }
+
 
     //Event that comprobates if the player break a waystone
     @EventHandler
@@ -129,9 +155,9 @@ public class WaystoneInteract implements Listener {
     }
 
     @EventHandler
-    public void  onPlayerWaystoneMenuClick(InventoryClickEvent e)throws EventException{
+    public void onPlayerWaystoneMenuClick(InventoryClickEvent e) throws EventException {
 
-        if (!e.getView().getTitle().equalsIgnoreCase("WaystoneMenu")){
+        if (!e.getView().getTitle().equalsIgnoreCase("WaystoneMenu")) {
             return;
         }
 
@@ -146,7 +172,7 @@ public class WaystoneInteract implements Listener {
         //at the moment we will teleport the player to the waystone location
         teleportPlayer((Player) e.getWhoClicked(), waystone);
         //send message to player
-        e.getWhoClicked().sendMessage("Teleporting to " +ChatColor.GOLD+ " "+ waystone.getName());
+        e.getWhoClicked().sendMessage("Teleporting to " + ChatColor.GOLD + " " + waystone.getName());
 
 
     }
@@ -190,6 +216,12 @@ public class WaystoneInteract implements Listener {
         });
 
         return itemStacks;
+    }
+
+    //method that sees if a player is looking a tilestate block
+    private boolean isPlayerLookingAtTileState(Player p) {
+        Block b = p.getTargetBlockExact(5);
+        return b != null && b.getState() instanceof TileState;
     }
 
 //

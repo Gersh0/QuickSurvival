@@ -269,6 +269,27 @@ public class CustomRecipes {
 
         // Registrar el crafteo
         Bukkit.addRecipe(waystoneRecipe);
+
+        //add a warp Scroll
+        ItemStack warpScroll = new ItemStack(Material.PAPER);
+        ItemMeta warpScrollMeta = warpScroll.getItemMeta();
+        warpScrollMeta.setDisplayName(ChatColor.DARK_PURPLE + "Warp Scroll");
+        warpScrollMeta.getPersistentDataContainer().set(Keys.WARP_SCROLL, PersistentDataType.STRING, "true");
+        warpScrollMeta.setLore(List.of("A scroll to warp to a waystone"));
+        warpScrollMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
+        warpScrollMeta.addEnchant(Enchantment.ARROW_DAMAGE, 1, true);
+        warpScroll.setItemMeta(warpScrollMeta);
+
+        //add a recipe for the warp scroll
+        ShapedRecipe warpScrollRecipe = new ShapedRecipe(Keys.WARP_SCROLL, warpScroll);
+        warpScrollRecipe.shape(" P ", "PEP", " P ");
+        //add ender gem as ingredient
+        warpScrollRecipe.setIngredient('E', new RecipeChoice.ExactChoice(enderGem));
+        warpScrollRecipe.setIngredient('P', Material.PAPER);
+
+        //register the recipe
+        Bukkit.addRecipe(warpScrollRecipe);
+
     }
 
 
