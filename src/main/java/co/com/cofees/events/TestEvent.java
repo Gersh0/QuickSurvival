@@ -46,8 +46,9 @@ public class TestEvent implements Listener {
         player.sendMessage(String.valueOf(mainHandItem.getType()));
         player.sendMessage(String.valueOf(block.getType().compareTo(Material.SPAWNER)));
          */
-        if(mainHandItem.getItemMeta() == null)return false;
-        if(mainHandItem.getType().compareTo(Material.AIR)==0)return false;
+        if (mainHandItem.getItemMeta() == null) return false;
+        if (mainHandItem.getType().compareTo(Material.AIR) == 0) return false;
+        if (block.getType().compareTo(Material.AIR) == 0) return false;
         return mainHandItem.getItemMeta().hasEnchant(Enchantment.SILK_TOUCH) && block.getType().compareTo(Material.SPAWNER) == 0;
     }
 }
