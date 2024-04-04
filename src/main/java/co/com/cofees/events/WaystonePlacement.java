@@ -129,6 +129,16 @@ public class WaystonePlacement implements Listener {
             e.printStackTrace();
         }
     }
+
+    public static void removeWaystone(String waystoneName) {
+        QuickSurvival.waystonesConfig.set(waystoneName, null);
+        QuickSurvival.waystones.remove(waystoneName);
+        try {
+            QuickSurvival.waystonesConfig.save(new File(QuickSurvival.getInstance().getDataFolder(), "waystones.yml"));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 }
 
 

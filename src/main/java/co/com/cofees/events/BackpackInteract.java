@@ -112,7 +112,7 @@ public class BackpackInteract implements Listener {
         if (event.getInventory().getHolder() != null) return; // poner otra condicion para limitar el inventario a solo backpacks
         //comprobar el persisten data container para guardar el inventario de la mochila
 
-        //wareclouse if the inventory isnt a backpack inventory
+        //wareclouse if the inventory isn't a backpack inventory
         if (!event.getView().getTitle().equalsIgnoreCase("Backpack")) return;
 
 

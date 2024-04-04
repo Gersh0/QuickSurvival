@@ -14,6 +14,7 @@ import org.bukkit.event.Cancellable;
 import org.bukkit.event.EventException;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
@@ -61,19 +62,28 @@ public class WaystoneInteract implements Listener {
 
         if (e.getAction().name().contains("RIGHT") && container.has(Keys.WAYSTONE, PersistentDataType.STRING)) {
 
-            TileState blockState = (TileState) e.getClickedBlock().getState();
-            String name = blockState.getPersistentDataContainer().get(Keys.WAYSTONE, PersistentDataType.STRING);
+            String name = tileState.getPersistentDataContainer().get(Keys.WAYSTONE, PersistentDataType.STRING);
             //create the waystone object to add the player
-            Waystone waystone = QuickSurvival.waystones.get(name);
-            p.sendMessage("Clicked Waystone Name: " + name);
 
-            //check if the player is already in the list
+            Waystone waystone = QuickSurvival.waystones.get(name);
+            //check if the waysone is null
+
+
+            // Just de
+            if (waystone == null) {
+                p.sendMessage("Waystone Fail: " + name);
+            } else {
+                p.sendMessage("Clicked Waystone Name: " + name);
+            }
+
+
+
             if (!waystone.containsPlayer(p.getName())) {
                 waystone.addPlayer(p.getName());
                 //e.getItem().getItemMeta().getPersistentDataContainer().set(Keys.WAYSTONE, PersistentDataType.STRING, waystone.getName());
                 WaystonePlacement.saveWaystone(waystone, QuickSurvival.waystonesConfig, name);
 
-            }else {
+            } else {
                 p.sendMessage("Ya estás en la lista de este waystone");
             }
 
@@ -81,6 +91,40 @@ public class WaystoneInteract implements Listener {
             p.sendMessage("menu abierto correctamente");
         } else {
             return;
+        }
+    }
+
+    //Event that comprobates if the player break a waystone
+    @EventHandler
+    public void onPlayerWaystoneBreak(BlockBreakEvent e) throws EventException {
+        if (e instanceof Cancellable && ((Cancellable) e).isCancelled()) {
+            e.setCancelled(false);
+        }
+
+        Player p = e.getPlayer();
+        Block b = null;
+
+        if (p.getTargetBlockExact(5) != null) {
+            b = p.getTargetBlockExact(5);
+        } else {
+            return;
+        }
+
+        if (!(b.getState() instanceof TileState)) return;
+
+        TileState tileState = (TileState) b.getState();
+
+        PersistentDataContainer container = tileState.getPersistentDataContainer();
+
+        //search the info of the waystone and remove the waystone from the hashmap and the file
+        if (container.has(Keys.WAYSTONE, PersistentDataType.STRING)) {
+            String name = tileState.getPersistentDataContainer().get(Keys.WAYSTONE, PersistentDataType.STRING);
+            Waystone waystone = QuickSurvival.waystones.get(name);
+            if (waystone != null) {
+                //remove the waystone from the hashmap and the file
+                WaystonePlacement.removeWaystone(name);
+                p.sendMessage("Waystone " + name + " has been removed");
+            }
         }
     }
 
