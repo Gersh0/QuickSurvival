@@ -66,6 +66,9 @@ public class ControlMenuHandler implements Listener {
         }
 
         else if(event.getView().getTitle().equals(GENERAL_MENU)){
+            //guard clause para evitar errores
+
+            if (event.getCurrentItem() == null) return;
 
             switch (event.getCurrentItem().getType()){
                 case BARRIER:

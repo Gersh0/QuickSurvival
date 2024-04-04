@@ -18,9 +18,6 @@ commands:
     aliases:
       - homes
       - h
-  qspanel:
-    description: abre un panel de control
-
   Backpack:
     description: abre el backpack manualmente
 

@@ -4,11 +4,14 @@ import co.com.cofees.QuickSurvival;
 import co.com.cofees.tools.Keys;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
+import org.bukkit.block.Block;
+import org.bukkit.block.TileState;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
@@ -28,6 +31,9 @@ public class BackpackInteract implements Listener {
 
     @EventHandler
     public void onPlayerInteract(PlayerInteractEvent event) throws IOException {
+        //Guard Clause if the player is looking at a tilestate block and if is null we will open the backpack anyway
+        Block b = event.getClickedBlock();
+        if (b != null && b.getState() instanceof TileState) return;
 
 
         Player player = event.getPlayer();
@@ -73,7 +79,9 @@ public class BackpackInteract implements Listener {
     private void openBackpackInventory(Player player, int backpackLevel) throws IOException {
         int inventorySize = roundInventorySize(9 * backpackLevel);
 
-        Inventory backpackInventory = Bukkit.createInventory(null, inventorySize, ChatColor.translateAlternateColorCodes('&', "&6Mochila Nivel " + backpackLevel));
+
+
+        Inventory backpackInventory = Bukkit.createInventory(null, inventorySize,"Backpack");
         // Crear el inventario de la mochila
         if (restoreInventory(player) != null) {
             backpackInventory = restoreInventory(player);
@@ -85,7 +93,7 @@ public class BackpackInteract implements Listener {
 
         // Duplicar el inventario si el nivel es mayor que 1
         if (backpackLevel > 1) {
-            Inventory duplicateInventory = Bukkit.createInventory(null, inventorySize, ChatColor.translateAlternateColorCodes('&', "&6Mochila Nivel " + backpackLevel));
+            Inventory duplicateInventory = Bukkit.createInventory(null, inventorySize, "Backpack");
             duplicateInventory.setContents(backpackInventory.getContents());
             player.openInventory(duplicateInventory);
         } else {
@@ -103,6 +111,9 @@ public class BackpackInteract implements Listener {
     public void onInventoryClose(InventoryCloseEvent event) throws IOException {
         if (event.getInventory().getHolder() != null) return; // poner otra condicion para limitar el inventario a solo backpacks
         //comprobar el persisten data container para guardar el inventario de la mochila
+
+        //wareclouse if the inventory isnt a backpack inventory
+        if (!event.getView().getTitle().equalsIgnoreCase("Backpack")) return;
 
 
         Player player = (Player) event.getPlayer();
@@ -172,6 +183,13 @@ public class BackpackInteract implements Listener {
     }
 
     public void saveInventory(Player p, Inventory inventory) throws IOException {
+
+        //Wareclouse if the player is looking at a tilestate block
+        Block b = p.getTargetBlockExact(5);
+        if (b != null && b.getState() instanceof TileState) return;
+
+
+
         String UUIDbackpack = getBackpackUUID(p);
 
         File f = new File(getInventoryFolder(), p.getName() + UUIDbackpack + "BInventory" + ".yml");
@@ -202,7 +220,7 @@ public class BackpackInteract implements Listener {
         if (items != null) {
             // Ajustar el tamaño para que sea un múltiplo de 9
             int adjustedSize = roundInventorySize(items.size());
-            Inventory inventory = Bukkit.createInventory(null, adjustedSize, ChatColor.translateAlternateColorCodes('&', "&6Mochila Restaurada"));
+            Inventory inventory = Bukkit.createInventory(null, adjustedSize,"Backpack");
 
             for (int i = 0; i < items.size(); i++) {
                 ItemStack itemStack = ItemStack.deserialize(items.get(i));

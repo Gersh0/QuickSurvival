@@ -23,6 +23,7 @@ public class CustomRecipes {
 
     public static void registerCustomCrafting() {
         backpacks();
+        waystones();
     }
 
     public static ItemStack createCustomItem(Material material, String displayName, String lore, NamespacedKey key, String keyValue, int amount) {
@@ -220,6 +221,56 @@ public class CustomRecipes {
         // Registrar el crafteo
         Bukkit.addRecipe(bl5);
     }
+
+    public static void waystones () {
+        //crear una ender pearl especial para la waystone
+        ItemStack enderGem = new ItemStack(Material.ENDER_PEARL);
+        ItemMeta enderGemMeta = enderGem.getItemMeta();
+        enderGemMeta.setDisplayName(ChatColor.DARK_PURPLE + "Ender Gem");
+        enderGemMeta.getPersistentDataContainer().set(Keys.ENDER_GEM, PersistentDataType.STRING, "true");
+        enderGemMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
+        enderGemMeta.addEnchant(Enchantment.ARROW_DAMAGE, 1, true);
+        enderGemMeta.setLore(List.of("A special ender pearl for waystones"));
+
+        enderGem.setItemMeta(enderGemMeta);
+
+        // Crear el crafteo personalizado
+        ShapedRecipe enderGemRecipe = new ShapedRecipe(Keys.ENDER_GEM, enderGem);
+        enderGemRecipe.shape(" E ", "EPE", " E ");
+        enderGemRecipe.setIngredient('E', Material.ENDER_EYE);
+        enderGemRecipe.setIngredient('P', Material.ENDER_PEARL);
+
+        // Registrar el crafteo
+
+        Bukkit.addRecipe(enderGemRecipe);
+
+
+        // Crear el ítem que se obtendrá al realizar el crafteo
+        ItemStack waystone = new ItemStack(Material.BLACK_BANNER);
+        ItemMeta waystoneMeta = waystone.getItemMeta();
+        waystoneMeta.setDisplayName("Waystone");
+
+        waystoneMeta.getPersistentDataContainer().set(Keys.WAYSTONE, PersistentDataType.STRING, "true");
+        waystoneMeta.setLore(List.of("Place this to create a waystone"));
+        waystone.setAmount(1);
+        waystoneMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
+        waystoneMeta.addEnchant(Enchantment.ARROW_DAMAGE, 1, true);
+        //setear meta
+        waystone.setItemMeta(waystoneMeta);
+
+        // Crear el crafteo personalizado
+
+        ShapedRecipe waystoneRecipe = new ShapedRecipe(Keys.WAYSTONE, waystone);
+        waystoneRecipe.shape(" B ", "BGB", "OOO");
+        waystoneRecipe.setIngredient('B', Material.STONE_BRICKS);
+        //set ingredient to the ender gem
+        waystoneRecipe.setIngredient('G', new RecipeChoice.ExactChoice(enderGem));
+        waystoneRecipe.setIngredient('O', Material.OBSIDIAN);
+
+        // Registrar el crafteo
+        Bukkit.addRecipe(waystoneRecipe);
+    }
+
 
     // Métodos para verificar las condiciones de crafteo de cada mochila
     private static boolean canCraftLv2(ItemStack itemStack) {
