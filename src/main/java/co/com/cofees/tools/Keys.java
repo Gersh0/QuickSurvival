@@ -22,4 +22,6 @@ public class Keys {
     public static final NamespacedKey ENDER_GEM = new NamespacedKey(QuickSurvival.getInstance(), "EnderGem");
 
     public static final NamespacedKey WARP_SCROLL = new NamespacedKey(QuickSurvival.getInstance(), "WarpScroll");
+
+    public  static final NamespacedKey MENUOBJECT = new NamespacedKey(QuickSurvival.getInstance(), "MenuObject");
 }

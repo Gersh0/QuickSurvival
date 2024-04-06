@@ -4,8 +4,10 @@ package co.com.cofees.events;
 import co.com.cofees.QuickSurvival;
 import co.com.cofees.tools.Keys;
 import co.com.cofees.tools.Waystone;
+import co.com.cofees.tools.WaystoneMenuGui;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
+import org.bukkit.Sound;
 import org.bukkit.block.Block;
 import org.bukkit.block.TileState;
 import org.bukkit.configuration.ConfigurationSection;
@@ -185,7 +187,7 @@ public class WaystoneInteract implements Listener {
         ItemStack item = e.getCurrentItem();
         //guard clause that sees if the item is null
         if (item == null) return;
-        ItemMeta itemMeta= item.getItemMeta();
+        ItemMeta itemMeta = item.getItemMeta();
         //guard clause that sees if the item has a meta
         if (itemMeta == null) return;
 
@@ -195,16 +197,27 @@ public class WaystoneInteract implements Listener {
         //guard clause that sees if the waystone is null
         if (waystone == null) return;
 
-        //at the moment we will teleport the player to the waystone location
-        teleportPlayer((Player) e.getWhoClicked(), waystone);
-        //send message to player
-        e.getWhoClicked().sendMessage("Teleporting to " + ChatColor.GOLD + " " + waystone.getName());
 
+        //comprobate if the player clicked "Left"(Teleport) or "Right"(open OptionMenu)
 
+        if (e.getClick().isRightClick()) {
+            //open the waystone menu
+            WaystoneMenuGui.openWaystoneOptionMenu((Player) e.getWhoClicked(), waystone);
+            //send message to player
+            e.getWhoClicked().sendMessage("Menu de " + ChatColor.GOLD + " " + waystone.getName() + " " + ChatColor.RESET + "abierto correctamente");
+            return;
+        } else if (e.getClick().isLeftClick()) {
+            //teleport the player to the waystone
+
+            teleportPlayer((Player) e.getWhoClicked(), waystone);
+            //send message to player
+            e.getWhoClicked().sendMessage("Teleporting to " + ChatColor.GOLD + " " + waystone.getName());
+
+        }
     }
 
 
-    private void openWaystoneInventory(Player player) {
+    public static void openWaystoneInventory(Player player) {
         // Crear el inventario del "Waystone"
         Inventory waystoneInventory = Bukkit.createInventory(null, 54, "WaystoneMenu");
 
@@ -229,13 +242,21 @@ public class WaystoneInteract implements Listener {
         consumeWarpScroll(player);
         //teleport the player to the waystone location
         player.teleport(waystone.getLocation());
+        player.playSound(player.getLocation(), Sound.ENTITY_ENDER_EYE_LAUNCH, 1.0f, 1.0f);
+        player.playSound(player.getLocation(), Sound.ENTITY_ENDERMAN_TELEPORT, 1.0f, 1.0f);
+
+        //make a particle effect intense to the player
+
+        player.spawnParticle(org.bukkit.Particle.PORTAL, player.getLocation(), 100, 0.5, 1, 0.5, 0.1);
+        player.spawnParticle(org.bukkit.Particle.END_ROD, player.getLocation(), 100, 0.5, 1, 0.5, 0.1);
+        player.spawnParticle(org.bukkit.Particle.PORTAL, player.getLocation(), 100, 0.5, 1, 0.5, 0.1);
 
     }
 
     //method that consumes the warpscroll
     private void consumeWarpScroll(Player player) {
         //guard clause that sees if the player is looking at a tilestate block
-        if(isPlayerLookingAtTileState(player)) return;
+        if (isPlayerLookingAtTileState(player)) return;
 
         //see if the player is in creative mode
         if (player.getGameMode().name().contains("CREATIVE")) return;
@@ -254,12 +275,12 @@ public class WaystoneInteract implements Listener {
         if (container.has(Keys.WARP_SCROLL, PersistentDataType.STRING)) {
 
             //remove the item from the inventory
-            player.getInventory().getItemInMainHand().setAmount(item.getAmount() -1);
+            player.getInventory().getItemInMainHand().setAmount(item.getAmount() - 1);
         }
     }
 
 
-    private Queue<ItemStack> loadWaystoneItems(Player player) {
+    private static Queue<ItemStack> loadWaystoneItems(Player player) {
         // Cargar los elementos del inventario
         Queue<ItemStack> itemStacks = new LinkedList<>();
 

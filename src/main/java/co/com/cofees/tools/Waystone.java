@@ -21,7 +21,7 @@ public class Waystone {
         this.location = location;
         this.name = name;
         this.players = players;
-        icon = icon == null ? new ItemStack(Material.GRASS_BLOCK) : icon;
+        icon = icon == null ? new ItemStack(Material.GREEN_WOOL) : icon;
 
         ItemMeta defaultMeta = icon.getItemMeta();
         defaultMeta.setDisplayName(name);

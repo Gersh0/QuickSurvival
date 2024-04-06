@@ -58,7 +58,6 @@ public class QuickSurvival extends JavaPlugin {
 
     public void registerEvents() {
         getServer().getPluginManager().registerEvents(new TestEvent(), this);
-        getServer().getPluginManager().registerEvents(new ControlPanelListener(), this);
         getServer().getPluginManager().registerEvents(new WaystoneMenu(), this);
         getServer().getPluginManager().registerEvents(new BackpackInteract(), this);
         getServer().getPluginManager().registerEvents(new CraftBackpack(), this);
@@ -68,6 +67,7 @@ public class QuickSurvival extends JavaPlugin {
         getServer().getPluginManager().registerEvents(veinMiner, this);
         getServer().getPluginManager().registerEvents(treeCapitator, this);
         getServer().getPluginManager().registerEvents(new ControlMenuHandler(), this);
+        getServer().getPluginManager().registerEvents(new WaystoneMenuHandler(), this);
     }
 
     public void registerConfigFiles() {
@@ -122,7 +122,14 @@ public class QuickSurvival extends JavaPlugin {
             ItemStack icon = waystoneSection.getItemStack("icon");
             Waystone waystone = new Waystone(location, name, players, icon);
             waystones.put(waystoneName, waystone);
-            this.getServer().getLogger().info("Loaded waystone: " +ChatColor.GREEN+ waystoneName);
+            this.getServer().getLogger().info("Loaded waystone: " + ChatColor.GREEN + " " + waystoneName);
+
+            //send the info of the waystone to the console
+            this.getServer().getLogger().info("Waystone: " + ChatColor.GREEN + waystone.getName());
+            this.getServer().getLogger().info("Location: " + ChatColor.GREEN + waystone.getLocation());
+            this.getServer().getLogger().info("Players: " + ChatColor.GREEN + waystone.getPlayers());
+            this.getServer().getLogger().info("Icon: " + ChatColor.GREEN + waystone.getIcon());
+
         };
 
     }

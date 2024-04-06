@@ -116,7 +116,7 @@ public class WaystonePlacement implements Listener {
     public static void saveWaystone(Waystone waystone, YamlConfiguration config, String path) {
     //based on the setHome class in Home command we will addapt the save method to the waystone class
         config.set(path + ".name", waystone.getName());
-        config.set(path + ".icon", waystone.getIcon().toString());
+        config.set(path + ".icon", waystone.getIcon());
         LocationHandler.serializeLocation(waystone.getLocation(), config,path + ".location"); //saves location in waystonConfig.yml
         config.set(path + ".players", waystone.getPlayers());
 
@@ -128,6 +128,9 @@ public class WaystonePlacement implements Listener {
         } catch (Exception e) {
             e.printStackTrace();
         }
+
+        //send message to the console
+        QuickSurvival.getInstance().getServer().getLogger().info("Waystone " + ChatColor.GREEN + waystone.getName() + ChatColor.RESET + " has been saved to the waystones.yml file.");
     }
 
     public static void removeWaystone(String waystoneName) {
