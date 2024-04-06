@@ -89,5 +89,10 @@ public class Waystone {
         return null;
     }
 
+    //make a to string of a location
+    public String locationToString(Location location) {
+        return location.getWorld().getName() + "\n" + location.getBlockX() + "\n" + location.getBlockY() + "\n" + location.getBlockZ();
+    }
+
 
 }

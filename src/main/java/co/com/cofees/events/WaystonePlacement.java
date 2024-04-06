@@ -114,6 +114,7 @@ public class WaystonePlacement implements Listener {
 
     //this methos will be used to save the waystone to the yml file
     public static void saveWaystone(Waystone waystone, YamlConfiguration config, String path) {
+
     //based on the setHome class in Home command we will addapt the save method to the waystone class
         config.set(path + ".name", waystone.getName());
         config.set(path + ".icon", waystone.getIcon());

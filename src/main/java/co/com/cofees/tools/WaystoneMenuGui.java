@@ -49,9 +49,10 @@ public class WaystoneMenuGui {
         waystoneOptionMenu.setItem(8, close);
 
         //add the current waystone icon
-        ItemStack CurrentWaystoneIcon = new ItemStack((waystone.getIcon()));
+        ItemStack CurrentWaystoneIcon = showWaystoneInfo(waystone.getIcon(), waystone);
 
         waystoneOptionMenu.setItem(0, CurrentWaystoneIcon);
+        clearLore(CurrentWaystoneIcon);
 
         player.openInventory(waystoneOptionMenu);
 
@@ -191,6 +192,43 @@ public class WaystoneMenuGui {
         player.sendMessage("You have magical powers!");
         // Realiza otras acciones según tus necesidades.
     }
+
+
+    //method that shows the waystone information of an item with persistent data container WAYSTONE(Location and Players with access)
+    public static ItemStack showWaystoneInfo(ItemStack waystoneItem, Waystone waystone){
+
+        ItemMeta itemMeta = waystoneItem.getItemMeta();
+        PersistentDataContainer container = itemMeta.getPersistentDataContainer();
+        if (!QuickSurvival.waystones.containsKey(waystone.getName())) return waystoneItem;
+        itemMeta.setLore(Arrays.asList(
+                ChatColor.GREEN + "Location: ",
+                ChatColor.WHITE + "X: " + waystone.getLocation().getBlockX(),
+                ChatColor.WHITE + "Y: " + waystone.getLocation().getBlockY(),
+                ChatColor.WHITE + "Z: " + waystone.getLocation().getBlockZ(),
+                ChatColor.GREEN + "Players: " + ChatColor.WHITE + waystone.getPlayers()
+
+        ));
+
+        waystoneItem.setItemMeta(itemMeta);
+
+
+
+        //show the waystone information
+        return waystoneItem;
+
+    }
+
+    //clear the lore of an item
+    public static ItemStack clearLore(ItemStack item){
+        ItemMeta itemMeta = item.getItemMeta();
+        itemMeta.setLore(null);
+        item.setItemMeta(itemMeta);
+        return item;
+
+
+}
+
+
 
 
 

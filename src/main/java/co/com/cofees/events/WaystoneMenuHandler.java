@@ -47,6 +47,7 @@ public class WaystoneMenuHandler implements Listener {
 
             Material waystoneMaterial = waystone.getIcon().getType();
 
+
             switch (Objects.requireNonNull(event.getCurrentItem()).getType()) {
                 case BOOK:
                     if (event.getRawSlot() == 2) {
@@ -104,13 +105,13 @@ public class WaystoneMenuHandler implements Listener {
                 player.closeInventory();
                 return;
             }
-                ItemStack iconSelect = waystone.getIcon();
-                iconSelect.setType(item.getType());
-                QuickSurvival.waystones.put(waystone.getName(), waystone);
-                WaystonePlacement.saveWaystone(waystone, QuickSurvival.waystonesConfig, waystone.getName());
-                player.sendMessage(waystone.getName() + " icon was changed");
-                player.closeInventory();
-                WaystoneInteract.openWaystoneInventory(player);
+            ItemStack iconSelect = waystone.getIcon();
+            iconSelect.setType(item.getType());
+            QuickSurvival.waystones.put(waystone.getName(), waystone);
+            WaystonePlacement.saveWaystone(waystone, QuickSurvival.waystonesConfig, waystone.getName());
+            player.sendMessage(waystone.getName() + " icon was changed");
+            player.closeInventory();
+            WaystoneInteract.openWaystoneInventory(player);
 
         }
 
@@ -169,8 +170,6 @@ public class WaystoneMenuHandler implements Listener {
         player.sendMessage(waystone.getName() + " Waystone was deleted for: " + player.getName());
     }
 
-
-    //With AngvilGUI library we will make a function to rename the waystone
 
 
 }
