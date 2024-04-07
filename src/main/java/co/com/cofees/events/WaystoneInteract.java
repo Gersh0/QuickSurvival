@@ -10,56 +10,48 @@ import org.bukkit.Bukkit;
 import org.bukkit.Sound;
 import org.bukkit.block.Block;
 import org.bukkit.block.TileState;
-import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
-import org.bukkit.event.EventException;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 
-import java.io.Console;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Queue;
 
 public class WaystoneInteract implements Listener {
 
-
     @EventHandler
-    public void onPlayerWaystoneClick(PlayerInteractEvent e) throws EventException {
+    public void onPlayerWaystoneClick(PlayerInteractEvent e) {
+//guard clause that sees if the event is cancelled
         if (e instanceof Cancellable && ((Cancellable) e).isCancelled()) {
-            e.setCancelled(false);
+            ((Cancellable) e).setCancelled(false);
+            // e.setCancelled(false);
         }
 
         Player p = e.getPlayer();
-        Block b = null;
+        Block b;
 
+        if (p.getTargetBlockExact(5) == null) return;
 
-        if (p.getTargetBlockExact(5) != null) {
-            b = p.getTargetBlockExact(5);
-        } else {
-            return;
-        }
+        b = p.getTargetBlockExact(5);
 
-        if (!(b.getState() instanceof TileState)) return;
+        if (b == null) return;
 
-
-        TileState tileState = (TileState) b.getState();
-
+        if (!(b.getState() instanceof TileState tileState)) return;
 
         PersistentDataContainer container = tileState.getPersistentDataContainer();
 
+        // All the logic to add the player to the waystone when right-clicking
         if (e.getAction().name().contains("RIGHT") && container.has(Keys.WAYSTONE, PersistentDataType.STRING)) {
 
             String name = tileState.getPersistentDataContainer().get(Keys.WAYSTONE, PersistentDataType.STRING);
@@ -69,40 +61,34 @@ public class WaystoneInteract implements Listener {
             //check if the waysone is null
 
 
-            // Just de
-            if (waystone == null) {
-                p.sendMessage("Waystone Fail: " + name);
-            } else {
+            // Just debugging
+            {
+                if (waystone == null) {
+                    p.sendMessage("Waystone Fail: " + name);
+                    return;
+                }
                 p.sendMessage("Clicked Waystone Name: " + name);
             }
-
 
             if (!waystone.containsPlayer(p.getName())) {
                 waystone.addPlayer(p.getName());
                 //e.getItem().getItemMeta().getPersistentDataContainer().set(Keys.WAYSTONE, PersistentDataType.STRING, waystone.getName());
                 WaystonePlacement.saveWaystone(waystone, QuickSurvival.waystonesConfig, name);
-
             } else {
                 p.sendMessage("Ya estás en la lista de este waystone");
             }
 
             openWaystoneInventory(p);
             p.sendMessage("menu abierto correctamente");
-        } else {
-            return;
         }
     }
 
     //event that locks the manipulation of the items in the waystone menu
     @EventHandler
-    public void onPlayerMenuInteraction(InventoryClickEvent e) throws EventException {
-        if (!e.getView().getTitle().equalsIgnoreCase("WaystoneMenu")) {
-            return;
-        }
+    public void onPlayerMenuInteraction(InventoryClickEvent e) {
+        if (!e.getView().getTitle().equalsIgnoreCase("WaystoneMenu")) return;
 
-        if (e.getClickedInventory() == null) {
-            return;
-        }
+        if (e.getClickedInventory() == null) return;
 
         e.setCancelled(true);
     }
@@ -110,7 +96,7 @@ public class WaystoneInteract implements Listener {
 
     //event that if the player uses a warp scroll
     @EventHandler
-    public void onPlayerWarpScrollUse(PlayerInteractEvent e) throws EventException {
+    public void onPlayerWarpScrollUse(PlayerInteractEvent e) {
         //guard clause that sees if the event is cancelled
         if (e instanceof Cancellable && ((Cancellable) e).isCancelled()) {
             e.setCancelled(false);
@@ -132,107 +118,88 @@ public class WaystoneInteract implements Listener {
             openWaystoneInventory(p);
             p.sendMessage("menu de warp scroll abierto correctamente");
 
-        } else {
-            return;
         }
-
     }
 
-
-    //Event that comprobates if the player break a waystone
+    //Event to check if the player break a waystone
     @EventHandler
-    public void onPlayerWaystoneBreak(BlockBreakEvent e) throws EventException {
+    public void onPlayerWaystoneBreak(BlockBreakEvent e) {
         if (e instanceof Cancellable && ((Cancellable) e).isCancelled()) {
             e.setCancelled(false);
         }
 
         Player p = e.getPlayer();
-        Block b = null;
 
-        if (p.getTargetBlockExact(5) != null) {
-            b = p.getTargetBlockExact(5);
-        } else {
-            return;
-        }
+        if (p.getTargetBlockExact(5) == null) return;
 
-        if (!(b.getState() instanceof TileState)) return;
+        Block b = p.getTargetBlockExact(5);
 
-        TileState tileState = (TileState) b.getState();
+        if (b == null) return;
+
+        if (!(b.getState() instanceof TileState tileState)) return;
 
         PersistentDataContainer container = tileState.getPersistentDataContainer();
 
         //search the info of the waystone and remove the waystone from the hashmap and the file
-        if (container.has(Keys.WAYSTONE, PersistentDataType.STRING)) {
-            String name = tileState.getPersistentDataContainer().get(Keys.WAYSTONE, PersistentDataType.STRING);
-            Waystone waystone = QuickSurvival.waystones.get(name);
-            if (waystone != null) {
-                //remove the waystone from the hashmap and the file
-                WaystonePlacement.removeWaystone(name);
-                p.sendMessage("Waystone " + name + " has been removed");
-            }
-        }
+        if (!container.has(Keys.WAYSTONE, PersistentDataType.STRING)) return;
+
+        String name = container.get(Keys.WAYSTONE, PersistentDataType.STRING);
+        Waystone waystone = QuickSurvival.waystones.get(name);
+
+        if (waystone == null) return;
+
+        WaystonePlacement.removeWaystone(name);
+        p.sendMessage("Waystone " + name + " has been removed");
     }
 
     @EventHandler
-    public void onPlayerWaystoneMenuClick(InventoryClickEvent e) throws EventException {
+    public void onPlayerWaystoneMenuClick(InventoryClickEvent e) {
 
-        if (!e.getView().getTitle().equalsIgnoreCase("WaystoneMenu")) {
-            return;
-        }
+        //guard clause that sees if the event is cancelled and if the clicked inventory is null
+        if ((!e.getView().getTitle().equalsIgnoreCase("WaystoneMenu")) || (e.getClickedInventory() == null)) return;
 
-        if (e.getClickedInventory() == null) {
-            return;
-        }
-        //get the name of the item who clicked the player
-        ItemStack item = e.getCurrentItem();
+        ItemStack item = e.getCurrentItem();//get the name of the item who clicked the player
+
         //guard clause that sees if the item is null
         if (item == null) return;
-        ItemMeta itemMeta = item.getItemMeta();
-        //guard clause that sees if the item has a meta
-        if (itemMeta == null) return;
 
-        String itemName = itemMeta.getDisplayName();
-        //search the waystone in the hashmap
-        Waystone waystone = QuickSurvival.waystones.get(itemName);
-        //guard clause that sees if the waystone is null
-        if (waystone == null) return;
+        ItemMeta itemMeta = item.getItemMeta();//get the item meta
 
+        if (itemMeta == null) return;//guard clause that sees if the item has a meta
 
-        //comprobate if the player clicked "Left"(Teleport) or "Right"(open OptionMenu)
+        String itemName = itemMeta.getDisplayName();//get the name of the item
+        Waystone waystone = QuickSurvival.waystones.get(itemName);//search the waystone in the hashmap
 
+        if (waystone == null) return;//guard clause that sees if the waystone is null
+
+        //check if the player clicked "Left"(Teleport) or "Right"(open OptionMenu)
         if (e.getClick().isRightClick()) {
             //open the waystone menu
             WaystoneMenuGui.openWaystoneOptionMenu((Player) e.getWhoClicked(), waystone);
             //send message to player
             e.getWhoClicked().sendMessage("Menu de " + ChatColor.GOLD + " " + waystone.getName() + " " + ChatColor.RESET + "abierto correctamente");
             return;
-        } else if (e.getClick().isLeftClick()) {
-            //teleport the player to the waystone
+        }
 
+        if (e.getClick().isLeftClick()) {
+            //teleport the player to the waystone
             teleportPlayer((Player) e.getWhoClicked(), waystone);
             //send message to player
             e.getWhoClicked().sendMessage("Teleporting to " + ChatColor.GOLD + " " + waystone.getName());
-
         }
     }
 
 
     public static void openWaystoneInventory(Player player) {
-        // Crear el inventario del "Waystone"
+        // Create the inventory
         Inventory waystoneInventory = Bukkit.createInventory(null, 54, "WaystoneMenu");
-
-
-        // Cargar los elementos del inventario
-        Queue<ItemStack> itemStacks = loadWaystoneItems(player);
-
-        // Agregar los elementos al inventario
+        Queue<ItemStack> itemStacks = loadWaystoneItems(player);// Load the items
+        // Add the items to the inventory
         itemStacks.forEach(waystoneInventory::addItem);
         //send message to player
         player.sendMessage("Inventario cargado correctamente");
-        // Abrir el inventario para el jugador
+        // Open the inventory
         player.openInventory(waystoneInventory);
-
-
     }
 
     private void teleportPlayer(Player player, Waystone waystone) {
@@ -246,7 +213,6 @@ public class WaystoneInteract implements Listener {
         player.playSound(player.getLocation(), Sound.ENTITY_ENDERMAN_TELEPORT, 1.0f, 1.0f);
 
         //make a particle effect intense to the player
-
         player.spawnParticle(org.bukkit.Particle.PORTAL, player.getLocation(), 100, 0.5, 1, 0.5, 0.1);
         player.spawnParticle(org.bukkit.Particle.END_ROD, player.getLocation(), 100, 0.5, 1, 0.5, 0.1);
         player.spawnParticle(org.bukkit.Particle.PORTAL, player.getLocation(), 100, 0.5, 1, 0.5, 0.1);
@@ -255,14 +221,12 @@ public class WaystoneInteract implements Listener {
 
     //method that consumes the warpscroll
     private void consumeWarpScroll(Player player) {
-        //guard clause that sees if the player is looking at a tilestate block
-        if (isPlayerLookingAtTileState(player)) return;
+        //guard clause that sees if the player is looking at a tilestate block or if the player is in creative mode
+        if (isPlayerLookingAtTileState(player) || player.getGameMode().name().contains("CREATIVE")) return;
 
-        //see if the player is in creative mode
-        if (player.getGameMode().name().contains("CREATIVE")) return;
-
+        PlayerInventory inventory = player.getInventory();
         //get the item in the main hand
-        ItemStack item = player.getInventory().getItemInMainHand();
+        ItemStack item = inventory.getItemInMainHand();
         //guard clause that sees if the item is null
         if (item == null) return;
         //get the item meta
@@ -273,7 +237,6 @@ public class WaystoneInteract implements Listener {
         PersistentDataContainer container = meta.getPersistentDataContainer();
         //guard clause that sees if the container has the warp scroll key
         if (container.has(Keys.WARP_SCROLL, PersistentDataType.STRING)) {
-
             //remove the item from the inventory
             player.getInventory().getItemInMainHand().setAmount(item.getAmount() - 1);
         }

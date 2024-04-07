@@ -57,7 +57,7 @@ public class QuickSurvival extends JavaPlugin {
     }
 
     public void registerEvents() {
-        getServer().getPluginManager().registerEvents(new TestEvent(), this);
+        getServer().getPluginManager().registerEvents(new SpawnerEvents(), this);
         getServer().getPluginManager().registerEvents(new WaystoneMenu(), this);
         getServer().getPluginManager().registerEvents(new BackpackInteract(), this);
         getServer().getPluginManager().registerEvents(new CraftBackpack(), this);

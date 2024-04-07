@@ -38,50 +38,47 @@ public class WaystoneBannerInteract implements CommandExecutor, TabCompleter {
 
         switch (args[0]) {
             case "open":
-                Block b = null;
-
-                if (p.getTargetBlockExact(5) != null) {
-                    b = p.getTargetBlockExact(5);
-                } else {
+                Block b = p.getTargetBlockExact(5);
+                if (b == null) {
                     p.sendMessage("Apunta a un bloque");
+                    return true;
                 }
 
-
-                if (b.getState() instanceof TileState) {
-                    p.sendMessage("este bloque si es un tilestate");
-                    TileState tileState = (TileState) b.getState();
-                    PersistentDataContainer container = tileState.getPersistentDataContainer();
-                    if (container.has(Keys.WAYSTONE, PersistentDataType.STRING)) {
-                        openWaystoneInventory(p);
-                    } else {
-                        p.sendMessage("Este bloque no tiene Key: WAYSTONE");
-                    }
-
-                } else {
+                if (!(b.getState() instanceof TileState)) {
                     p.sendMessage("Este bloque no es una Waystone");
+                    return true;
                 }
 
+                p.sendMessage("este bloque si es un tilestate");
+                TileState tileState = (TileState) b.getState();
+                PersistentDataContainer container = tileState.getPersistentDataContainer();
+
+                if (!container.has(Keys.WAYSTONE, PersistentDataType.STRING)) {
+                    p.sendMessage("Este bloque no tiene Key: WAYSTONE");
+                    return true;
+                }
+
+                openWaystoneInventory(p);
                 break;
+
             case "set":
-                Block block = null;
-
-                if (p.getTargetBlockExact(5) != null) {
-                    block = p.getTargetBlockExact(5);
-                    if (block.getState() instanceof TileState) {
-                        p.sendMessage("este bloque si es un tilestate");
-                        TileState tileState = (TileState) block.getState();
-
-                        tileState.getPersistentDataContainer().set(Keys.WAYSTONE, PersistentDataType.STRING, "true");
-                        tileState.update();
-                        p.sendMessage("Bloque asignado como Waystone");
-
-                    } else {
-                        p.sendMessage("Este bloque no tiene Tilestate");
-                    }
-                } else {
+                Block block = p.getTargetBlockExact(5);
+                if (block == null) {
                     p.sendMessage("Apunta a un bloque");
+                    return true;
                 }
 
+                if (!(block.getState() instanceof TileState)) {
+                    p.sendMessage("Este bloque no tiene Tilestate");
+                    return true;
+                }
+
+                p.sendMessage("este bloque si es un tilestate");
+                TileState tileStateSet = (TileState) block.getState();
+                tileStateSet.getPersistentDataContainer().set(Keys.WAYSTONE, PersistentDataType.STRING, "true");
+                tileStateSet.update();
+                p.sendMessage("Bloque asignado como Waystone");
+                break;
 
             default:
                 noArgs(player);

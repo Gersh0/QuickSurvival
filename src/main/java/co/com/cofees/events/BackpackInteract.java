@@ -2,7 +2,6 @@ package co.com.cofees.events;
 
 import co.com.cofees.QuickSurvival;
 import co.com.cofees.tools.Keys;
-import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
 import org.bukkit.block.Block;
 import org.bukkit.block.TileState;
@@ -11,9 +10,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.event.inventory.InventoryCloseEvent;
-import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -173,7 +170,7 @@ public class BackpackInteract implements Listener {
     public String getBackpackUUID(Player player) {
         PersistentDataContainer container = Objects.requireNonNull(player.getInventory().getItemInMainHand().getItemMeta()).getPersistentDataContainer();
 
-        String UUIDbackpack = null;
+        String UUIDbackpack;
         if (container.has(Keys.BACKPACK_CODE, PersistentDataType.STRING)) {
             UUIDbackpack = player.getInventory().getItemInMainHand().getItemMeta().getPersistentDataContainer().get(Keys.BACKPACK_CODE, PersistentDataType.STRING);
         } else {

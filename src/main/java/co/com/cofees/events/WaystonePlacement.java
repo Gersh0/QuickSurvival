@@ -22,7 +22,6 @@ import org.bukkit.persistence.PersistentDataType;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
 
@@ -34,35 +33,28 @@ public class WaystonePlacement implements Listener {
 
         ItemStack waypointStack = player.getInventory().getItemInMainHand();
 
-        if (waypointStack.getItemMeta() == null) return;//el mismo guard clause
+        if (waypointStack.getItemMeta() == null || !isWaystoneItem(waypointStack)) return;
 
-        if (isWaystoneItem(waypointStack)) {
-            PersistentDataContainer container = Objects.requireNonNull(waypointStack.getItemMeta()).getPersistentDataContainer();
+        PersistentDataContainer container = Objects.requireNonNull(waypointStack.getItemMeta()).getPersistentDataContainer();
+        if (!isRightClick(event) || !hasWaystoneTag(container) || !isClickedBlockValid(event)) return;
 
-            if (isRightClick(event) && hasWaystoneTag(container) && isClickedBlockValid(event)) {
-                Location blockLocation = getBlockLocationAbove(Objects.requireNonNull(event.getClickedBlock()).getLocation());
-
-                if (isEmptyBlock(blockLocation)) {
-
-
-                    //Process to save the waystone to the yml file
-                    List<String> players = new ArrayList<>();
-                    players.add(player.getName());
-                    Waystone waystone = new Waystone(blockLocation, waypointStack.getItemMeta().getDisplayName(), players, null
-                    );
-
-                    consumeItemInHand(player);
-                    placeNewWaystoneBlock(waystone, blockLocation);
-
-                    saveWaystone(waystone, QuickSurvival.waystonesConfig, waystone.getName());
-
-                    player.sendMessage(ChatColor.GREEN + "Se ha colocado un nuevo Waystone correctamente.");
-                } else {
-                    player.sendMessage(ChatColor.RED + "No se puede colocar el Waystone aquí. El bloque no está vacío.");
-                }
-            }
+        Location blockLocation = getBlockLocationAbove(Objects.requireNonNull(event.getClickedBlock()).getLocation());
+        if (!isEmptyBlock(blockLocation)) {
+            player.sendMessage(ChatColor.RED + "No se puede colocar el Waystone aquí. El bloque no está vacío.");
+            return;
         }
 
+//Process to save the waystone to the yml file
+        List<String> players = new ArrayList<>();
+        players.add(player.getName());
+        Waystone waystone = new Waystone(blockLocation, waypointStack.getItemMeta().getDisplayName(), players, null);
+
+        consumeItemInHand(player);
+        placeNewWaystoneBlock(waystone, blockLocation);
+
+        saveWaystone(waystone, QuickSurvival.waystonesConfig, waystone.getName());
+
+        player.sendMessage(ChatColor.GREEN + "Se ha colocado un nuevo Waystone correctamente.");
         event.setCancelled(true);
     }
 
@@ -115,10 +107,10 @@ public class WaystonePlacement implements Listener {
     //this methos will be used to save the waystone to the yml file
     public static void saveWaystone(Waystone waystone, YamlConfiguration config, String path) {
 
-    //based on the setHome class in Home command we will addapt the save method to the waystone class
+        //based on the setHome class in Home command we will addapt the save method to the waystone class
         config.set(path + ".name", waystone.getName());
         config.set(path + ".icon", waystone.getIcon());
-        LocationHandler.serializeLocation(waystone.getLocation(), config,path + ".location"); //saves location in waystonConfig.yml
+        LocationHandler.serializeLocation(waystone.getLocation(), config, path + ".location"); //saves location in waystonConfig.yml
         config.set(path + ".players", waystone.getPlayers());
 
 
@@ -166,7 +158,6 @@ public class WaystonePlacement implements Listener {
 //borrar waystone del yml cuando se rompa el bloque
 
 //ademas de los debidos metodos de acceso y modificacion
-
 
 
 //Hashmap<String, Waystone> waystones = new Hasmap<>();
