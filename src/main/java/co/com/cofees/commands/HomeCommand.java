@@ -70,6 +70,14 @@ public class HomeCommand implements CommandExecutor, TabCompleter {
         String subCommandName = args[0];
         CommandExecutor subCommand = subCommands.get(subCommandName);//check if the subcommand exists in the HashMap
 
+        if (subCommandName.equalsIgnoreCase("set") || subCommandName.equalsIgnoreCase("delete")) {
+            if(QuickSurvival.homes.get(player.getName()).containsKey(subCommandName)){
+                TextTools.sendMessage(player, "Teleporting to home " + subCommandName, "", QuickSurvival.getPlugin(QuickSurvival.class));
+                player.teleport(playerHomes.get(subCommandName));
+                return true;
+            }
+        }
+
         if (subCommand == null) {//If the subcommand does not exist in HashMap teleports the player to the home with the name of the subcommand
             if (playerHomes == null || playerHomes.isEmpty()) {
                 player.sendMessage("You don't have any homes set");
@@ -81,7 +89,7 @@ public class HomeCommand implements CommandExecutor, TabCompleter {
             }
             // Just debug
             // TextTools.sendMessage(player, Optional.of("Teleporting to home " + playerHomes.get(subCommandName).toString()), "", QuickSurvival.getPlugin(QuickSurvival.class));
-            TextTools.sendMessage(player, Optional.of("Teleporting to home " + subCommandName), "", QuickSurvival.getPlugin(QuickSurvival.class));
+            TextTools.sendMessage(player, "Teleporting to home " + subCommandName, "", QuickSurvival.getPlugin(QuickSurvival.class));
             player.teleport(playerHomes.get(subCommandName));
             return true;
         }

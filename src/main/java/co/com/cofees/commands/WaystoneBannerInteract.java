@@ -11,6 +11,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -20,64 +21,59 @@ public class WaystoneBannerInteract implements CommandExecutor, TabCompleter {
 
 
     @Override
-    public boolean onCommand(CommandSender sender, Command command, String alias, String[] args) throws CommandException {
+    public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String alias, String[] args) throws CommandException {
         //Issued from console
-        if (!(sender instanceof Player)) {
+        if (!(sender instanceof Player player)) {
             sender.sendMessage(text("&4Can't use this command from console."));
             return true;
         }
 
         //Player issued command
-        Player player = (Player) sender;
         if (args.length <= 0) {
             player.sendMessage(text("&bTest Successfull."));
             return true;
         }
 
-        Player p = (Player) sender;
-
         switch (args[0]) {
             case "open":
-                Block b = p.getTargetBlockExact(5);
+                Block b = player.getTargetBlockExact(5);
                 if (b == null) {
-                    p.sendMessage("Apunta a un bloque");
+                    player.sendMessage("Apunta a un bloque");
                     return true;
                 }
 
-                if (!(b.getState() instanceof TileState)) {
-                    p.sendMessage("Este bloque no es una Waystone");
+                if (!(b.getState() instanceof TileState tileState)) {
+                    player.sendMessage("Este bloque no es una Waystone");
                     return true;
                 }
 
-                p.sendMessage("este bloque si es un tilestate");
-                TileState tileState = (TileState) b.getState();
+                player.sendMessage("este bloque si es un tilestate");
                 PersistentDataContainer container = tileState.getPersistentDataContainer();
 
                 if (!container.has(Keys.WAYSTONE, PersistentDataType.STRING)) {
-                    p.sendMessage("Este bloque no tiene Key: WAYSTONE");
+                    player.sendMessage("Este bloque no tiene Key: WAYSTONE");
                     return true;
                 }
 
-                openWaystoneInventory(p);
+                openWaystoneInventory(player);
                 break;
 
             case "set":
-                Block block = p.getTargetBlockExact(5);
+                Block block = player.getTargetBlockExact(5);
                 if (block == null) {
-                    p.sendMessage("Apunta a un bloque");
+                    player.sendMessage("Apunta a un bloque");
                     return true;
                 }
 
-                if (!(block.getState() instanceof TileState)) {
-                    p.sendMessage("Este bloque no tiene Tilestate");
+                if (!(block.getState() instanceof TileState tileStateSet)) {
+                    player.sendMessage("Este bloque no tiene Tilestate");
                     return true;
                 }
 
-                p.sendMessage("este bloque si es un tilestate");
-                TileState tileStateSet = (TileState) block.getState();
+                player.sendMessage("este bloque si es un tilestate");
                 tileStateSet.getPersistentDataContainer().set(Keys.WAYSTONE, PersistentDataType.STRING, "true");
                 tileStateSet.update();
-                p.sendMessage("Bloque asignado como Waystone");
+                player.sendMessage("Bloque asignado como Waystone");
                 break;
 
             default:
@@ -110,9 +106,8 @@ public class WaystoneBannerInteract implements CommandExecutor, TabCompleter {
 
     //COMPLETAR COMANDO
     @Override
-    public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
+    public List<String> onTabComplete(@NotNull CommandSender sender, Command command, @NotNull String alias, String[] args) {
         if (command.getName().equalsIgnoreCase("waystone") && args.length == 1) {
-
             List<String> completions = new ArrayList<>();
             completions.add("open");
             completions.add("set");

@@ -77,8 +77,7 @@ public class BackpackInteract implements Listener {
         int inventorySize = roundInventorySize(9 * backpackLevel);
 
 
-
-        Inventory backpackInventory = Bukkit.createInventory(null, inventorySize,"Backpack");
+        Inventory backpackInventory = Bukkit.createInventory(null, inventorySize, "Backpack");
         // Crear el inventario de la mochila
         if (restoreInventory(player) != null) {
             backpackInventory = restoreInventory(player);
@@ -106,7 +105,8 @@ public class BackpackInteract implements Listener {
 
     @EventHandler
     public void onInventoryClose(InventoryCloseEvent event) throws IOException {
-        if (event.getInventory().getHolder() != null) return; // poner otra condicion para limitar el inventario a solo backpacks
+        if (event.getInventory().getHolder() != null)
+            return; // poner otra condicion para limitar el inventario a solo backpacks
         //comprobar el persisten data container para guardar el inventario de la mochila
 
         //wareclouse if the inventory isn't a backpack inventory
@@ -118,7 +118,7 @@ public class BackpackInteract implements Listener {
 
         ItemStack handItem = player.getInventory().getItemInMainHand();
 
-        if (handItem.getItemMeta() == null)return;
+        if (handItem.getItemMeta() == null) return;
 
         PersistentDataContainer container = Objects.requireNonNull(handItem.getItemMeta()).getPersistentDataContainer();
 
@@ -152,8 +152,12 @@ public class BackpackInteract implements Listener {
             restoreInventory(player);
         }
     }*/
-
-
+    // function to drop the backpack if the player try to close the inventory with the backpack inside
+    private void dropBackpack(Player player) {
+        ItemStack handItem = player.getInventory().getItemInMainHand();
+        player.getWorld().dropItem(player.getLocation(), handItem);
+        player.getInventory().setItemInMainHand(null);
+    }
     private File getInventoryFolder() {
         File pluginFolder = QuickSurvival.getInstance().getDataFolder();
         File inventoryFolder = new File(pluginFolder, "inventory");
@@ -186,7 +190,6 @@ public class BackpackInteract implements Listener {
         if (b != null && b.getState() instanceof TileState) return;
 
 
-
         String UUIDbackpack = getBackpackUUID(p);
 
         File f = new File(getInventoryFolder(), p.getName() + UUIDbackpack + "BInventory" + ".yml");
@@ -196,6 +199,8 @@ public class BackpackInteract implements Listener {
         for (ItemStack item : inventory.getContents()) {
             if (item != null) {
                 items.add(item.serialize());
+            } else {
+                items.add(null);
             }
         }
 
@@ -217,9 +222,10 @@ public class BackpackInteract implements Listener {
         if (items != null) {
             // Ajustar el tamaño para que sea un múltiplo de 9
             int adjustedSize = roundInventorySize(items.size());
-            Inventory inventory = Bukkit.createInventory(null, adjustedSize,"Backpack");
+            Inventory inventory = Bukkit.createInventory(null, adjustedSize, "Backpack");
 
             for (int i = 0; i < items.size(); i++) {
+                if (items.get(i) == null) continue;
                 ItemStack itemStack = ItemStack.deserialize(items.get(i));
                 inventory.setItem(i, itemStack);
             }

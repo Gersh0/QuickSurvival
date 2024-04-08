@@ -39,7 +39,7 @@ public class NewTestCommand implements CommandExecutor, TabCompleter {
             // Prepare a success message
             String message = "Test successful from ";
             // Send the message to the sender (player or console)
-            return sendMessage(sender, Optional.of(message + sender.getName()), message + "console!", core);
+            return sendMessage(sender, message + sender.getName(), message + "console!", core);
         }
 
         // Get the name of the subcommand from the first argument
@@ -53,7 +53,7 @@ public class NewTestCommand implements CommandExecutor, TabCompleter {
             // Prepare an error message
             String message = "Invalid command";
             // Send the error message to the sender
-            return sendMessage(sender, Optional.empty(), message, core);
+            return sendMessage(sender, "", message, core);
         }
 
         // Prepare the arguments for the subcommand by removing the first argument
