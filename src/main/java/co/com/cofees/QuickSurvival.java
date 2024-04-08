@@ -22,6 +22,8 @@ public class QuickSurvival extends JavaPlugin {
     private static VeinMiner veinMiner = new VeinMiner();
     private static TreeCapitator treeCapitator = new TreeCapitator();
 
+    private static int currentSleepPercentage = 100;
+
 
     public YamlConfiguration homesConfig, backpackConfig;
 
@@ -36,7 +38,7 @@ public class QuickSurvival extends JavaPlugin {
         homesConfig = getConfigFile("homes.yml", this);//create a file for homes
         backpackConfig = getConfigFile("backpacks.yml", this);
         CustomRecipes.registerCustomCrafting();
-        changeSleepingPlayers("50");
+        //changeSleepingPlayers("50");
     }
 
     public void changeSleepingPlayers(String percentage) {
@@ -115,6 +117,13 @@ public class QuickSurvival extends JavaPlugin {
 
     public static boolean isTreeCapitatorActive(){
         return treeCapitator.isActive();
+    }
+
+    public static int getSleepingPercentage(){  return currentSleepPercentage;}
+
+    public static void setSleepingPercentage(int percentage){
+        currentSleepPercentage = percentage;
+        Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "gamerule playersSleepingPercentage " + percentage);
     }
 
 }

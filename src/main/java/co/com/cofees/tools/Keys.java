@@ -4,6 +4,7 @@ import co.com.cofees.QuickSurvival;
 import org.bukkit.NamespacedKey;
 
 public class Keys {
+    public static  final NamespacedKey PERCENTAGE = new NamespacedKey(QuickSurvival.getInstance(), "Percentage");
     public static final NamespacedKey WAYSTONE = new NamespacedKey(QuickSurvival.getInstance(), "Waystone");
     public static final NamespacedKey BACKPACKLV1 = new NamespacedKey(QuickSurvival.getInstance(), "BackpackLv1");
     public static final NamespacedKey BACKPACKLV1Recipe = new NamespacedKey(QuickSurvival.getInstance(), "BackpackLv1Recipe");

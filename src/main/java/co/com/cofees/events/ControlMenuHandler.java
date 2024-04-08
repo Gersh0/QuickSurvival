@@ -2,6 +2,8 @@ package co.com.cofees.events;
 
 import co.com.cofees.QuickSurvival;
 import co.com.cofees.tools.ControlMenuGUI;
+import co.com.cofees.tools.Keys;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
@@ -9,6 +11,8 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.persistence.PersistentDataContainer;
+import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 
@@ -17,19 +21,18 @@ import java.util.Objects;
 
 public class ControlMenuHandler implements Listener {
 
-
-
     ControlMenuGUI guiManager = new ControlMenuGUI();
 
+    //lista de los posibles menus
+    final String MAIN_MENU = "Main Menu";
+    final String UHC_MENU = "UHC Menu";
+    final String GENERAL_MENU = "General Menu";
+    final String SLEEP_MENU = "Sleep Menu";
+
     @EventHandler
-    public void onMenuClick(InventoryClickEvent event){
+    public void onMainMenuClick(InventoryClickEvent event){
 
         Player player = (Player)event.getWhoClicked();
-
-        //lista de los posibles menus
-        final String MAIN_MENU = "Main Menu";
-        final String UHC_MENU = "UHC Menu";
-        final String GENERAL_MENU = "General Menu";
 
         if(event.getView().getTitle().equals(MAIN_MENU)){
 
@@ -47,9 +50,7 @@ public class ControlMenuHandler implements Listener {
                 case GRASS_BLOCK:
                     if(Objects.requireNonNull(event.getCurrentItem().getItemMeta()).getCustomModelData() == 10){
                         // Se cambia al menu de eventos general
-                        player.closeInventory();
-                        guiManager.openGeneralMenu(player);
-                        player.sendMessage("switched to general menu");
+                        reopenGeneralMenu(player);
                     }
                     break;
 
@@ -58,16 +59,21 @@ public class ControlMenuHandler implements Listener {
                         // Se cambia al menu de eventos de uhc
                         player.closeInventory();
                         //abrir menu de UHC
-                        player.sendMessage("switched to UHC menu");
+
                     }
                     break;
 
             }
         }
+    }
 
-        else if(event.getView().getTitle().equals(GENERAL_MENU)){
+    @EventHandler
+    public void onGeneralMenuClick(InventoryClickEvent event){
+        if(event.getView().getTitle().equals(GENERAL_MENU)){
 
-            switch (event.getCurrentItem().getType()){
+            Player player = (Player)event.getWhoClicked();
+
+            switch (Objects.requireNonNull(event.getCurrentItem()).getType()){
                 case BARRIER:
                     //Se cierra el menu general
                     if(Objects.requireNonNull(event.getCurrentItem().getItemMeta()).getCustomModelData() == 10){
@@ -108,15 +114,57 @@ public class ControlMenuHandler implements Listener {
                         reopenGeneralMenu(player);
                     }
                     break;
+                case RED_BED:
+                    if(Objects.requireNonNull(event.getCurrentItem().getItemMeta()).getCustomModelData() == 10){
+                        //se activa el treeCapitator
+                        player.closeInventory();
+                        guiManager.openSleepEventMenu(player);
+                    }
+                    break;
 
             }
         }
+    }
 
+    @EventHandler
+    public void onSleepMenuClick(InventoryClickEvent event){
 
+        Player player = (Player)event.getWhoClicked();
+
+        if(event.getView().getTitle().equals(SLEEP_MENU)){
+            switch (Objects.requireNonNull(event.getCurrentItem()).getType()) {
+                case BARRIER:
+                    //Se cierra el menu general
+                    if (Objects.requireNonNull(event.getCurrentItem().getItemMeta()).getCustomModelData() == 10) {
+                        player.closeInventory();
+                        player.sendMessage("general control menu was closed");
+                    }
+                    break;
+
+                case GRASS_BLOCK:
+                    // se cambia al menu principal
+                    if (Objects.requireNonNull(event.getCurrentItem().getItemMeta()).getCustomModelData() == 10) {
+                        reopenGeneralMenu(player);
+                    }
+                    break;
+                case WHITE_BED,GREEN_BED:
+                    if (Objects.requireNonNull(event.getCurrentItem().getItemMeta()).getCustomModelData() == 10) {
+                        int percentage = event.getCurrentItem().getItemMeta().getPersistentDataContainer().get(Keys.PERCENTAGE, PersistentDataType.INTEGER);
+                        QuickSurvival.setSleepingPercentage(percentage);
+                        reopenSleepMenu(player);
+                    }
+                    break;
+            }
+        }
     }
 
     public void reopenGeneralMenu(Player player){
         player.closeInventory();
         guiManager.openGeneralMenu(player);
+    }
+
+    public void reopenSleepMenu(Player player){
+        player.closeInventory();
+        guiManager.openSleepEventMenu(player);
     }
 }
