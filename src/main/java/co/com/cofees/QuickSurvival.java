@@ -11,6 +11,7 @@ import org.bukkit.Location;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
@@ -24,9 +25,13 @@ public class QuickSurvival extends JavaPlugin {
     public static HashMap<String, HashMap<String, Location>> homes = new HashMap<>();
     public static HashMap<String, Waystone> waystones = new HashMap<>();
     private static QuickSurvival plugin;
+    PluginDescriptionFile desc = getDescription();
     private static VacaNagasaki cowEvent = new VacaNagasaki();
     private static VeinMiner veinMiner = new VeinMiner();
     private static TreeCapitator treeCapitator = new TreeCapitator();
+
+    private static int currentSleepPercentage = 100;
+
 
     @Override
     public void onEnable() {
@@ -37,8 +42,17 @@ public class QuickSurvival extends JavaPlugin {
         registerMaps();
         registerCommands();
         registerEvents();
-        changeSleepingPlayers("50");
-        Bukkit.getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', PREFIX + "&bPlugin enabled."));//Versión, Prefix PluginName
+        Bukkit.getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', "&bPlugin enabled."));//Versión, Prefix PluginName
+        homesConfig = getConfigFile("homes.yml", this);//create a file for homes
+        backpackConfig = getConfigFile("backpacks.yml", this);
+        CustomRecipes.registerCustomCrafting();
+        //changeSleepingPlayers("50");
+    }
+
+    public void changeSleepingPlayers(String percentage) {
+        Bukkit.getScheduler().runTaskLater(this, () -> {
+            Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "gamerule playersSleepingPercentage " + percentage);
+        }, 1);
     }
 
     @Override
@@ -47,6 +61,7 @@ public class QuickSurvival extends JavaPlugin {
     }
 
     public void registerCommands() {
+        this.getCommand("test").setExecutor(new TestCommand());
         this.getCommand("explosivecows").setExecutor(new ExplosiveCows());
         this.getCommand("test").setExecutor(new NewTestCommand(this));
         this.getCommand("home").setExecutor(new HomeCommand());
@@ -81,17 +96,6 @@ public class QuickSurvival extends JavaPlugin {
         //Fill the information from the configuration files to the maps
         fillInfoFromYML(homesConfig, getHomes());
         fillInfoFromYML(waystonesConfig, getWaystones());
-    }
-
-    public void changeSleepingPlayers(String percentage) {
-        Bukkit.getScheduler()
-                .runTaskLater(
-                        this,
-                        () -> Bukkit.dispatchCommand(
-                                Bukkit.getConsoleSender(),
-                                "gamerule playersSleepingPercentage " + percentage
-                        ),
-                        1);
     }
 
     public void fillInfoFromYML(YamlConfiguration config, Consumer<String> function) {
@@ -137,7 +141,7 @@ public class QuickSurvival extends JavaPlugin {
     public YamlConfiguration getConfigFile(String fileName, JavaPlugin plugin) {
         File configFile = new File(plugin.getDataFolder(), fileName);
         if (!configFile.exists()) {
-            plugin.getLogger().warning("File " + fileName + " doesn't exists. Creating file...");
+            plugin.getLogger().warning("File " + fileName + " doesn't exist. Creating file...");
             plugin.saveResource(fileName, false);
         }
         return YamlConfiguration.loadConfiguration(configFile);
@@ -175,5 +179,11 @@ public class QuickSurvival extends JavaPlugin {
         return treeCapitator.isActive();
     }
 
+    public static int getSleepingPercentage(){  return currentSleepPercentage;}
+
+    public static void setSleepingPercentage(int percentage){
+        currentSleepPercentage = percentage;
+        Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "gamerule playersSleepingPercentage " + percentage);
+    }
 
 }
