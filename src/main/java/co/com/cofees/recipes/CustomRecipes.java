@@ -187,7 +187,7 @@ public class CustomRecipes {
         // Registrar el crafteo
         Bukkit.addRecipe(bl4);
 
-        //backpack lv4
+        //backpack lv5
 
         // Crear el ítem que se obtendrá al realizar el crafteo
         ItemStack backpackLv5 = new ItemStack(Material.CLOCK);
