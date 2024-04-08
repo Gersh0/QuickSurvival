@@ -15,7 +15,10 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class HomeCommand implements CommandExecutor, TabCompleter {
 
@@ -32,7 +35,7 @@ public class HomeCommand implements CommandExecutor, TabCompleter {
         subCommandCompleters.put(name, completer);
     }
 
-    public Location getHomeLocation(HashMap<String, Location> homes){
+    public Location getHomeLocation(HashMap<String, Location> homes) {
         return homes.values()
                 .stream()
                 .findFirst()
@@ -70,13 +73,6 @@ public class HomeCommand implements CommandExecutor, TabCompleter {
         String subCommandName = args[0];
         CommandExecutor subCommand = subCommands.get(subCommandName);//check if the subcommand exists in the HashMap
 
-        if (subCommandName.equalsIgnoreCase("set") || subCommandName.equalsIgnoreCase("delete")) {
-            if(QuickSurvival.homes.get(player.getName()).containsKey(subCommandName)){
-                TextTools.sendMessage(player, "Teleporting to home " + subCommandName, "", QuickSurvival.getPlugin(QuickSurvival.class));
-                player.teleport(playerHomes.get(subCommandName));
-                return true;
-            }
-        }
 
         if (subCommand == null) {//If the subcommand does not exist in HashMap teleports the player to the home with the name of the subcommand
             if (playerHomes == null || playerHomes.isEmpty()) {
@@ -86,6 +82,13 @@ public class HomeCommand implements CommandExecutor, TabCompleter {
             if (!playerHomes.containsKey(subCommandName)) {
                 player.sendMessage("Home " + subCommandName + " does not exist");
                 return false;
+            }
+            if ((subCommandName.equalsIgnoreCase("set") || subCommandName.equalsIgnoreCase("delete")) && args.length == 1) {
+                if (QuickSurvival.homes.get(player.getName()).containsKey(subCommandName)) {
+                    TextTools.sendMessage(player, "Teleporting to home " + subCommandName, "", QuickSurvival.getPlugin(QuickSurvival.class));
+                    player.teleport(playerHomes.get(subCommandName));
+                    return true;
+                }
             }
             // Just debug
             // TextTools.sendMessage(player, Optional.of("Teleporting to home " + playerHomes.get(subCommandName).toString()), "", QuickSurvival.getPlugin(QuickSurvival.class));
