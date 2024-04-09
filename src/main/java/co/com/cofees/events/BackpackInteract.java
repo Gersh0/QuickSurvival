@@ -10,6 +10,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.Inventory;
@@ -31,7 +32,6 @@ public class BackpackInteract implements Listener {
         //Guard Clause if the player is looking at a tilestate block and if is null we will open the backpack anyway
         Block b = event.getClickedBlock();
         if (b != null && b.getState() instanceof TileState) return;
-
 
 
         Player player = event.getPlayer();
@@ -101,20 +101,22 @@ public class BackpackInteract implements Listener {
         player.sendMessage(org.bukkit.ChatColor.GREEN + "Mochila abierta");
     }
 
+    //Evitar que ponga el backpack dentro de sí mismo
+    public void onInventoryClick(InventoryClickEvent event) {
+        //código acá
+
+    }
     //SECCION DE GUARDADO
-
-
     @EventHandler
     public void onInventoryClose(InventoryCloseEvent event) throws IOException {
         if (event.getInventory().getHolder() != null)
             return; // poner otra condicion para limitar el inventario a solo backpacks
         //comprobar el persisten data container para guardar el inventario de la mochila
-
-        //wareclouse if the inventory isn't a backpack inventory
+        //guard clause to check if the inventory isn't a backpack inventory
         if (!event.getView().getTitle().equalsIgnoreCase("Backpack")) return;
 
-
         Player player = (Player) event.getPlayer();
+        //check if the player is trying to close the inventory with the backpack inside
         Inventory inventory = event.getInventory();
 
         ItemStack handItem = player.getInventory().getItemInMainHand();
@@ -134,8 +136,6 @@ public class BackpackInteract implements Listener {
             player.sendMessage("holder: " + inventory.getHolder());
 
         }
-
-
     }
 
   /*  @EventHandler
@@ -153,12 +153,7 @@ public class BackpackInteract implements Listener {
             restoreInventory(player);
         }
     }*/
-    // function to drop the backpack if the player try to close the inventory with the backpack inside
-    private void dropBackpack(Player player) {
-        ItemStack handItem = player.getInventory().getItemInMainHand();
-        player.getWorld().dropItem(player.getLocation(), handItem);
-        player.getInventory().setItemInMainHand(null);
-    }
+
     private File getInventoryFolder() {
         File pluginFolder = QuickSurvival.getInstance().getDataFolder();
         File inventoryFolder = new File(pluginFolder, "inventory");
@@ -186,7 +181,7 @@ public class BackpackInteract implements Listener {
 
     public void saveInventory(Player p, Inventory inventory) throws IOException {
 
-        //Wareclouse if the player is looking at a tilestate block
+        //Guard clause if the player is looking at a tilestate block
         Block b = p.getTargetBlockExact(5);
         if (b != null && b.getState() instanceof TileState) return;
 

@@ -29,14 +29,13 @@ public class FlyCommand implements CommandExecutor {
         }
 
         // If the sender is not a player
-        if (!(sender instanceof Player)) {
+         if (!(sender instanceof Player player)) {
             // Log an info message indicating that fly mode has been enabled for the player specified in the arguments
             sender.getServer().getLogger().info("Fly mode toggled for " + args[0]);
             // Toggle fly mode for the player specified in the arguments
             return toggleFly(Objects.requireNonNull(sender.getServer().getPlayer(args[0])));
         }
         // Cast the sender to a Player
-        Player player = (Player) sender;
         // If no arguments are provided
         if (args.length == 0) {
             // Toggle fly mode for the player who sent the command
