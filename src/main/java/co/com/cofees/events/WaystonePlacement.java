@@ -69,7 +69,7 @@ public class WaystonePlacement implements Listener {
         Player player = (Player) event.getWhoClicked();
         //open the anvil menu
         Waystone waystone = new Waystone(player.getLocation(), waypointStack.getItemMeta().getDisplayName(), new ArrayList<>(), null);
-        WaystoneMenuGui.makeAnvilGui(player, waypointStack);
+
     }
 
     private boolean isWaystoneItem(ItemStack itemStack) {
