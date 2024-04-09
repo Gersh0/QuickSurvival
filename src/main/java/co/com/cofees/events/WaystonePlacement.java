@@ -6,6 +6,7 @@ import co.com.cofees.tools.Keys;
 import co.com.cofees.tools.LocationHandler;
 import co.com.cofees.tools.Waystone;
 import co.com.cofees.tools.WaystoneMenuGui;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -21,9 +22,12 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
+import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.scheduler.BukkitTask;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
@@ -51,7 +55,7 @@ public class WaystonePlacement implements Listener {
         players.add(player.getName());
         Waystone waystone = new Waystone(blockLocation, waypointStack.getItemMeta().getDisplayName(), players, null);
 
-        consumeItemInHand(player);
+
         placeNewWaystoneBlock(waystone, blockLocation);
 
         saveWaystone(waystone, QuickSurvival.waystonesConfig, waystone.getName());
@@ -60,15 +64,32 @@ public class WaystonePlacement implements Listener {
         event.setCancelled(true);
     }
 
+    @EventHandler
     public void onPlayerWaystoneCraft (CraftItemEvent event) {
         //see if is a waystone
         ItemStack waypointStack = event.getCurrentItem();
+
         if (waypointStack.getItemMeta() == null || !isWaystoneItem(waypointStack)) return;
 
         //get the player
         Player player = (Player) event.getWhoClicked();
+        ItemStack result = event.getCurrentItem();
+
+        //consume the materials except the waystone
+        Arrays.stream(event.getInventory().getContents()).forEach(item -> {
+            if (item != null && !item.isSimilar(waypointStack)) {
+                item.setAmount(item.getAmount() - 1);
+            }
+        });
+
         //open the anvil menu
-        Waystone waystone = new Waystone(player.getLocation(), waypointStack.getItemMeta().getDisplayName(), new ArrayList<>(), null);
+        //make a delay to open the anvil menu
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                WaystoneMenuGui.makeAnvilGuiForItem(player, result);
+            }
+        }.runTaskLater(QuickSurvival.getInstance(), 10);
 
     }
 

@@ -6,8 +6,7 @@ import co.com.cofees.tools.Keys;
 import co.com.cofees.tools.Waystone;
 import co.com.cofees.tools.WaystoneMenuGui;
 import net.md_5.bungee.api.ChatColor;
-import org.bukkit.Bukkit;
-import org.bukkit.Sound;
+import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.TileState;
@@ -26,11 +25,14 @@ import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Queue;
+
+import static org.bukkit.Bukkit.getServer;
 
 public class WaystoneInteract implements Listener {
 
@@ -228,13 +230,13 @@ public class WaystoneInteract implements Listener {
         consumeWarpScroll(player);
         //teleport the player to the waystone location
         player.teleport(waystone.getLocation());
-        player.playSound(player.getLocation(), Sound.ENTITY_ENDER_EYE_LAUNCH, 1.0f, 1.0f);
-        player.playSound(player.getLocation(), Sound.ENTITY_ENDERMAN_TELEPORT, 1.0f, 1.0f);
 
-        //make a particle effect intense to the player
-        player.spawnParticle(org.bukkit.Particle.PORTAL, player.getLocation(), 100, 0.5, 1, 0.5, 0.1);
-        player.spawnParticle(org.bukkit.Particle.END_ROD, player.getLocation(), 100, 0.5, 1, 0.5, 0.1);
-        player.spawnParticle(org.bukkit.Particle.PORTAL, player.getLocation(), 100, 0.5, 1, 0.5, 0.1);
+        player.playSound(player.getLocation(), Sound.BLOCK_AMETHYST_BLOCK_RESONATE, 1.2f, 1.0f);
+        player.playSound(player.getLocation(), Sound.ENTITY_ENDERMAN_TELEPORT, 0.75f, 2.0f);
+        player.playSound(player.getLocation(), Sound.BLOCK_BEACON_ACTIVATE, 1.0f, 1.0f);
+
+
+        generateParticleEffect(player);
 
     }
 
@@ -318,7 +320,74 @@ public class WaystoneInteract implements Listener {
         return false;
     }
 
-}
+    //method that generate a plarticle effect
+    private void generateParticleEffect(Player player) {
+
+                // Ejecutar el anillo de partículas cada tick (20 veces por segundo)
+                new BukkitRunnable() {
+                    double t = 0; // Variable para el ángulo
+                    double radius = 1.0; // Radio del anillo
+                    double duration = 3.0; // Duración en segundos
+
+                    //
+
+
+
+                    @Override
+                    public void run() {
+                        if (t >= 0.5 * Math.PI) {
+                            // Cancelar la tarea después de 3 segundos
+                            cancel();
+                            return;
+                        }
+
+                        double x = player.getLocation().getX() + radius * Math.cos(t);
+
+                        Location playerLocation = player.getLocation();
+                        // Calcular la posición del anillo
+                        //summonCircle(playerLocation, 1);
+                        summonCircle2(1, 1, 000.1,Color.PURPLE ,player);
+                        summonCircle2(3, 1, 000.1,Color.BLACK, player);
+                        summonCircle2(1, 3, 000.1,Color.BLACK, player);
+                        summonCircle2(0.5,0.5,0.1,Color.WHITE,player);
+
+                        // Incrementar el ángulo para la siguiente iteración
+                        t += Math.PI / 16; // Ajusta la velocidad del anillo según tus preferencias
+                    }
+                }.runTaskTimer(QuickSurvival.getInstance(), 0, 1); // Ejecutar cada tick (20 veces por segundo)
+            }
+
+
+    public void summonCircle(Location location, int size,Color particleColor) {
+        for (int d = 0; d <= 90; d += 1) {
+            Location particleLoc = new Location(location.getWorld(), location.getX(), location.getY(), location.getZ());
+            particleLoc.setX(location.getX() + Math.cos(d) * size);
+            particleLoc.setZ(location.getZ() + Math.sin(d) * size);
+            location.getWorld().spawnParticle(Particle.REDSTONE, particleLoc, 1, new Particle.DustOptions(particleColor, 5));
+        }
+    }
+
+    public void summonCircle2(double scaleX, double scaleY, double density,Color particleColor,Player player){
+        //int scaleX = 1;  // use these to tune the size of your circle
+        //int scaleY = 1;
+       // double density = 0.1;  // smaller numbers make the particles denser
+
+        for (double i=0; i < 2 * Math.PI ; i +=density) {
+            double x = Math.cos(i) * scaleX;
+            double y = Math.sin(i) * scaleY;
+
+            // spawn your particle here
+            player.getWorld().spawnParticle(Particle.REDSTONE, player.getLocation().add(x, 0, y), 1, new Particle.DustOptions(particleColor, 5));
+
+        }
+    }
+
+
+
+
+    }
+
+
 
 
 

@@ -191,6 +191,39 @@ public class WaystoneMenuGui {
         ;
     }
 
+    //make a anvilGui just for rename items
+    public static void makeAnvilGuiForItem(Player player, ItemStack item) {
+
+        AnvilGUI.Builder anvilGUI = new AnvilGUI.Builder();
+
+        anvilGUI
+                .plugin(QuickSurvival.getInstance())
+                .itemLeft(item)
+                .itemRight(new ItemStack(Material.BARRIER))
+                .onClick((slot, stateSnapshot) -> {
+                    if (slot != AnvilGUI.Slot.OUTPUT) {
+                        return emptyList();
+                    }
+                    if (stateSnapshot.getText().isEmpty()) {
+                        //send a message to the player
+                        stateSnapshot.getPlayer().sendMessage("The name is empty or the same as the item name :)");
+                    }
+
+                    String newName = stateSnapshot.getText();
+                    stateSnapshot.getPlayer().playSound(stateSnapshot.getPlayer().getLocation(), "block.anvil.use", 1, 1);
+                    return Arrays.asList(
+                            AnvilGUI.ResponseAction.close(),
+                            AnvilGUI.ResponseAction.run(() -> changeItemName(newName, stateSnapshot.getPlayer(), item))
+                    );
+
+                })
+                .preventClose()
+                .title("Rename Item")
+                .open(player)
+
+        ;
+    }
+
 
     public static void configureWaystone(String newName, Player player, Waystone waystone) {
 
@@ -215,6 +248,24 @@ public class WaystoneMenuGui {
 
         container.set(Keys.WAYSTONE, PersistentDataType.STRING, newName);
         tileState.update();
+    }
+
+    //set the new name to the item
+    public static void changeItemName(String newName, Player player, ItemStack item) {
+        ItemMeta itemMeta = item.getItemMeta();
+        itemMeta.setDisplayName(newName);
+        item.setItemMeta(itemMeta);
+
+        //give the item to the player if is full drop it
+        if (player.getInventory().firstEmpty() == -1) {
+            player.getWorld().dropItemNaturally(player.getLocation(), item);
+            player.sendMessage("The item has been dropped on the floor");
+            return;
+        }else {
+            player.getInventory().addItem(item);
+        }
+
+        player.sendMessage("The new name is: " + newName);
     }
 
 
