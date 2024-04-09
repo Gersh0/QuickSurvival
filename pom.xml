@@ -8,15 +8,6 @@
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-jar-plugin</artifactId>
-                <version>3.3.0</version>
-                <configuration>
-                    <outputDirectory>D:/Proyecto2/Server/plugins</outputDirectory>
-                </configuration>
-            </plugin>
-
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
                 <version>3.3.0</version> <!-- The version must be at least 3.3.0 -->
                 <executions>
@@ -45,10 +36,24 @@
                     </execution>
                 </executions>
             </plugin>
+
+
+            //Add this plugin to move the jar to the plugins folder
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>3.3.0</version>
+                <configuration>
+                    <outputDirectory>C:\Users\vorte\Downloads\UNIVERSIDAD\SERVERQUICKSURVIVAL\plugins</outputDirectory>
+                </configuration>
+            </plugin>
+
         </plugins>
 
 
     </build>
+
+
 
     <groupId>co.com.cofees</groupId>
     <artifactId>QuickSurvival</artifactId>
@@ -58,6 +63,7 @@
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <dir>${project.build.directory}</dir>
     </properties>
     <repositories>
         <!-- Agregar Spigot a Maven -->

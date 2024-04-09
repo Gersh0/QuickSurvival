@@ -1,10 +1,14 @@
 package co.com.cofees.tools;
 
 import co.com.cofees.QuickSurvival;
+import co.com.cofees.events.WaystoneInteract;
+import co.com.cofees.events.WaystonePlacement;
 import net.wesjd.anvilgui.AnvilGUI;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.block.Block;
+import org.bukkit.block.TileState;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
@@ -16,6 +20,9 @@ import org.bukkit.persistence.PersistentDataType;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
+
+import static java.util.Collections.emptyList;
 
 public class WaystoneMenuGui {
 
@@ -53,6 +60,7 @@ public class WaystoneMenuGui {
 
         waystoneOptionMenu.setItem(0, CurrentWaystoneIcon);
         clearLore(CurrentWaystoneIcon);
+
 
         player.openInventory(waystoneOptionMenu);
 
@@ -149,59 +157,77 @@ public class WaystoneMenuGui {
 
     }
 
-    public static void openAnvilRenameWaystoneMenu(Player player, Waystone waystone) {
-        player.sendMessage("name change menu was opened");
-        //create an anvil inventory to rename the waystone
-        Inventory anvil = Bukkit.createInventory(player, InventoryType.ANVIL, "Rename Waystone");
-        anvil.setItem(0, waystone.getIcon());
-        player.openInventory(anvil);
-    }
-
     public static void makeAnvilGui(Player player, Waystone waystone) {
-        AnvilGUI.Builder builder =
 
-                new AnvilGUI.Builder()
-                        .onClose(stateSnapshot -> {
-                            stateSnapshot.getPlayer().sendMessage("You closed the inventory.");
-                        })
-                        .onClick((slot, stateSnapshot) -> { // Either use sync or async variant, not both
-                            if(slot != AnvilGUI.Slot.OUTPUT) {
-                                return Collections.emptyList();
-                            }
+        AnvilGUI.Builder anvilGUI = new AnvilGUI.Builder();
 
-                            if(stateSnapshot.getText().equalsIgnoreCase("you")) {
-                                stateSnapshot.getPlayer().sendMessage("You have magical powers!");
-                                return Arrays.asList(AnvilGUI.ResponseAction.close());
-                            } else {
-                                return Arrays.asList(AnvilGUI.ResponseAction.replaceInputText("Try again"));
-                            }
-                        })
-                        .preventClose()                                                    //prevents the inventory from being closed
-                        .text("What is the meaning of life?")                              //sets the text the GUI should start with
-                        .title("Enter your answer.")                                       //set the title of the GUI (only works in 1.14+)
-                        .plugin(QuickSurvival.getInstance());                              //opens the GUI for the player provided
+        anvilGUI
+                .plugin(QuickSurvival.getInstance())
+                .itemLeft(waystone.getIcon())
+                .itemRight(new ItemStack(Material.BARRIER))
+                .onClick((slot, stateSnapshot) -> {
+                    if (slot != AnvilGUI.Slot.OUTPUT) {
+                        return emptyList();
+                    }
+                    if (stateSnapshot.getText().equalsIgnoreCase(waystone.getName()) || stateSnapshot.getText().isEmpty()) {
+                        //send a message to the player
+                        stateSnapshot.getPlayer().sendMessage("The name is empty or the same as the waystone name :)");
+                        return List.of(AnvilGUI.ResponseAction.close());
 
-        builder.open(player);
+                    }
 
+                    String newName = stateSnapshot.getText();
+                    stateSnapshot.getPlayer().playSound(stateSnapshot.getPlayer().getLocation(), "block.anvil.use", 1, 1);
+                    return Arrays.asList(
+                            AnvilGUI.ResponseAction.close(),
+                            AnvilGUI.ResponseAction.run(() -> configureWaystone(newName, stateSnapshot.getPlayer(), waystone))
+                    );
+
+                })
+                .preventClose()
+                .title("Rename Waystone")
+                .open(player)
+
+        ;
     }
 
-    private static void myCode(Player player) {
-        // Aquí puedes definir las acciones que deseas realizar
-        // cuando el jugador ingresa "you" en el inventario del yunque.
-        // Por ejemplo:
-        player.sendMessage("You have magical powers!");
-        // Realiza otras acciones según tus necesidades.
+
+    public static void configureWaystone(String newName, Player player, Waystone waystone) {
+
+        //set the new name to the waystone
+        WaystonePlacement.removeWaystone(waystone.getName());
+        Waystone newWaystone = new Waystone(waystone.getLocation(), newName, waystone.getPlayers(), waystone.getIcon());
+        WaystonePlacement.saveWaystone(newWaystone, QuickSurvival.waystonesConfig, newName);
+
+        WaystoneInteract.openWaystoneInventory(player);
+        player.sendMessage("The new name is: " + newName);
+
+        //upload the new name to the physical waystone
+
+        Block b = player.getTargetBlockExact(5);
+
+        if (b == null) return;
+
+        if (!(b.getState() instanceof TileState tileState)) return;
+
+        PersistentDataContainer container = tileState.getPersistentDataContainer();
+        if (!container.has(Keys.WAYSTONE, PersistentDataType.STRING)) return;
+
+        container.set(Keys.WAYSTONE, PersistentDataType.STRING, newName);
+        tileState.update();
     }
 
 
     //method that shows the waystone information of an item with persistent data container WAYSTONE(Location and Players with access)
-    public static ItemStack showWaystoneInfo(ItemStack waystoneItem, Waystone waystone){
+
+    public static ItemStack showWaystoneInfo(ItemStack waystoneItem, Waystone waystone) {
 
         ItemMeta itemMeta = waystoneItem.getItemMeta();
         PersistentDataContainer container = itemMeta.getPersistentDataContainer();
         if (!QuickSurvival.waystones.containsKey(waystone.getName())) return waystoneItem;
         itemMeta.setLore(Arrays.asList(
                 ChatColor.GREEN + "Location: ",
+                ChatColor.WHITE + "World: " + Objects.requireNonNull(waystone.getLocation().getWorld()).getName(),
                 ChatColor.WHITE + "X: " + waystone.getLocation().getBlockX(),
                 ChatColor.WHITE + "Y: " + waystone.getLocation().getBlockY(),
                 ChatColor.WHITE + "Z: " + waystone.getLocation().getBlockZ(),
@@ -212,23 +238,17 @@ public class WaystoneMenuGui {
         waystoneItem.setItemMeta(itemMeta);
 
 
-
         //show the waystone information
         return waystoneItem;
 
     }
 
     //clear the lore of an item
-    public static ItemStack clearLore(ItemStack item){
+    public static void clearLore(ItemStack item) {
         ItemMeta itemMeta = item.getItemMeta();
         itemMeta.setLore(null);
         item.setItemMeta(itemMeta);
-        return item;
-
-
-}
-
-
+    }
 
 
 
