@@ -11,6 +11,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.RecipeChoice;
 import org.bukkit.inventory.ShapedRecipe;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.inventory.recipe.CraftingBookCategory;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.Nullable;
@@ -85,6 +86,8 @@ public class CustomRecipes {
         bl1.setIngredient('H', Material.CHEST);
         bl1.setIngredient('C', Material.LEATHER);
         bl1.setIngredient('S', Material.STRING);
+        bl1.setCategory(CraftingBookCategory.EQUIPMENT);
+
         // Registrar el crafteo
         Bukkit.addRecipe(bl1);
 
@@ -114,6 +117,7 @@ public class CustomRecipes {
                 return canCraftLv2(itemStack);
             }
         });
+        bl2.setCategory(CraftingBookCategory.EQUIPMENT);
 
 
         // Registrar el crafteo
@@ -150,6 +154,7 @@ public class CustomRecipes {
                 return container.has(Keys.BACKPACKLV2, PersistentDataType.STRING);
             }
         });
+        bl3.setCategory(CraftingBookCategory.EQUIPMENT);
         // Registrar el crafteo
         Bukkit.addRecipe(bl3);
 
@@ -184,6 +189,7 @@ public class CustomRecipes {
                 return container.has(Keys.BACKPACKLV3, PersistentDataType.STRING);
             }
         });
+        bl4.setCategory(CraftingBookCategory.EQUIPMENT);
         // Registrar el crafteo
         Bukkit.addRecipe(bl4);
 
@@ -217,6 +223,7 @@ public class CustomRecipes {
                 return container.has(Keys.BACKPACKLV4, PersistentDataType.STRING);
             }
         });
+        bl5.setCategory(CraftingBookCategory.EQUIPMENT);
 
         // Registrar el crafteo
         Bukkit.addRecipe(bl5);
@@ -239,6 +246,7 @@ public class CustomRecipes {
         enderGemRecipe.shape(" E ", "EPE", " E ");
         enderGemRecipe.setIngredient('E', Material.ENDER_EYE);
         enderGemRecipe.setIngredient('P', Material.ENDER_PEARL);
+        enderGemRecipe.setCategory(CraftingBookCategory.MISC);
 
         // Registrar el crafteo
 
@@ -266,6 +274,7 @@ public class CustomRecipes {
         //set ingredient to the ender gem
         waystoneRecipe.setIngredient('G', new RecipeChoice.ExactChoice(enderGem));
         waystoneRecipe.setIngredient('O', Material.OBSIDIAN);
+        waystoneRecipe.setCategory(CraftingBookCategory.MISC);
 
         // Registrar el crafteo
         Bukkit.addRecipe(waystoneRecipe);
@@ -286,6 +295,7 @@ public class CustomRecipes {
         //add ender gem as ingredient
         warpScrollRecipe.setIngredient('E', new RecipeChoice.ExactChoice(enderGem));
         warpScrollRecipe.setIngredient('P', Material.PAPER);
+        warpScrollRecipe.setCategory(CraftingBookCategory.EQUIPMENT);
 
         //register the recipe
         Bukkit.addRecipe(warpScrollRecipe);

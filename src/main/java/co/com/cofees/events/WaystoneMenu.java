@@ -50,7 +50,7 @@ public class WaystoneMenu implements Listener {
 
 
                     Player player = (Player) event.getWhoClicked();
-                    player.sendMessage(ChatColor.RED + "¡Waypoint creado!");
+                    player.sendMessage(ChatColor.RED + "¡Waystone creado!");
 
                     giveBeacon(player.getLocation(),player);
 
@@ -72,7 +72,7 @@ public class WaystoneMenu implements Listener {
         ItemMeta waystoneItemItemMeta = waystoneItem.getItemMeta();
 
         // Almacenar el nombre "Waystone" en el ItemMeta
-        waystoneItemItemMeta.setDisplayName(ChatColor.GREEN + "Waystone");
+        waystoneItemItemMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&6" + randomName()));
 
         waystoneItemItemMeta.getPersistentDataContainer().set(Keys.WAYSTONE, PersistentDataType.STRING, "true");
 
@@ -102,7 +102,7 @@ public class WaystoneMenu implements Listener {
 
             if (tileState != null) {
                 // Almacenar el NamespacedKey en el PersistentDataContainer
-                tileState.getPersistentDataContainer().set(Keys.WAYSTONE, PersistentDataType.STRING, "true");
+                tileState.getPersistentDataContainer().set(Keys.WAYSTONE, PersistentDataType.STRING, waystoneItemItemMeta.getDisplayName());
                 tileState.update(); // Actualizar el estado para aplicar los cambios
 
                 player.sendMessage(ChatColor.GREEN + "Se creó Waystone correctamente.");
@@ -121,4 +121,13 @@ public class WaystoneMenu implements Listener {
     public String text(String text) {
         return TextTools.coloredText(text);
     }
+
+
+    //make a method that gives a random name to the waystone literally a random name
+    public String randomName(){
+        String[] names = {"Waystone", "Portal", "Teleport", "Warp", "Jump", "Blink", "Tele", "Port", "Warpstone", "Jumpstone", "Blinkstone", "Telestone", "Portstone"};
+        return names[(int) (Math.random() * names.length)];
+    }
+
+
 }

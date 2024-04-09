@@ -5,6 +5,10 @@ import co.com.cofees.tools.Keys;
 import co.com.cofees.tools.Waystone;
 import co.com.cofees.tools.WaystoneMenuGui;
 import org.bukkit.Material;
+import org.bukkit.Sound;
+import org.bukkit.block.Block;
+import org.bukkit.block.BlockState;
+import org.bukkit.block.TileState;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -47,8 +51,11 @@ public class WaystoneMenuHandler implements Listener {
 
             Material waystoneMaterial = waystone.getIcon().getType();
 
+            if (event.getCurrentItem() == null) return;
 
-            switch (Objects.requireNonNull(event.getCurrentItem()).getType()) {
+            Material iconSelectMaterial = event.getCurrentItem().getType();
+
+            switch (iconSelectMaterial) {
                 case BOOK:
                     if (event.getRawSlot() == 2) {
                         //opens icon select waystone menu
@@ -60,6 +67,11 @@ public class WaystoneMenuHandler implements Listener {
 
                 case NAME_TAG:
                     if (event.getRawSlot() == 4) {
+                        //see if the player is looking at the waystone with the same name as the menu
+                        if (!isPlayerLookingAtTheSameWaystone(player, waystone)) {
+                            player.sendMessage("You are not looking at the same waystone");
+                            return;
+                        }
                         //opens name change menu
                         player.closeInventory();
                         //open the anvil menu
@@ -87,6 +99,7 @@ public class WaystoneMenuHandler implements Listener {
                         player.closeInventory();
                         player.sendMessage("waystone menu was closed");
                         WaystoneInteract.openWaystoneInventory(player);
+                        player.playSound(player.getLocation(), Sound.ITEM_TRIDENT_HIT, 1, 1);
                     }
                     break;
 
@@ -102,7 +115,6 @@ public class WaystoneMenuHandler implements Listener {
             PersistentDataContainer container = Objects.requireNonNull(item.getItemMeta()).getPersistentDataContainer();
 
             if (container.has(Keys.MENUOBJECT, PersistentDataType.STRING)) {
-                player.closeInventory();
                 return;
             }
             ItemStack iconSelect = waystone.getIcon();
@@ -115,20 +127,6 @@ public class WaystoneMenuHandler implements Listener {
 
         }
 
-        if (event.getInventory().getType() == InventoryType.ANVIL && event.getView().getTitle().equalsIgnoreCase(WaystoneRename)) {
-
-            //lock the player inventory
-            event.setCancelled(true);
-
-            //send message to the player
-
-            Inventory inventory = event.getInventory();
-
-            event.getWhoClicked().sendMessage("You clicked on the anvil menu, on slot #" + event.getSlot());
-            ItemStack waystoneItem = inventory.getItem(0);
-
-
-        }
 
 
     }
@@ -156,6 +154,28 @@ public class WaystoneMenuHandler implements Listener {
         return null;
     }
 
+    public boolean isPlayerLookingAtTheSameWaystone (Player player, Waystone waystone) {
+        //get the player target block
+        Block block = player.getTargetBlockExact(5);
+        if (block == null) return false;
+        //get the block state
+        BlockState blockState = block.getState();
+        //get the tile state
+        if (!(blockState instanceof TileState) ) return false;
+
+        TileState tileState = (TileState) blockState;
+        //get the persistent data container
+        PersistentDataContainer container = tileState.getPersistentDataContainer();
+
+        //get the waystone name
+        String waystoneName = waystone.getName();
+        //compare the waystone name with the block name
+        if (!container.has(Keys.WAYSTONE, PersistentDataType.STRING)) return false;
+
+        return container.get(Keys.WAYSTONE, PersistentDataType.STRING).equals(waystoneName);
+
+    }
+
     //delete waystone just from the menu, not from the file
     public void deleteWaystoneFromMenu(Waystone waystone, Player player) {
         //search the waysone in the hashmap
@@ -164,7 +184,6 @@ public class WaystoneMenuHandler implements Listener {
         //remove the player from the waystone
         waystoneToDelete.removePlayer(player.getName());
         //save the waystone
-        QuickSurvival.waystones.put(waystone.getName(), waystoneToDelete);
         WaystonePlacement.saveWaystone(waystoneToDelete, QuickSurvival.waystonesConfig, waystoneToDelete.getName());
 
         player.sendMessage(waystone.getName() + " Waystone was deleted for: " + player.getName());

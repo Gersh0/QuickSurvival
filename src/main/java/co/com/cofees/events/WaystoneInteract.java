@@ -9,7 +9,9 @@ import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
 import org.bukkit.Sound;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockState;
 import org.bukkit.block.TileState;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.EventHandler;
@@ -18,12 +20,14 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Queue;
@@ -74,6 +78,7 @@ public class WaystoneInteract implements Listener {
                 waystone.addPlayer(p.getName());
                 //e.getItem().getItemMeta().getPersistentDataContainer().set(Keys.WAYSTONE, PersistentDataType.STRING, waystone.getName());
                 WaystonePlacement.saveWaystone(waystone, QuickSurvival.waystonesConfig, name);
+                p.playSound(p.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1.0f, 1.0f);
             } else {
                 p.sendMessage("Ya estás en la lista de este waystone");
             }
@@ -117,6 +122,7 @@ public class WaystoneInteract implements Listener {
 
             openWaystoneInventory(p);
             p.sendMessage("menu de warp scroll abierto correctamente");
+            p.playSound(p.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 1.0f, 1.0f);
 
         }
     }
@@ -149,6 +155,7 @@ public class WaystoneInteract implements Listener {
         if (waystone == null) return;
 
         WaystonePlacement.removeWaystone(name);
+        p.playSound(p.getLocation(), Sound.ITEM_SHIELD_BREAK, 1.0f, 1.0f);
         p.sendMessage("Waystone " + name + " has been removed");
     }
 
@@ -174,7 +181,19 @@ public class WaystoneInteract implements Listener {
 
         //check if the player clicked "Left"(Teleport) or "Right"(open OptionMenu)
         if (e.getClick().isRightClick()) {
+            //get the item in main hand to see if is a warp scroll
+            ItemStack itemInHand = e.getWhoClicked().getInventory().getItemInMainHand();
+            //get the item meta
+            ItemMeta meta = itemInHand.getItemMeta();
+            if (meta != null) {
+                //get the container
+                PersistentDataContainer container = meta.getPersistentDataContainer();
+                //guard clause that sees if the container has the warp scroll key
+                if (container.has(Keys.WARP_SCROLL, PersistentDataType.STRING) && !isPlayerLookingAtTileState((Player) e.getWhoClicked()))
+                    return;
+            }
             //open the waystone menu
+
             WaystoneMenuGui.openWaystoneOptionMenu((Player) e.getWhoClicked(), waystone);
             //send message to player
             e.getWhoClicked().sendMessage("Menu de " + ChatColor.GOLD + " " + waystone.getName() + " " + ChatColor.RESET + "abierto correctamente");
@@ -253,6 +272,15 @@ public class WaystoneInteract implements Listener {
             Waystone waystone = waystoneHashMap.get(waystoneName);
             if (waystone.containsPlayer(player.getName())) {
                 ItemStack icon = waystone.getIcon();
+                ItemMeta meta = icon.getItemMeta();
+                meta.setLore(Arrays.asList("Click derecho para abrir el menú", "Click izquierdo para teletransportarte"));
+                if (isCurrentWaystone(player, waystone)) {
+                    meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
+                    meta.addEnchant(Enchantment.DURABILITY, 1, true);
+                } else {
+                    meta.removeEnchant(Enchantment.DURABILITY);
+                }
+                icon.setItemMeta(meta);
                 itemStacks.add(icon);
             }
         });
@@ -266,7 +294,33 @@ public class WaystoneInteract implements Listener {
         return b != null && b.getState() instanceof TileState;
     }
 
-//
+    //method that enchants the waystone if is the current waystone
+    private static Boolean isCurrentWaystone(Player player, Waystone waystone) {
+        //get the player target block
+        Block block = player.getTargetBlockExact(5);
+        if (block == null) return false;
+        //get the block state
+        BlockState blockState = block.getState();
+        //get the tile state
+        if (!(blockState instanceof TileState tileState)) return false;
 
+        //get the persistent data container
+        PersistentDataContainer container = tileState.getPersistentDataContainer();
+
+        //get the waystone name
+        String waystoneName = waystone.getName();
+        //compare the waystone name with the block name
+        if (!container.has(Keys.WAYSTONE, PersistentDataType.STRING)) return false;
+
+        if (container.get(Keys.WAYSTONE, PersistentDataType.STRING).equals(waystoneName)) {
+            return true;
+        }
+        return false;
+    }
 
 }
+
+
+
+
+

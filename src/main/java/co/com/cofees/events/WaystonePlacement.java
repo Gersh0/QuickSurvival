@@ -5,6 +5,7 @@ import co.com.cofees.QuickSurvival;
 import co.com.cofees.tools.Keys;
 import co.com.cofees.tools.LocationHandler;
 import co.com.cofees.tools.Waystone;
+import co.com.cofees.tools.WaystoneMenuGui;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -15,6 +16,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
+import org.bukkit.event.inventory.CraftItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataContainer;
@@ -56,6 +58,18 @@ public class WaystonePlacement implements Listener {
 
         player.sendMessage(ChatColor.GREEN + "Se ha colocado un nuevo Waystone correctamente.");
         event.setCancelled(true);
+    }
+
+    public void onPlayerWaystoneCraft (CraftItemEvent event) {
+        //see if is a waystone
+        ItemStack waypointStack = event.getCurrentItem();
+        if (waypointStack.getItemMeta() == null || !isWaystoneItem(waypointStack)) return;
+
+        //get the player
+        Player player = (Player) event.getWhoClicked();
+        //open the anvil menu
+        Waystone waystone = new Waystone(player.getLocation(), waypointStack.getItemMeta().getDisplayName(), new ArrayList<>(), null);
+        WaystoneMenuGui.makeAnvilGui(player, waypointStack);
     }
 
     private boolean isWaystoneItem(ItemStack itemStack) {
