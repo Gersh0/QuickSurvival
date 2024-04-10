@@ -2,6 +2,7 @@ package co.com.cofees.tools;
 
 import co.com.cofees.QuickSurvival;
 import co.com.cofees.events.WaystoneInteract;
+import co.com.cofees.events.WaystoneMenuHandler;
 import co.com.cofees.events.WaystonePlacement;
 import net.wesjd.anvilgui.AnvilGUI;
 import org.bukkit.Bukkit;
@@ -36,12 +37,21 @@ public class WaystoneMenuGui {
         iconSelectMeta.setDisplayName(ChatColor.GREEN + "Select Icon");
         iconSelect.setItemMeta(iconSelectMeta);
         waystoneOptionMenu.setItem(2, iconSelect);
-
-        ItemStack nameChange = new ItemStack(Material.NAME_TAG);
-        ItemMeta nameChangeMeta = nameChange.getItemMeta();
-        nameChangeMeta.setDisplayName(ChatColor.GREEN + "Change Name");
-        nameChange.setItemMeta(nameChangeMeta);
-        waystoneOptionMenu.setItem(4, nameChange);
+        //if the player is not looking at the waystone disable the change name
+        if (!WaystoneMenuHandler.isPlayerLookingAtTheSameWaystone(player, waystone)) {
+            ItemStack nameChange = new ItemStack(Material.DAMAGED_ANVIL);
+            ItemMeta nameChangeMeta = nameChange.getItemMeta();
+            nameChangeMeta.setDisplayName(ChatColor.RED + " "+ ChatColor.BOLD + "Cannot Change Name");
+            nameChangeMeta.setLore(Collections.singletonList(ChatColor.RED + "You are not looking at the same waystone"));
+            nameChange.setItemMeta(nameChangeMeta);
+            waystoneOptionMenu.setItem(4, nameChange);
+        } else {
+            ItemStack nameChange = new ItemStack(Material.NAME_TAG);
+            ItemMeta nameChangeMeta = nameChange.getItemMeta();
+            nameChangeMeta.setDisplayName(ChatColor.GREEN + "Change Name");
+            nameChange.setItemMeta(nameChangeMeta);
+            waystoneOptionMenu.setItem(4, nameChange);
+        }
 
         ItemStack deleteWaystone = new ItemStack(Material.REDSTONE);
         ItemMeta deleteWaystoneMeta = deleteWaystone.getItemMeta();
@@ -219,7 +229,7 @@ public class WaystoneMenuGui {
                     stateSnapshot.getPlayer().playSound(stateSnapshot.getPlayer().getLocation(), "block.anvil.use", 1, 1);
                     return Arrays.asList(
                             AnvilGUI.ResponseAction.close(),
-                            AnvilGUI.ResponseAction.run(() -> WaystonePlacement.checkWaystoneSurroundings(stateSnapshot.getPlayer(),newName))
+                            AnvilGUI.ResponseAction.run(() -> WaystonePlacement.checkWaystoneSurroundings(stateSnapshot.getPlayer(), newName))
                     );
 
                 })
@@ -268,7 +278,7 @@ public class WaystoneMenuGui {
             player.getWorld().dropItemNaturally(player.getLocation(), item);
             player.sendMessage("The item has been dropped on the floor");
             return;
-        }else {
+        } else {
             player.getInventory().addItem(item);
         }
 
@@ -307,7 +317,6 @@ public class WaystoneMenuGui {
         itemMeta.setLore(null);
         item.setItemMeta(itemMeta);
     }
-
 
 
 }

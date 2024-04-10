@@ -47,6 +47,8 @@ public class WaystoneMenuHandler implements Listener {
             //lock the player inventory
             event.setCancelled(true);
 
+            //disable change name if the player is not looking at the waystone
+
             player.sendMessage("You clicked on the main menu, on slot #" + event.getSlot());
 
             Material waystoneMaterial = waystone.getIcon().getType();
@@ -66,12 +68,10 @@ public class WaystoneMenuHandler implements Listener {
                     break;
 
                 case NAME_TAG:
+
                     if (event.getRawSlot() == 4) {
                         //see if the player is looking at the waystone with the same name as the menu
-                        if (!isPlayerLookingAtTheSameWaystone(player, waystone)) {
-                            player.sendMessage("You are not looking at the same waystone");
-                            return;
-                        }
+
                         //opens name change menu
                         player.closeInventory();
                         //open the anvil menu
@@ -154,7 +154,7 @@ public class WaystoneMenuHandler implements Listener {
         return null;
     }
 
-    public boolean isPlayerLookingAtTheSameWaystone (Player player, Waystone waystone) {
+    public static boolean isPlayerLookingAtTheSameWaystone (Player player, Waystone waystone) {
         //get the player target block
         Block block = player.getTargetBlockExact(5);
         if (block == null) return false;
