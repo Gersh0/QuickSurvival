@@ -72,7 +72,7 @@ public class WaystoneMenu implements Listener {
         ItemMeta waystoneItemItemMeta = waystoneItem.getItemMeta();
 
         // Almacenar el nombre "Waystone" en el ItemMeta
-        waystoneItemItemMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&6" + randomName()));
+        waystoneItemItemMeta.setDisplayName("Waystone");
 
         waystoneItemItemMeta.getPersistentDataContainer().set(Keys.WAYSTONE, PersistentDataType.STRING, "true");
 
@@ -124,10 +124,7 @@ public class WaystoneMenu implements Listener {
 
 
     //make a method that gives a random name to the waystone literally a random name
-    public String randomName(){
-        String[] names = {"Waystone", "Portal", "Teleport", "Warp", "Jump", "Blink", "Tele", "Port", "Warpstone", "Jumpstone", "Blinkstone", "Telestone", "Portstone"};
-        return names[(int) (Math.random() * names.length)];
-    }
+
 
 
 }

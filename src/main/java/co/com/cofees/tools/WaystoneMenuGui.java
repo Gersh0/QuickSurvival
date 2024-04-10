@@ -79,7 +79,6 @@ public class WaystoneMenuGui {
     public static void openIconSelectWaystoneMenu(Player player, Waystone waystone) {
         String waystoneName = waystone.getName();
         Inventory iconSelectWaystoneMenu = Bukkit.createInventory(player, 54, waystoneName + " Icon Select");
-
         //add a queue to store the items
         List<ItemStack> itemStacks = Arrays.asList(
                 new ItemStack(Material.REDSTONE_BLOCK),

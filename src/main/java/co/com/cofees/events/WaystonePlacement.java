@@ -19,8 +19,12 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.entity.EntityPickupItemEvent;
 import org.bukkit.event.inventory.CraftItemEvent;
+import org.bukkit.event.inventory.InventoryPickupItemEvent;
+import org.bukkit.event.player.PlayerHarvestBlockEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerPickupItemEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataContainer;
@@ -80,6 +84,23 @@ public class WaystonePlacement implements Listener {
         //drop the item and remove the other drop
         event.setDropItems(false);
         block.getWorld().dropItemNaturally(block.getLocation(), item);
+    }
+
+    //event that checks if the player get a dropped waystone and it has a waystone key
+    @EventHandler
+    public void onWaystonePickup(EntityPickupItemEvent event) {
+        ItemStack item = event.getItem().getItemStack();
+        String waystoneName = "Waystone";
+        ItemMeta itemMeta = item.getItemMeta();
+        String actualName = ChatColor.stripColor(itemMeta.getDisplayName());
+        if (itemMeta == null || !actualName.equalsIgnoreCase(waystoneName)) return;
+        PersistentDataContainer container = Objects.requireNonNull(itemMeta.getPersistentDataContainer());
+        if (container.has(Keys.WAYSTONE, PersistentDataType.STRING)) return;
+        itemMeta.getPersistentDataContainer().set(Keys.WAYSTONE, PersistentDataType.STRING, waystoneName);
+        item.setItemMeta(itemMeta);
+        //debug message
+        event.getEntity().sendMessage("Waystone has been picked up");
+
     }
 
     private boolean isWaystoneItem(ItemStack itemStack) {
