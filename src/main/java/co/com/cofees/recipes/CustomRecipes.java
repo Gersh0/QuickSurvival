@@ -18,6 +18,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 public class CustomRecipes {
@@ -25,8 +26,16 @@ public class CustomRecipes {
     public static void registerCustomCrafting() {
         backpacks();
         waystones();
+       /* new WaystoneRecipe().registerRecipe();
+        new BackpackRecipe(1, Map.of(), new String[]{"CCC","SHS","CCC"}).registerRecipe();
+        new BackpackRecipe(2, Map.of(), new String[]{"HHH","HMH","HHH"}).registerRecipe();
+        new BackpackRecipe(3, Map.of(), new String[]{"OOO","OMO","OOO"}).registerRecipe();
+        new BackpackRecipe(4, Map.of(), new String[]{"DDD","DMD","DDD"}).registerRecipe();
+        new BackpackRecipe(5, Map.of(), new String[]{"CCC","SHS","CCC"}).registerRecipe();*/
+
     }
 
+    //todo: make this class more generic and scalable using classes and interfaces
     public static ItemStack createCustomItem(Material material, String displayName, String lore, NamespacedKey key, String keyValue, int amount) {
         // Crear el ítem
         ItemStack item = new ItemStack(material, amount);
@@ -154,6 +163,7 @@ public class CustomRecipes {
                 return container.has(Keys.BACKPACKLV2, PersistentDataType.STRING);
             }
         });
+        //bl3.setIngredient('M', createIngredient(backpackLv2.getType(), Keys.BACKPACKLV2, PersistentDataType.STRING));
         bl3.setCategory(CraftingBookCategory.EQUIPMENT);
         // Registrar el crafteo
         Bukkit.addRecipe(bl3);
@@ -211,7 +221,7 @@ public class CustomRecipes {
 
         // Crear el crafteo personalizado
         ShapedRecipe bl5 = new ShapedRecipe(Keys.BACKPACKLV5Recipe, backpackLv5);
-        bl5.shape("NM ");
+        bl5.shape("NM ").shape(" MN").shape("  M");
         bl5.setIngredient('N', Material.NETHERITE_INGOT);
         bl5.setIngredient('M', new RecipeChoice.MaterialChoice(Material.CLOCK) {
             @Override
