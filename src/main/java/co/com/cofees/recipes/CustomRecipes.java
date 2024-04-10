@@ -260,7 +260,6 @@ public class CustomRecipes {
 
         waystoneMeta.getPersistentDataContainer().set(Keys.WAYSTONE, PersistentDataType.STRING, waystoneMeta.getDisplayName());
         waystoneMeta.setLore(List.of("Place this to create a waystone"));
-        waystone.setAmount(1);
         waystoneMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
         waystoneMeta.addEnchant(Enchantment.ARROW_DAMAGE, 1, true);
         //setear meta

@@ -14,6 +14,7 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.TileState;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -25,6 +26,7 @@ import org.bukkit.event.inventory.InventoryPickupItemEvent;
 import org.bukkit.event.player.PlayerHarvestBlockEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerPickupItemEvent;
+import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataContainer;
@@ -97,6 +99,10 @@ public class WaystonePlacement implements Listener {
         PersistentDataContainer container = Objects.requireNonNull(itemMeta.getPersistentDataContainer());
         if (container.has(Keys.WAYSTONE, PersistentDataType.STRING)) return;
         itemMeta.getPersistentDataContainer().set(Keys.WAYSTONE, PersistentDataType.STRING, waystoneName);
+        itemMeta.setLore(List.of("Place this to create a waystone"));
+        itemMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
+        itemMeta.addEnchant(Enchantment.ARROW_DAMAGE, 1, true);
+
         item.setItemMeta(itemMeta);
         //debug message
         event.getEntity().sendMessage("Waystone has been picked up");
