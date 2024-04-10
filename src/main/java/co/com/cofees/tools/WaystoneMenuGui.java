@@ -192,13 +192,19 @@ public class WaystoneMenuGui {
     }
 
     //make a anvilGui just for rename items
-    public static void makeAnvilGuiForItem(Player player, ItemStack item) {
+    public static void makeAnvilGuiFirstRename(Player player) {
+
+        //paper that says rename name
+        ItemStack paper = new ItemStack(Material.PAPER);
+        ItemMeta paperMeta = paper.getItemMeta();
+        paperMeta.setDisplayName(ChatColor.GREEN + "Rename Name");
+        paper.setItemMeta(paperMeta);
 
         AnvilGUI.Builder anvilGUI = new AnvilGUI.Builder();
 
         anvilGUI
                 .plugin(QuickSurvival.getInstance())
-                .itemLeft(item)
+                .itemLeft(paper)
                 .itemRight(new ItemStack(Material.BARRIER))
                 .onClick((slot, stateSnapshot) -> {
                     if (slot != AnvilGUI.Slot.OUTPUT) {
@@ -213,7 +219,7 @@ public class WaystoneMenuGui {
                     stateSnapshot.getPlayer().playSound(stateSnapshot.getPlayer().getLocation(), "block.anvil.use", 1, 1);
                     return Arrays.asList(
                             AnvilGUI.ResponseAction.close(),
-                            AnvilGUI.ResponseAction.run(() -> changeItemName(newName, stateSnapshot.getPlayer(), item))
+                            AnvilGUI.ResponseAction.run(() -> WaystonePlacement.checkWaystoneSurroundings(stateSnapshot.getPlayer(),newName))
                     );
 
                 })
@@ -253,6 +259,7 @@ public class WaystoneMenuGui {
     //set the new name to the item
     public static void changeItemName(String newName, Player player, ItemStack item) {
         ItemMeta itemMeta = item.getItemMeta();
+        assert itemMeta != null;
         itemMeta.setDisplayName(newName);
         item.setItemMeta(itemMeta);
 

@@ -32,8 +32,6 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Queue;
 
-import static org.bukkit.Bukkit.getServer;
-
 public class WaystoneInteract implements Listener {
 
     @EventHandler
@@ -231,9 +229,10 @@ public class WaystoneInteract implements Listener {
         //teleport the player to the waystone location
         player.teleport(waystone.getLocation());
 
-        player.playSound(player.getLocation(), Sound.BLOCK_AMETHYST_BLOCK_RESONATE, 1.2f, 1.0f);
+        player.playSound(player.getLocation(), Sound.BLOCK_AMETHYST_BLOCK_RESONATE, 1.0f, 1.0f);
         player.playSound(player.getLocation(), Sound.ENTITY_ENDERMAN_TELEPORT, 0.75f, 2.0f);
-        player.playSound(player.getLocation(), Sound.BLOCK_BEACON_ACTIVATE, 1.0f, 1.0f);
+        player.playSound(player.getLocation(), Sound.BLOCK_PORTAL_AMBIENT, 1.2f, 1.0f);
+
 
 
         generateParticleEffect(player);
@@ -335,7 +334,7 @@ public class WaystoneInteract implements Listener {
 
                     @Override
                     public void run() {
-                        if (t >= 0.5 * Math.PI) {
+                        if (t >= 0.25 * Math.PI) {
                             // Cancelar la tarea después de 3 segundos
                             cancel();
                             return;
@@ -346,10 +345,10 @@ public class WaystoneInteract implements Listener {
                         Location playerLocation = player.getLocation();
                         // Calcular la posición del anillo
                         //summonCircle(playerLocation, 1);
-                        summonCircle2(1, 1, 000.1,Color.PURPLE ,player);
-                        summonCircle2(3, 1, 000.1,Color.BLACK, player);
-                        summonCircle2(1, 3, 000.1,Color.BLACK, player);
-                        summonCircle2(0.5,0.5,0.1,Color.WHITE,player);
+                        summonCircle2(0.75, 0.75, 000.1,Color.PURPLE ,player,4);
+                        summonCircle2(3, 1, 000.1,Color.BLACK, player,3);
+                        //summonCircle2(1, 3, 000.1,Color.BLACK, player);
+                        summonCircle2(0.25,0.25,0.1,Color.WHITE,player,5);
 
                         // Incrementar el ángulo para la siguiente iteración
                         t += Math.PI / 16; // Ajusta la velocidad del anillo según tus preferencias
@@ -363,11 +362,11 @@ public class WaystoneInteract implements Listener {
             Location particleLoc = new Location(location.getWorld(), location.getX(), location.getY(), location.getZ());
             particleLoc.setX(location.getX() + Math.cos(d) * size);
             particleLoc.setZ(location.getZ() + Math.sin(d) * size);
-            location.getWorld().spawnParticle(Particle.REDSTONE, particleLoc, 1, new Particle.DustOptions(particleColor, 5));
+            location.getWorld().spawnParticle(Particle.SOUL_FIRE_FLAME, particleLoc, 1, new Particle.DustOptions(particleColor, 5));
         }
     }
 
-    public void summonCircle2(double scaleX, double scaleY, double density,Color particleColor,Player player){
+    public void summonCircle2(double scaleX, double scaleY, double density,Color particleColor,Player player,float size){
         //int scaleX = 1;  // use these to tune the size of your circle
         //int scaleY = 1;
        // double density = 0.1;  // smaller numbers make the particles denser
@@ -377,7 +376,7 @@ public class WaystoneInteract implements Listener {
             double y = Math.sin(i) * scaleY;
 
             // spawn your particle here
-            player.getWorld().spawnParticle(Particle.REDSTONE, player.getLocation().add(x, 0, y), 1, new Particle.DustOptions(particleColor, 5));
+            player.getWorld().spawnParticle(Particle.REDSTONE, player.getLocation().add(x, 0, y), 1, new Particle.DustOptions(particleColor, size));
 
         }
     }

@@ -11,15 +11,18 @@ import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockState;
 import org.bukkit.block.TileState;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
+import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.inventory.CraftItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -50,47 +53,33 @@ public class WaystonePlacement implements Listener {
             return;
         }
 
-//Process to save the waystone to the yml file
-        List<String> players = new ArrayList<>();
-        players.add(player.getName());
-        Waystone waystone = new Waystone(blockLocation, waypointStack.getItemMeta().getDisplayName(), players, null);
-
-
-        placeNewWaystoneBlock(waystone, blockLocation);
-
-        saveWaystone(waystone, QuickSurvival.waystonesConfig, waystone.getName());
+        //open anvil gui to rename the waystone
+        WaystoneMenuGui.makeAnvilGuiFirstRename(player);
 
         player.sendMessage(ChatColor.GREEN + "Se ha colocado un nuevo Waystone correctamente.");
         event.setCancelled(true);
     }
 
+    //event that assigns the data container to the item that drops when you break the waystone
     @EventHandler
-    public void onPlayerWaystoneCraft (CraftItemEvent event) {
-        //see if is a waystone
-        ItemStack waypointStack = event.getCurrentItem();
+    public void waystoneBreakEvent(BlockBreakEvent event) {
+        Block block = event.getBlock();
+        if (!(block.getState() instanceof TileState tileState)) return;
+        PersistentDataContainer container = tileState.getPersistentDataContainer();
+        //debug message
+        event.getPlayer().sendMessage(container.toString());
+        if (!container.has(Keys.WAYSTONE, PersistentDataType.STRING)) return;
+        //debug message
+        event.getPlayer().sendMessage("Waystone has been broken");
+        ItemStack item = new ItemStack(block.getType());
+        ItemMeta itemMeta = item.getItemMeta();
+        itemMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&6Waystone"));
+        itemMeta.getPersistentDataContainer().set(Keys.WAYSTONE, PersistentDataType.STRING, container.get(Keys.WAYSTONE, PersistentDataType.STRING));
+        item.setItemMeta(itemMeta);
 
-        if (waypointStack.getItemMeta() == null || !isWaystoneItem(waypointStack)) return;
-
-        //get the player
-        Player player = (Player) event.getWhoClicked();
-        ItemStack result = event.getCurrentItem();
-
-        //consume the materials except the waystone
-        Arrays.stream(event.getInventory().getContents()).forEach(item -> {
-            if (item != null && !item.isSimilar(waypointStack)) {
-                item.setAmount(item.getAmount() - 1);
-            }
-        });
-
-        //open the anvil menu
-        //make a delay to open the anvil menu
-        new BukkitRunnable() {
-            @Override
-            public void run() {
-                WaystoneMenuGui.makeAnvilGuiForItem(player, result);
-            }
-        }.runTaskLater(QuickSurvival.getInstance(), 10);
-
+        //drop the item and remove the other drop
+        event.setDropItems(false);
+        block.getWorld().dropItemNaturally(block.getLocation(), item);
     }
 
     private boolean isWaystoneItem(ItemStack itemStack) {
@@ -127,18 +116,6 @@ public class WaystonePlacement implements Listener {
         itemInHand.setAmount(itemInHand.getAmount() - 1);
     }
 
-    private void placeNewWaystoneBlock(Waystone waystone, Location location) {
-        Block newBlock = location.getBlock();
-        newBlock.setType(Material.BLACK_BANNER);
-
-        TileState tileState = (TileState) newBlock.getState();
-        //set waystone name to the block
-
-        PersistentDataContainer newContainer = tileState.getPersistentDataContainer();
-        newContainer.set(Keys.WAYSTONE, PersistentDataType.STRING, waystone.getName());
-        tileState.update();
-    }
-
     //this methos will be used to save the waystone to the yml file
     public static void saveWaystone(Waystone waystone, YamlConfiguration config, String path) {
 
@@ -170,7 +147,89 @@ public class WaystonePlacement implements Listener {
             e.printStackTrace();
         }
     }
+
+
+    //method that sees if the player is looking at the same waystone
+    public static boolean isPlayerLookingAtWaystone(Player player) {
+        //get the player target block
+        Block block = player.getTargetBlockExact(5);
+        if (block == null) return false;
+        //get the block state
+        BlockState blockState = block.getState();
+        //get the tile state
+        if (!(blockState instanceof TileState)) return false;
+
+        TileState tileState = (TileState) blockState;
+        //get the persistent data container
+        PersistentDataContainer container = tileState.getPersistentDataContainer();
+
+        //see if the block has a waystone key
+        return true;
+
+    }
+
+    //see if im clicking a side of a block to cancell the placement of the waystone
+
+
+    //if the player isn't looking at the waystone well see if there's a block that has up the waystone and update the tilestate of the banner
+    public static void checkWaystoneSurroundings(Player player, String name) {
+
+        Block block = player.getTargetBlockExact(5);
+
+        if (block == null) return;
+
+        player.sendMessage(block.toString());
+        if (isPlayerLookingAtWaystone(player)) {
+            //get the info of the block and assign the new name
+            //send message
+
+            //say that the player is looking at the waystone
+            player.sendMessage(ChatColor.RED + "You are looking at the waystone");
+
+            TileState blockState = (TileState) block.getState();
+            blockState.getPersistentDataContainer().set(Keys.WAYSTONE, PersistentDataType.STRING, name);
+            blockState.update();
+
+            //save the waystone
+            makeSaveProcessOfWaystone(player, block.getLocation(), name);
+            return;
+        };
+
+        //get the block above the block
+
+        Block waystoneBlock = block.getRelative(0, 1, 0);
+
+        BlockState WblockState = waystoneBlock.getState();
+        if (!(WblockState instanceof TileState tileState)) return ;
+
+        PersistentDataContainer container = tileState.getPersistentDataContainer();
+        container.set(Keys.WAYSTONE, PersistentDataType.STRING,name);
+        tileState.update();
+        Location location = new Location(waystoneBlock.getWorld(), waystoneBlock.getX(), waystoneBlock.getY(), waystoneBlock.getZ());
+
+        //save the waystone
+        makeSaveProcessOfWaystone(player, location, name);
+
+    }
+
+    //method that will be used to update the waystone in the yml file
+    public static void makeSaveProcessOfWaystone(Player player, Location blockLocation, String waystoneName) {
+        //Process to save the waystone to the yml file
+        List<String> players = new ArrayList<>();
+        players.add(player.getName());
+
+        //center the location of the block
+        Location location = new Location(player.getWorld(), blockLocation.getX() + 0.5, blockLocation.getY(), blockLocation.getZ() + 0.5);
+        Waystone waystone = new Waystone(location, waystoneName, players, null);
+
+        //save the waystone
+        saveWaystone(waystone, QuickSurvival.waystonesConfig, waystoneName);
+
+    }
 }
+
+
+
 
 
 //obtener lista de jugadores:
