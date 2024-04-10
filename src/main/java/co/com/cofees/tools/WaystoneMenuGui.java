@@ -206,7 +206,7 @@ public class WaystoneMenuGui {
         //paper that says rename name
         ItemStack paper = new ItemStack(Material.PAPER);
         ItemMeta paperMeta = paper.getItemMeta();
-        paperMeta.setDisplayName(ChatColor.GREEN + "Rename Name");
+        paperMeta.setDisplayName(ChatColor.GREEN + "Set A Name");
         paper.setItemMeta(paperMeta);
 
         AnvilGUI.Builder anvilGUI = new AnvilGUI.Builder();
@@ -233,7 +233,7 @@ public class WaystoneMenuGui {
 
                 })
                 .preventClose()
-                .title("Rename Item")
+                .title("Set Waystone Name")
                 .open(player)
 
         ;
