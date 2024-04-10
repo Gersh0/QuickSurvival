@@ -83,18 +83,20 @@ public class HomeCommand implements CommandExecutor, TabCompleter {
                 player.sendMessage("Home " + subCommandName + " does not exist");
                 return false;
             }
-            if ((subCommandName.equalsIgnoreCase("set") || subCommandName.equalsIgnoreCase("delete")) && args.length == 1) {
-                if (QuickSurvival.homes.get(player.getName()).containsKey(subCommandName)) {
-                    TextTools.sendMessage(player, "Teleporting to home " + subCommandName, "", QuickSurvival.getPlugin(QuickSurvival.class));
-                    player.teleport(playerHomes.get(subCommandName));
-                    return true;
-                }
-            }
             // Just debug
             // TextTools.sendMessage(player, Optional.of("Teleporting to home " + playerHomes.get(subCommandName).toString()), "", QuickSurvival.getPlugin(QuickSurvival.class));
             TextTools.sendMessage(player, "Teleporting to home " + subCommandName, "", QuickSurvival.getPlugin(QuickSurvival.class));
             player.teleport(playerHomes.get(subCommandName));
             return true;
+        }
+
+
+        if ((subCommandName.equalsIgnoreCase("set") || subCommandName.equalsIgnoreCase("delete")) && args.length == 1) {
+            if (QuickSurvival.homes.get(player.getName()).containsKey(subCommandName)) {
+                TextTools.sendMessage(player, "Teleporting to home " + subCommandName, "", QuickSurvival.getPlugin(QuickSurvival.class));
+                player.teleport(playerHomes.get(subCommandName));
+                return true;
+            }
         }
 
         String[] subCommandArgs = new String[args.length - 1];
