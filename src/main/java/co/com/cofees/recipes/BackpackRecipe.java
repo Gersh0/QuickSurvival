@@ -4,6 +4,8 @@ import co.com.cofees.tools.Keys;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
+import org.bukkit.enchantments.Enchantment;
+import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.RecipeChoice;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -21,11 +23,18 @@ public class BackpackRecipe extends RecipesCustom {
         this.result = getItem(lvl);
         this.ingredients = ingredients;
         this.shape = shape;
-        //bl3.setIngredient('M', createIngredient(result.getType(), getKey(lvl-1), PersistentDataType.STRING));
         registerRecipe();
     }
 
-    public RecipeChoice.MaterialChoice createIngredient(Material material, NamespacedKey key, PersistentDataType<String, String> type) {
+    public BackpackRecipe(int lvl, Map<Character, Material> ingredients, String[] shape, char key, RecipeChoice.MaterialChoice materialChoice) {
+        this.key = getKey(lvl);
+        this.result = getItem(lvl);
+        this.ingredients = ingredients;
+        this.shape = shape;
+        registerRecipe(key, materialChoice);
+    }
+
+    public RecipeChoice.MaterialChoice createChoice(Material material, NamespacedKey key, PersistentDataType<String, String> type) {
         return new RecipeChoice.MaterialChoice(material) {
             @Override
             public boolean test(@Nullable ItemStack itemStack) {
@@ -52,9 +61,17 @@ public class BackpackRecipe extends RecipesCustom {
     private ItemStack createBackpackItem(int lvl, String lore) {
         ItemStack backpack = new ItemStack(Material.CLOCK);
         ItemMeta backpackMeta = backpack.getItemMeta();
+        if (backpackMeta == null) return null;
+
+        if (lvl >= 3 && lvl <= 5) {
+            backpackMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
+            backpackMeta.addEnchant(Enchantment.ARROW_DAMAGE, 1, true);
+        }
+
         backpackMeta.setDisplayName(getName(lvl));
-        if (lvl == 1)
-            backpackMeta.getPersistentDataContainer().set(Keys.BACKPACK_CODE, PersistentDataType.STRING, "true");
+
+        if (lvl == 1) backpackMeta.getPersistentDataContainer().set(Keys.BACKPACK_CODE, PersistentDataType.STRING, "true");
+
         backpackMeta.getPersistentDataContainer().set(getKey(lvl), PersistentDataType.STRING, "true");
         backpackMeta.setLore(List.of(lore));
         backpack.setAmount(1);
