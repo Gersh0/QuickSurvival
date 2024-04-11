@@ -1,10 +1,14 @@
 package co.com.cofees.events;
+
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import co.com.cofees.tools.Regions;
 import co.com.cofees.tools.Region;
+import org.bukkit.event.block.BlockPlaceEvent;
+
+import java.util.List;
 
 public final class RegionListener implements Listener {
 
@@ -14,12 +18,41 @@ public final class RegionListener implements Listener {
         Regions regions = Regions.getInstance();
 
         Region standingIn = regions.findRegion(event.getBlock().getLocation());
+        assert standingIn != null;
+        List<String> players = standingIn.getPlayers();
 
-        if (standingIn != null) {
-           //say the player is in a region
-            player.sendMessage("You are in a region" + standingIn.getName());
+
+        if (standingIn != null
+          && !players.contains(player.getName())
+        ) {
+            //say the player is in a region
+            player.sendMessage("You are in a region: " + standingIn.getName()+ "only this players can be here:" + players);
 
             event.setCancelled(true);
         }
+        player.sendMessage("you are allowed to break blocks in this region: " + standingIn.getName());
+
+        return;
     }
+
+//    @EventHandler
+//    public void onBlockPlace(BlockPlaceEvent event) {
+//        Player player = event.getPlayer();
+//        Regions regions = Regions.getInstance();
+//
+//        Region standingIn = regions.findRegion(event.getBlock().getLocation());
+//        assert standingIn != null;
+//        List<String> players = standingIn.getPlayers();
+//
+//
+//
+//        if (!players.contains(player.getName())) {
+//           //say the player is in a region
+//            player.sendMessage("You are in a region" + standingIn.getName());
+//
+//            event.setCancelled(true);
+//        }
+//
+//        return;
+//    }
 }

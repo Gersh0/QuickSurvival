@@ -130,12 +130,6 @@ public class QuickSurvival extends JavaPlugin {
             waystones.put(waystoneName, waystone);
             this.getServer().getLogger().info("Loaded waystone: " + ChatColor.GREEN + " " + waystoneName);
 
-            //send the info of the waystone to the console
-            this.getServer().getLogger().info("Waystone: " + ChatColor.GREEN + waystone.getName());
-            this.getServer().getLogger().info("Location: " + ChatColor.GREEN + waystone.getLocation());
-            this.getServer().getLogger().info("Players: " + ChatColor.GREEN + waystone.getPlayers());
-            this.getServer().getLogger().info("Icon: " + ChatColor.GREEN + waystone.getIcon());
-
         };
 
     }

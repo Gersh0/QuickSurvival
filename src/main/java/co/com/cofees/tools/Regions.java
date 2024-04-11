@@ -86,6 +86,14 @@ public final class Regions {
         return Collections.unmodifiableSet(regions);
     }
 
+    public List<String> getPlayersInRegion(String name) {
+        Region region = findRegion(name);
+        if (region != null) {
+            return region.getPlayers();
+        }
+        return null;
+    }
+
     public Set<String> getRegionsNames() {
         Set<String> names = new HashSet<>();
 
@@ -95,9 +103,17 @@ public final class Regions {
         return Collections.unmodifiableSet(names);
     }
 
-    public void saveRegion(String name, Location primary, Location secondary) {
-        this.regions.add(new Region(name, primary, secondary));
+    public void saveRegion(String name, Location primary, Location secondary, List<String> players) {
+        this.regions.add(new Region(name, primary, secondary, players));
         save();
+    }
+
+    public void deleteRegion(String name) {
+        Region region = findRegion(name);
+        if (region != null) {
+            regions.remove(region);
+            save();
+        }
     }
 
     public static Regions getInstance() {

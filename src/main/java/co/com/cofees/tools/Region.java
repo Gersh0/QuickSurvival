@@ -12,14 +12,17 @@ public class Region {
     private final Location location1;
     private final Location location2;
 
+    private final List<String> players;
+
     //private final List<String> players;
 
 
-    public Region(String name, Location location1, Location location2) {
+    public Region(String name, Location location1, Location location2, List<String> players) {
         this.name = name;
         this.location1 = location1;
         this.location2 = location2;
         //this.players = players;
+        this.players = players;
     }
 
 
@@ -69,7 +72,7 @@ public class Region {
         map.put("name", this.name);
         map.put("location1", this.location1);
         map.put("location2", this.location2);
-        //map.put("players", this.players);
+        map.put("players", this.players);
         return map;
     }
 
@@ -78,8 +81,26 @@ public class Region {
         String name = (String) map.get("name");
         Location location1 = (Location) map.get("location1");
         Location location2 = (Location) map.get("location2");
-        //List<String> players = (List<String>) map.get("players");
-        return new Region(name, location1, location2);
+        List<String> players = (List<String>) map.get("players");
+        return new Region(name, location1, location2,players);
+    }
+
+    public List<String>getPlayersOf(String regionName){
+        if(this.name.equals(regionName)){
+            return this.players;
+        }
+        return null;
+    }
+    public List<String> getPlayers() {
+        return players;
+    }
+
+    public void addPlayer(String playerName){
+        this.players.add(playerName);
+    }
+
+    public void deletePlayer(String playerName){
+        this.players.remove(playerName);
     }
 
     public String getName() {

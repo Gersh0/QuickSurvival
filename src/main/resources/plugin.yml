@@ -37,7 +37,7 @@ commands:
       - em
   region:
       description: "Test WorldGuard region."
-      usage: "/region"
+      usage: "/region <pos1|pos2|save <name>|paste <name>>"
 
 
 
