@@ -35,3 +35,9 @@ commands:
     aliases:
       - configmenu
       - em
+  region:
+      description: "Test WorldGuard region."
+      usage: "/region"
+
+
+

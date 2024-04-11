@@ -4,6 +4,7 @@ import co.com.cofees.commands.*;
 import co.com.cofees.events.*;
 import co.com.cofees.recipes.CustomRecipes;
 import co.com.cofees.tools.LocationHandler;
+import co.com.cofees.tools.Regions;
 import co.com.cofees.tools.Waystone;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -38,7 +39,10 @@ public class QuickSurvival extends JavaPlugin {
         registerCommands();
         registerEvents();
         changeSleepingPlayers("50");
+        Regions.getInstance().load();
         Bukkit.getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', PREFIX + "&bPlugin enabled."));//Versión, Prefix PluginName
+
+
     }
 
     @Override
@@ -54,6 +58,7 @@ public class QuickSurvival extends JavaPlugin {
         this.getCommand("waystone").setExecutor(new WaystoneBannerInteract());
         this.getCommand("backpack").setExecutor(new BackpackCommand());
         this.getCommand("eventmenu").setExecutor(new ControlMenuCommand());
+        this.getCommand("region").setExecutor(new RegionCommand());
     }
 
     public void registerEvents() {
@@ -68,6 +73,7 @@ public class QuickSurvival extends JavaPlugin {
         getServer().getPluginManager().registerEvents(treeCapitator, this);
         getServer().getPluginManager().registerEvents(new ControlMenuHandler(), this);
         getServer().getPluginManager().registerEvents(new WaystoneMenuHandler(), this);
+        getServer().getPluginManager().registerEvents(new RegionListener(), this);
     }
 
     public void registerConfigFiles() {

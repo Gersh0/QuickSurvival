@@ -199,7 +199,6 @@ public class WaystonePlacement implements Listener {
         }
     }
 
-
     //method that sees if the player is looking at the same waystone
     public static boolean isPlayerLookingAtWaystone(Player player) {
         //get the player target block
