@@ -13,6 +13,7 @@ import co.com.cofees.completers.RegionAddPlayerCompleter;
 import co.com.cofees.completers.SetHomeCompleter;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
+import org.bukkit.block.Block;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -56,17 +57,23 @@ public final class RegionCommand implements CommandExecutor, TabCompleter {
         String param = args[0].toLowerCase();
         //use of Tuple class to store two locations
 
+
+        //TODO check id functionality for no premium servers
         Tuple<Location, Location> selection = selections.getOrDefault(player.getUniqueId(), new Tuple<>(null, null));
 
         //switch case to handle the different commands
         //pos1: set the first location
         if ("pos1".equals(param)) {
-            Location loc = player.getTargetBlockExact(5).getLocation();
-            if (loc == null) {
+            Block Bloc = player.getTargetBlockExact(5);
+
+            if (Bloc == null) {
                 sender.sendMessage("§8[§c❌§8] §7Please look at a block!");
 
                 return true;
             }
+
+            Location loc = Bloc.getLocation();
+
             selection.setFirst(loc);
 
             sender.sendMessage("§8[§a✔§8] §7First location set!");
@@ -147,6 +154,8 @@ public final class RegionCommand implements CommandExecutor, TabCompleter {
 				WorldEditHook.paste(player.getLocation(), file);
 				sender.sendMessage("§8[§a✔§8] §7Schematic pasted at " + player.getLocation());*/
 
+
+
         } else if ("delete".equals(param) ){
             if (args.length != 2) {
                 sender.sendMessage("§8[§6🛑§8] §7Usage: /region delete <name>");
@@ -165,7 +174,7 @@ public final class RegionCommand implements CommandExecutor, TabCompleter {
             regions.deleteRegion(name);
 
             sender.sendMessage("§8[§a✔§8] §7Region deleted!");
-
+            //el codigo anterior sirve Perfectamente
         } else if ("addPlayer".equals(param)){
             if (args.length != 3) {
                 sender.sendMessage("§8[§6🛑§8] §7Usage: /region addPlayer <region> <player>");

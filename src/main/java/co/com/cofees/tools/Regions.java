@@ -47,8 +47,6 @@ public final class Regions {
             Bukkit.getConsoleSender().sendMessage("Loaded regions: " + getRegionsNames());
         }
 
-
-        //TODO load regions from config
     }
 
     public void save() {
