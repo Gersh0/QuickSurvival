@@ -67,7 +67,7 @@ public class CraftBackpack implements Listener {
             event.getCurrentItem().setItemMeta(backpackMeta);
 
             Player player = (Player) event.getWhoClicked();
-                    ;
+
             player.sendMessage("Se creó un backpack con código adicional: " + BackpackUUID);
 
         } else if (event.getCurrentItem() != null &&
@@ -164,5 +164,4 @@ public class CraftBackpack implements Listener {
         return uuid.substring(0, Math.min(uuid.length(), lenght));
     }
 }
-
 
