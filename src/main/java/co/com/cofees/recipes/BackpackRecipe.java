@@ -38,7 +38,9 @@ public class BackpackRecipe extends RecipesCustom {
         if (lvl == 1)
             backpackMeta.getPersistentDataContainer().set(Keys.BACKPACK_CODE, PersistentDataType.STRING, "true");
         NamespacedKey key = getKey(lvl);
+
         if (key == null) return null;
+
         backpackMeta.getPersistentDataContainer().set(key, PersistentDataType.STRING, "true");
         backpackMeta.setLore(lore);
         backpack.setAmount(1);
