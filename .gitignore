@@ -13,9 +13,9 @@ target/
 *.iml
 *.ipr
 
-pom.xml
+
 QuickSurvival.iml
-dependency-reduced-pom.xml
+
 
 
 ### Eclipse ###
