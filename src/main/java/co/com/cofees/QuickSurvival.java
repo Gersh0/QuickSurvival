@@ -14,6 +14,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 
+
 import java.io.File;
 import java.util.HashMap;
 import java.util.List;
@@ -28,6 +29,7 @@ public class QuickSurvival extends JavaPlugin {
     private static VacaNagasaki cowEvent = new VacaNagasaki();
     private static VeinMiner veinMiner = new VeinMiner();
     private static TreeCapitator treeCapitator = new TreeCapitator();
+    private static int currentSleepPercentage = 100;
 
     @Override
     public void onEnable() {
@@ -38,7 +40,6 @@ public class QuickSurvival extends JavaPlugin {
         registerMaps();
         registerCommands();
         registerEvents();
-        changeSleepingPlayers("50");
         Bukkit.getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', PREFIX + "&bPlugin enabled."));//Versión, Prefix PluginName
 
         Bukkit.getScheduler().runTaskLater(this, () -> {
@@ -66,6 +67,7 @@ public class QuickSurvival extends JavaPlugin {
 
     public void registerEvents() {
         getServer().getPluginManager().registerEvents(new SpawnerEvents(), this);
+        getServer().getPluginManager().registerEvents(new ControlPanelListener(), this);
         getServer().getPluginManager().registerEvents(new WaystoneMenu(), this);
         getServer().getPluginManager().registerEvents(new BackpackInteract(), this);
         getServer().getPluginManager().registerEvents(new CraftBackpack(), this);
@@ -178,5 +180,11 @@ public class QuickSurvival extends JavaPlugin {
         return treeCapitator.isActive();
     }
 
+    public static int getSleepingPercentage(){  return currentSleepPercentage;}
+
+    public static void setSleepingPercentage(int percentage){
+        currentSleepPercentage = percentage;
+        Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "gamerule playersSleepingPercentage " + percentage);
+    }
 
 }
