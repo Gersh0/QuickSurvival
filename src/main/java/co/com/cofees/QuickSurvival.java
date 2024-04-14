@@ -1,3 +1,13 @@
+/*
+ Warning: This plugin is private and should not be copied.
+ Copying or using this code for other plugins is illegal and unethical.
+ Always give credit to the original authors.
+
+ Authors:
+ - Gersh0: https://github.com/Gersh0
+ - Storm566: https://github.com/Vrtx566
+ - PyroSoul56: https://github.com/PyroSoul56
+ */
 package co.com.cofees;
 
 import co.com.cofees.commands.*;
