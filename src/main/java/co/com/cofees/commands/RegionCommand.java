@@ -33,6 +33,7 @@ public final class RegionCommand implements CommandExecutor, TabCompleter {
         register("list", new RegionListCommand(), null);
         register("current", new RegionCurrentCommand(), null);
         register("delete", new RegionDeleteCommand(), new RegionDeleteCompleter());
+        register("show", new ShowRegionCommand(), null);
     }
 
     // TODO Move into PlayerCache
