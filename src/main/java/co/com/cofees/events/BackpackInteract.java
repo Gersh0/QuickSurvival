@@ -24,7 +24,7 @@ import java.util.*;
 
 public class BackpackInteract implements Listener {
 
-    private static HashMap<String, String> backpacks = new HashMap<>();
+    private static final HashMap<String, String> backpacks = new HashMap<>();
 
     @EventHandler
     public void onPlayerInteract(PlayerInteractEvent event) throws IOException {
@@ -136,24 +136,16 @@ public class BackpackInteract implements Listener {
 
         Player player = (Player) event.getPlayer();
         Inventory inventory = event.getInventory();
+        String UUIDbackpack = backpacks.get(player.getUniqueId().toString());
 
-        ItemStack handItem = player.getInventory().getItemInMainHand();
+        if (UUIDbackpack == null) return;
+        saveInventory(player, inventory);
 
-        if (handItem.getItemMeta() == null) return;
+        //remove the backpack from the hashmap
+        backpacks.remove(player.getUniqueId().toString());
 
-        PersistentDataContainer container = handItem.getItemMeta().getPersistentDataContainer();
 
-        if (container.has(Keys.BACKPACK_CODE, PersistentDataType.STRING)) {
 
-            saveInventory(player, inventory);
-
-            player.sendMessage("tipo de inventario cerrado: " + event.getInventory().getType().name());
-
-            player.sendMessage("nombre de la clase: " + inventory.getClass().getName());
-
-            player.sendMessage("holder: " + inventory.getHolder());
-
-        }
     }
 
   /*  @EventHandler
@@ -203,8 +195,8 @@ public class BackpackInteract implements Listener {
         Block b = p.getTargetBlockExact(5);
         if (b != null && b.getState() instanceof TileState) return;
 
-
-        String UUIDbackpack = getBackpackUUID(p);
+        //get the backpack UUID that was clicked by the player
+        String UUIDbackpack = backpacks.get(p.getUniqueId().toString());
 
         File f = new File(getInventoryFolder(), p.getName() + UUIDbackpack + "BInventory" + ".yml");
         FileConfiguration c = YamlConfiguration.loadConfiguration(f);
