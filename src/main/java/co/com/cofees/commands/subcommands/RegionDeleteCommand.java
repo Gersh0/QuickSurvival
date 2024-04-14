@@ -11,7 +11,7 @@ import org.jetbrains.annotations.NotNull;
 public class RegionDeleteCommand implements CommandExecutor{
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
-        if (!(sender instanceof Player player) || args.length != 1) return false;
+        if (!(sender instanceof Player) || args.length != 1) return false;
 
         Regions regions = Regions.getInstance();
 
@@ -26,6 +26,6 @@ public class RegionDeleteCommand implements CommandExecutor{
             regions.deleteRegion(name);
 
             sender.sendMessage("§8[§a✔§8] §7Region deleted!");
-        return false;
+        return true;
     }
 }

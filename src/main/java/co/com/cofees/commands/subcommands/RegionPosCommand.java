@@ -31,7 +31,7 @@ public class RegionPosCommand implements CommandExecutor {
             }
             case "2" -> {
                 selection.setSecond(loc);
-                player.sendMessage("§8[§a✔§8] §Second location set!");
+                player.sendMessage("§8[§a✔§8] §7Second location set!");
             }
             default -> {
                 player.sendMessage("§8[§c❌§8] §7Invalid argument! Use 1 or 2.");
