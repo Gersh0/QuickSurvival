@@ -26,6 +26,7 @@ import java.util.concurrent.Executor;
 
 public class WaystoneCommand implements CommandExecutor, Listener, TabCompleter {
 
+    //todo: check usability of this command
     public boolean onCommand(CommandSender sender, Command command, String alias, String[] args) {
         //Issued from console
         if (!(sender instanceof Player)) {

@@ -13,7 +13,7 @@ import org.jetbrains.annotations.NotNull;
 public class RegionPosCommand implements CommandExecutor {
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
-        if (!(sender instanceof Player player)) return false;
+        if (!(sender instanceof Player player) || args.length == 0) return false;
 
         Tuple<Location, Location> selection = RegionCommand.selections.getOrDefault(player.getUniqueId(), new Tuple<>(null, null));
         Block bLoc = player.getTargetBlockExact(5);

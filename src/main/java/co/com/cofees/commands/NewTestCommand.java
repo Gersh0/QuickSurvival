@@ -12,7 +12,10 @@ import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import static co.com.cofees.tools.TextTools.sendMessage;
 
@@ -63,26 +66,22 @@ public class NewTestCommand implements CommandExecutor, TabCompleter {
         // Execute the subcommand with the remaining arguments
         return subCommand.onCommand(sender, command, label, subCommandArgs);
     }
+
     @Override
     public List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String alias, String[] args) {
-        // If the sender is not a player, return null
         if (!(sender instanceof Player)) return null;
 
-        // If the user has only typed the command but not the subcommand
         if (args.length == 1) {
-            // Return a list of all available subcommands for auto-completion
             return new ArrayList<>(subCommands.keySet());
-        } else if (args.length > 1) {
-            // If a subcommand has been typed
-            // Retrieve the corresponding TabCompleter for the subcommand
+        }
+
+        if (args.length > 1) {
             TabCompleter completer = subCommandCompleters.get(args[0]);
-            // If the TabCompleter exists
             if (completer != null) {
-                // Delegate to the TabCompleter to provide auto-completion options
                 return completer.onTabComplete(sender, command, alias, args);
             }
         }
-        // If no conditions are met, return null
+
         return null;
     }
 

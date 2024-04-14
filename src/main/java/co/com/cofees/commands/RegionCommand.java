@@ -4,7 +4,6 @@ import co.com.cofees.commands.subcommands.*;
 import co.com.cofees.completers.RegionAddPlayerCompleter;
 import co.com.cofees.completers.RegionDeleteCompleter;
 import co.com.cofees.completers.RegionDeletePlayerCompleter;
-import co.com.cofees.tools.Region;
 import co.com.cofees.tools.Regions;
 import co.com.cofees.tools.Tuple;
 import org.bukkit.ChatColor;
@@ -17,10 +16,8 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 public final class RegionCommand implements CommandExecutor, TabCompleter {
-
 
     private final Map<String, CommandExecutor> subCommands = new HashMap<>();
     private final Map<String, TabCompleter> subCommandCompleters = new HashMap<>();
@@ -35,7 +32,6 @@ public final class RegionCommand implements CommandExecutor, TabCompleter {
         register("delete", new RegionDeleteCommand(), new RegionDeleteCompleter());
     }
 
-    // TODO Move into PlayerCache
     public static final Map<UUID, Tuple<Location, Location>> selections = new HashMap<>();
 
     @Override
@@ -45,87 +41,51 @@ public final class RegionCommand implements CommandExecutor, TabCompleter {
             return true;
         }
 
-        if (args.length == 0) {
-            //sender.sendMessage("Usage: /region <pos1|pos2|save <name>|paste <name>>");
-            return false;
-        }
+        if (args.length == 0) return false;
 
-        //if are there 1 or more arguments
+        // If there are 1 or more arguments
         String subCommandName = args[0];
         CommandExecutor subCommand = subCommands.get(subCommandName);
 
         //check if the subcommand exists in the HashMap
-        if (subCommand == null) {//there are arguments but the subcommand does not exist
-            sender.sendMessage(ChatColor.RED + "Unknown argument: " + subCommandName);
+        if (subCommand == null) {
+            player.sendMessage(ChatColor.RED + "Unknown argument: " + subCommandName);
             return false;
         }
 
+        //1. Not a player checked
+        //2. No arguments checked
+        //3. Subcommand does not exist (any text that is not pos1, pos2, save, etc) checked
+        //4. Subcommand exists, is the next step
 
-        //1. Not a player
-        //2. No arguments
-        //3. Subcommand does not exist (any text that is not pos1, pos2, save, etc)
-        //4. Subcommand exists
-
-        String[] subCommandArgs = new String[args.length - 1];
-        // Copy the remaining arguments into the new array
-        System.arraycopy(args, 1, subCommandArgs, 0, subCommandArgs.length);
-        // Execute the subcommand with the remaining arguments
+        String[] subCommandArgs = Arrays.copyOfRange(args, 1, args.length);
         return subCommand.onCommand(sender, command, label, subCommandArgs);
     }
 
-
+    //todo: check if the player is or no an Operator o has permission to use the completer
     @Override
     public List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String alias, @NotNull String[] args) {
-        if (!(sender instanceof Player)) return null; //Clauses the case if is not a player.
+        if (!(sender instanceof Player)) return null;
+
         if (command.getName().equalsIgnoreCase("region") && args.length == 1) {
-            List<String> completions = new ArrayList<>();
-            completions.add("pos1");
-            completions.add("pos2");
-            completions.add("list");
-            completions.add("addPlayer");
-            completions.add("deletePlayer");
-            completions.add("current");
-            completions.add("delete");
-            completions.add("save");
-            //add the Region names
+            List<String> completions = new ArrayList<>(subCommands.keySet());
             completions.addAll(Regions.getInstance().getRegionsNames());
             return completions;
         }
-        if (args.length > 1 && args[0].equalsIgnoreCase("delete")) {
-            Regions regions = Regions.getInstance();
-            return regions.getRegions().stream().map(Region::getName).collect(Collectors.toList());
-        }
 
-        if (args.length > 1 && args[0].equalsIgnoreCase("save")) {
-            return Collections.singletonList("<name>");
+        if (args.length > 1) {
+            String subCommandName = args[0];
+            TabCompleter completer = subCommandCompleters.get(subCommandName);
+            if (completer != null) {
+                return completer.onTabComplete(sender, command, alias, args);
+            }
         }
-
-        if (args.length > 1 && args[0].equalsIgnoreCase("addPlayer")) {
-            Regions regions = Regions.getInstance();
-            return regions.getPlayersInRegion(args[1]);
-        }
-
-        if (args.length == 2 && args[0].equalsIgnoreCase("deletePlayer")) {
-            Regions regions = Regions.getInstance();
-            //show the players in the region
-            return regions.getRegions().stream().map(Region::getName).collect(Collectors.toList());
-        }
-
-        if (args.length > 2 && args[0].equalsIgnoreCase("deletePlayer")) {
-            Regions regions = Regions.getInstance();
-            return regions.getPlayersInRegion(args[1]);
-        }
-
 
         return null;
     }
 
-
-    // Register a subcommand with its executor and completer
     public void register(String name, CommandExecutor cmd, TabCompleter completer) {
         subCommands.put(name, cmd);
         subCommandCompleters.put(name, completer);
     }
-
-
 }

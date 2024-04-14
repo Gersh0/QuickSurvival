@@ -15,10 +15,7 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class HomeCommand implements CommandExecutor, TabCompleter {
 
@@ -51,87 +48,56 @@ public class HomeCommand implements CommandExecutor, TabCompleter {
         // Get the list of homes for the player /home <subcommand> or /home <homeName>
         HashMap<String, Location> playerHomes = QuickSurvival.homes.get(player.getName());
 
-        if (args.length == 0) {//If player sends /home
+        if (playerHomes == null || playerHomes.isEmpty()) { // Guard clause if the player has no homes
+            player.sendMessage("You don't have any homes set");
+            return false;
+        }
 
-
-            if (playerHomes.isEmpty()) { // If the list is empty, send a message to the player
-                player.sendMessage("You don't have any homes set");
-                return false;
-            }
-
-            if (playerHomes.size() != 1) { // If the player has more than one home
-                player.teleport(getHomeLocation(playerHomes)); // Teleport the player to the home
-                return true;
-            }
-            //payer has only one home
+        if (args.length == 0) {// Send the player to the first home if no arguments are provided
             player.teleport(getHomeLocation(playerHomes));
             return true;
         }
-        //todo: check if args[0] is named "set" or "delete" and teleport the player to the home with the name of args[0]
+        // If player sends /home <subcommand> or /home <homeName>
+        String subCommandName = args[0];// Get the possible subcommand name, it may also be a home name
+        CommandExecutor subCommand = subCommands.get(subCommandName);//Try to get the subcommand, if it exists it will not be null
 
-        // if player sends /home <subcommand> or /home <homeName>
-        String subCommandName = args[0];
-        CommandExecutor subCommand = subCommands.get(subCommandName);//check if the subcommand exists in the HashMap
-
-
-        if (subCommand == null) {//If the subcommand does not exist in HashMap teleports the player to the home with the name of the subcommand
-            if (playerHomes == null || playerHomes.isEmpty()) {
-                player.sendMessage("You don't have any homes set");
-                return false;
-            }
+        if (subCommand == null) {// If the subcommand does not exist, it may be a home name or an invalid command
             if (!playerHomes.containsKey(subCommandName)) {
-                player.sendMessage("Home " + subCommandName + " does not exist");
+                player.sendMessage("Home " + subCommandName + " does not exist or is an invalid command");
                 return false;
             }
-            // Just debug
-            // TextTools.sendMessage(player, Optional.of("Teleporting to home " + playerHomes.get(subCommandName).toString()), "", QuickSurvival.getPlugin(QuickSurvival.class));
+            // Teleport the player to the home location after checking that it exists
             TextTools.sendMessage(player, "Teleporting to home " + subCommandName, "", QuickSurvival.getPlugin(QuickSurvival.class));
             player.teleport(playerHomes.get(subCommandName));
             return true;
         }
 
-
-        if ((subCommandName.equalsIgnoreCase("set") || subCommandName.equalsIgnoreCase("delete")) && args.length == 1) {
-            if (QuickSurvival.homes.get(player.getName()).containsKey(subCommandName)) {
-                TextTools.sendMessage(player, "Teleporting to home " + subCommandName, "", QuickSurvival.getPlugin(QuickSurvival.class));
-                player.teleport(playerHomes.get(subCommandName));
-                return true;
-            }
-        }
-
-        String[] subCommandArgs = new String[args.length - 1];
-        // Copy the remaining arguments into the new array
-        System.arraycopy(args, 1, subCommandArgs, 0, subCommandArgs.length);
-        // Execute the subcommand with the remaining arguments
-        return subCommand.onCommand(sender, command, label, subCommandArgs);
+        // At this point, the subcommand exists, so we will execute it calling its onCommand method and passing the arguments
+        String[] subCommandArgs = Arrays.copyOfRange(args, 1, args.length);// Remove the subcommand from the arguments
+        return subCommand.onCommand(sender, command, label, subCommandArgs);// Call the onCommand method of the subcommand
     }
 
     @Nullable
     @Override
     public List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String alias, @NotNull String[] args) {
-        // If the sender is not a player, return null
-        if (!(sender instanceof Player)) return null;
-        if (QuickSurvival.homes.isEmpty()) return null;
+        if (!(sender instanceof Player) || QuickSurvival.homes.isEmpty()) return null;
+        // Get the list of homes for the player
+        List<String> completions = new ArrayList<>(subCommands.keySet());
 
-        // If the user has only typed the command but not the subcommand
-        if (args.length == 1) {
-            // Return a list of all available subcommands for auto-completion
-            List<String> completions = new ArrayList<>(subCommands.keySet());
-            if (!QuickSurvival.homes.get(sender.getName()).isEmpty()) {
-                completions.addAll(QuickSurvival.homes.get(sender.getName()).keySet());
-            }
-            return completions;
-        } else if (args.length > 1) {
-            // If a subcommand has been typed
-            // Retrieve the corresponding TabCompleter for the subcommand
-            TabCompleter completer = subCommandCompleters.get(args[0]);
-            // If the TabCompleter exists
+        // And add the home names to the completions list, if the player has any homes
+        if (!QuickSurvival.homes.get(sender.getName()).isEmpty()) {
+            completions.addAll(QuickSurvival.homes.get(sender.getName()).keySet());
+        }
+
+        // Now we will check if the player has entered a subcommand and if so, we will call the tab completer of that subcommand
+        if (args.length > 1) {
+            TabCompleter completer = subCommandCompleters.get(args[0]); // Try to get the tab completer of the subcommand
             if (completer != null) {
-                // Delegate to the TabCompleter to provide auto-completion options
-                return completer.onTabComplete(sender, command, alias, args);
+                return completer.onTabComplete(sender, command, alias, args); // Call the tab completer of the subcommand
             }
         }
-        // If no conditions are met, return null
-        return null;
+
+        // If the player has not entered a subcommand, we will return the completions list
+        return completions;
     }
 }

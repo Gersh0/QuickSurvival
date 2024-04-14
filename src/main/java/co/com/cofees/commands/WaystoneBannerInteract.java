@@ -18,7 +18,7 @@ import java.util.Collections;
 import java.util.List;
 
 public class WaystoneBannerInteract implements CommandExecutor, TabCompleter {
-
+//todo: check usability of this command
 
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String alias, String[] args) throws CommandException {
