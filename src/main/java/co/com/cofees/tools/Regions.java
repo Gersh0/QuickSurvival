@@ -24,7 +24,6 @@ public final class Regions {
     }
 
     public void load() {
-
         try {
             if (!file.exists())
                 file.createNewFile();
@@ -46,7 +45,6 @@ public final class Regions {
 
             Bukkit.getConsoleSender().sendMessage("Loaded regions: " + getRegionsNames());
         }
-
     }
 
     public void save() {
