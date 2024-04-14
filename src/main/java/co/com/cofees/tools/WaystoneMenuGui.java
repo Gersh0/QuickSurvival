@@ -2,6 +2,7 @@ package co.com.cofees.tools;
 
 import co.com.cofees.QuickSurvival;
 import co.com.cofees.events.WaystoneInteract;
+import co.com.cofees.events.WaystoneMenuHandler;
 import co.com.cofees.events.WaystonePlacement;
 import net.wesjd.anvilgui.AnvilGUI;
 import org.bukkit.Bukkit;
@@ -36,12 +37,21 @@ public class WaystoneMenuGui {
         iconSelectMeta.setDisplayName(ChatColor.GREEN + "Select Icon");
         iconSelect.setItemMeta(iconSelectMeta);
         waystoneOptionMenu.setItem(2, iconSelect);
-
-        ItemStack nameChange = new ItemStack(Material.NAME_TAG);
-        ItemMeta nameChangeMeta = nameChange.getItemMeta();
-        nameChangeMeta.setDisplayName(ChatColor.GREEN + "Change Name");
-        nameChange.setItemMeta(nameChangeMeta);
-        waystoneOptionMenu.setItem(4, nameChange);
+        //if the player is not looking at the waystone disable the change name
+        if (!WaystoneMenuHandler.isPlayerLookingAtTheSameWaystone(player, waystone)) {
+            ItemStack nameChange = new ItemStack(Material.DAMAGED_ANVIL);
+            ItemMeta nameChangeMeta = nameChange.getItemMeta();
+            nameChangeMeta.setDisplayName(ChatColor.RED + " "+ ChatColor.BOLD + "Cannot Change Name");
+            nameChangeMeta.setLore(Collections.singletonList(ChatColor.RED + "You are not looking at the same waystone"));
+            nameChange.setItemMeta(nameChangeMeta);
+            waystoneOptionMenu.setItem(4, nameChange);
+        } else {
+            ItemStack nameChange = new ItemStack(Material.NAME_TAG);
+            ItemMeta nameChangeMeta = nameChange.getItemMeta();
+            nameChangeMeta.setDisplayName(ChatColor.GREEN + "Change Name");
+            nameChange.setItemMeta(nameChangeMeta);
+            waystoneOptionMenu.setItem(4, nameChange);
+        }
 
         ItemStack deleteWaystone = new ItemStack(Material.REDSTONE);
         ItemMeta deleteWaystoneMeta = deleteWaystone.getItemMeta();
@@ -69,7 +79,6 @@ public class WaystoneMenuGui {
     public static void openIconSelectWaystoneMenu(Player player, Waystone waystone) {
         String waystoneName = waystone.getName();
         Inventory iconSelectWaystoneMenu = Bukkit.createInventory(player, 54, waystoneName + " Icon Select");
-
         //add a queue to store the items
         List<ItemStack> itemStacks = Arrays.asList(
                 new ItemStack(Material.REDSTONE_BLOCK),
@@ -191,6 +200,45 @@ public class WaystoneMenuGui {
         ;
     }
 
+    //make a anvilGui just for rename items
+    public static void makeAnvilGuiFirstRename(Player player) {
+
+        //paper that says rename name
+        ItemStack paper = new ItemStack(Material.PAPER);
+        ItemMeta paperMeta = paper.getItemMeta();
+        paperMeta.setDisplayName(ChatColor.GREEN + "Set A Name");
+        paper.setItemMeta(paperMeta);
+
+        AnvilGUI.Builder anvilGUI = new AnvilGUI.Builder();
+
+        anvilGUI
+                .plugin(QuickSurvival.getInstance())
+                .itemLeft(paper)
+                .itemRight(new ItemStack(Material.BARRIER))
+                .onClick((slot, stateSnapshot) -> {
+                    if (slot != AnvilGUI.Slot.OUTPUT) {
+                        return emptyList();
+                    }
+                    if (stateSnapshot.getText().isEmpty()) {
+                        //send a message to the player
+                        stateSnapshot.getPlayer().sendMessage("The name is empty or the same as the item name :)");
+                    }
+
+                    String newName = stateSnapshot.getText();
+                    stateSnapshot.getPlayer().playSound(stateSnapshot.getPlayer().getLocation(), "block.anvil.use", 1, 1);
+                    return Arrays.asList(
+                            AnvilGUI.ResponseAction.close(),
+                            AnvilGUI.ResponseAction.run(() -> WaystonePlacement.checkWaystoneSurroundings(stateSnapshot.getPlayer(), newName))
+                    );
+
+                })
+                .preventClose()
+                .title("Set Waystone Name")
+                .open(player)
+
+        ;
+    }
+
 
     public static void configureWaystone(String newName, Player player, Waystone waystone) {
 
@@ -215,6 +263,25 @@ public class WaystoneMenuGui {
 
         container.set(Keys.WAYSTONE, PersistentDataType.STRING, newName);
         tileState.update();
+    }
+
+    //set the new name to the item
+    public static void changeItemName(String newName, Player player, ItemStack item) {
+        ItemMeta itemMeta = item.getItemMeta();
+        assert itemMeta != null;
+        itemMeta.setDisplayName(newName);
+        item.setItemMeta(itemMeta);
+
+        //give the item to the player if is full drop it
+        if (player.getInventory().firstEmpty() == -1) {
+            player.getWorld().dropItemNaturally(player.getLocation(), item);
+            player.sendMessage("The item has been dropped on the floor");
+            return;
+        } else {
+            player.getInventory().addItem(item);
+        }
+
+        player.sendMessage("The new name is: " + newName);
     }
 
 
@@ -249,7 +316,6 @@ public class WaystoneMenuGui {
         itemMeta.setLore(null);
         item.setItemMeta(itemMeta);
     }
-
 
 
 }

@@ -5,7 +5,7 @@ api-version: '1.20'
 authors:
   - GerMinatorCofee
   - PyroSoul
-  - Strom
+  - Storm566
 commands:
   explosivecows:
     description: "ahora las vacas son explosivas con el click derecho"
@@ -35,3 +35,9 @@ commands:
     aliases:
       - configmenu
       - em
+  region:
+      description: "Test region."
+      usage: "/region <pos1|pos2|save <name>|paste <name>>"
+
+
+

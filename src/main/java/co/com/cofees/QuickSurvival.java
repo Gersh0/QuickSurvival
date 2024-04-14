@@ -4,6 +4,7 @@ import co.com.cofees.commands.*;
 import co.com.cofees.events.*;
 import co.com.cofees.recipes.CustomRecipes;
 import co.com.cofees.tools.LocationHandler;
+import co.com.cofees.tools.Regions;
 import co.com.cofees.tools.Waystone;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -39,6 +40,12 @@ public class QuickSurvival extends JavaPlugin {
         registerEvents();
         changeSleepingPlayers("50");
         Bukkit.getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', PREFIX + "&bPlugin enabled."));//Versión, Prefix PluginName
+
+        Bukkit.getScheduler().runTaskLater(this, () -> {
+            Regions regions = Regions.getInstance();
+            regions.load();
+        }, 1);
+
     }
 
     @Override
@@ -54,6 +61,7 @@ public class QuickSurvival extends JavaPlugin {
         this.getCommand("waystone").setExecutor(new WaystoneBannerInteract());
         this.getCommand("backpack").setExecutor(new BackpackCommand());
         this.getCommand("eventmenu").setExecutor(new ControlMenuCommand());
+        this.getCommand("region").setExecutor(new RegionCommand());
     }
 
     public void registerEvents() {
@@ -68,6 +76,7 @@ public class QuickSurvival extends JavaPlugin {
         getServer().getPluginManager().registerEvents(treeCapitator, this);
         getServer().getPluginManager().registerEvents(new ControlMenuHandler(), this);
         getServer().getPluginManager().registerEvents(new WaystoneMenuHandler(), this);
+        getServer().getPluginManager().registerEvents(new RegionListener(), this);
     }
 
     public void registerConfigFiles() {
@@ -123,12 +132,6 @@ public class QuickSurvival extends JavaPlugin {
             Waystone waystone = new Waystone(location, name, players, icon);
             waystones.put(waystoneName, waystone);
             this.getServer().getLogger().info("Loaded waystone: " + ChatColor.GREEN + " " + waystoneName);
-
-            //send the info of the waystone to the console
-            this.getServer().getLogger().info("Waystone: " + ChatColor.GREEN + waystone.getName());
-            this.getServer().getLogger().info("Location: " + ChatColor.GREEN + waystone.getLocation());
-            this.getServer().getLogger().info("Players: " + ChatColor.GREEN + waystone.getPlayers());
-            this.getServer().getLogger().info("Icon: " + ChatColor.GREEN + waystone.getIcon());
 
         };
 
