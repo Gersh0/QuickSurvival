@@ -6,7 +6,6 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -35,8 +34,8 @@ public class RegionDeletePlayerCommand implements CommandExecutor {
             return true;
         }
 
-        if (!players.contains(playerName)) {
-            sender.sendMessage(ChatColor.RED + "You cannot delete a player, you dont have permission.");
+        if (players == null || !players.contains(playerName)) {
+            sender.sendMessage(ChatColor.RED + "Player is not in this region.");
             return true;
         }
 
