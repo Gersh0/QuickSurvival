@@ -39,9 +39,12 @@ public class QuickSurvival extends JavaPlugin {
         registerCommands();
         registerEvents();
         changeSleepingPlayers("50");
-        Regions.getInstance().load();
         Bukkit.getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', PREFIX + "&bPlugin enabled."));//Versión, Prefix PluginName
 
+        Bukkit.getScheduler().runTaskLater(this, () -> {
+            Regions regions = Regions.getInstance();
+            regions.load();
+        }, 1);
 
     }
 

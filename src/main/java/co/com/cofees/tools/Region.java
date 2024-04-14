@@ -5,7 +5,6 @@ import org.bukkit.Location;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 public class Region {
     private final String name;
@@ -28,9 +27,12 @@ public class Region {
 
     public boolean isWithin(final Location location) {
         //may be eliminated
-        if (!location.getWorld().getName().equals(this.location1.getWorld().getName())) return false;
+        if ((location.getWorld() == null || this.location1.getWorld() == null) || !location.getWorld().getName().equals(this.location1.getWorld().getName()))
+            return false;
 
         final Location[] centered = this.getCorrectedPoints();
+        if (centered == null) return false;
+
         final Location primary = centered[0];
         final Location secondary = centered[1];
 
@@ -82,24 +84,25 @@ public class Region {
         Location location1 = (Location) map.get("location1");
         Location location2 = (Location) map.get("location2");
         List<String> players = (List<String>) map.get("players");
-        return new Region(name, location1, location2,players);
+        return new Region(name, location1, location2, players);
     }
 
-    public List<String>getPlayersOf(String regionName){
-        if(this.name.equals(regionName)){
+    public List<String> getPlayersOf(String regionName) {
+        if (this.name.equals(regionName)) {
             return this.players;
         }
         return null;
     }
+
     public List<String> getPlayers() {
         return players;
     }
 
-    public void addPlayer(String playerName){
+    public void addPlayer(String playerName) {
         this.players.add(playerName);
     }
 
-    public void deletePlayer(String playerName){
+    public void deletePlayer(String playerName) {
         this.players.remove(playerName);
     }
 
