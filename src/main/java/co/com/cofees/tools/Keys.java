@@ -25,4 +25,10 @@ public class Keys {
     public static final NamespacedKey WARP_SCROLL = new NamespacedKey(QuickSurvival.getInstance(), "WarpScroll");
 
     public  static final NamespacedKey MENUOBJECT = new NamespacedKey(QuickSurvival.getInstance(), "MenuObject");
+
+    public static final NamespacedKey REGION_SCROLL = new NamespacedKey(QuickSurvival.getInstance(), "RegionScroll");
+
+    public static final NamespacedKey RSPOS1 = new NamespacedKey(QuickSurvival.getInstance(), "RSPOS1");
+
+    public static final NamespacedKey RSPOS2 = new NamespacedKey(QuickSurvival.getInstance(), "RSPOS2");
 }

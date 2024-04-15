@@ -88,6 +88,7 @@ public final class RegionCommand implements CommandExecutor, TabCompleter {
             completions.add("current");
             completions.add("delete");
             completions.add("save");
+            completions.add("show");
             //add the Region names
             completions.addAll(Regions.getInstance().getRegionsNames());
             return completions;
