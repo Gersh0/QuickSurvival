@@ -106,15 +106,7 @@ public class BackpackInteract implements Listener {
     public void onInventoryClick(InventoryClickEvent event) {
         if (!event.getView().getTitle().equalsIgnoreCase("Backpack")) return;
 
-        if (event.getCurrentItem() == null) {
-            event.getWhoClicked().sendMessage("Item nulo");
-            return;
-        }
-        event.getWhoClicked().sendMessage(event.getCurrentItem().toString());
         event.getWhoClicked().sendMessage(event.getWhoClicked().getOpenInventory().getTopInventory().getType().toString());
-
-        if (event.getCurrentItem().getItemMeta() == null) return;
-        PersistentDataContainer container = event.getCurrentItem().getItemMeta().getPersistentDataContainer();
 
         //si(backpack clikeado == backpack abierto) entonces cancelar evento
         String UUIDbackpack = event.getCurrentItem().getItemMeta().getPersistentDataContainer().get(Keys.BACKPACK_CODE, PersistentDataType.STRING);
@@ -122,13 +114,13 @@ public class BackpackInteract implements Listener {
         if (backpacks.containsKey(event.getWhoClicked().getUniqueId().toString()) && backpacks.get(event.getWhoClicked().getUniqueId().toString()).equals(UUIDbackpack)) {
             event.setCancelled(true);
         }
-    }
+          }
 
     //SECCION DE GUARDADO
     @EventHandler
     public void onInventoryClose(InventoryCloseEvent event) throws IOException {
-        if (event.getInventory().getHolder() != null)
-            return; // poner otra condicion para limitar el inventario a solo backpacks
+        if (event.getInventory().getHolder() != null) return;
+        // poner otra condicion para limitar el inventario a solo backpacks
         //comprobar el persisten data container para guardar el inventario de la mochila
 
         //wareclouse if the inventory isn't a backpack inventory
@@ -141,8 +133,7 @@ public class BackpackInteract implements Listener {
         if (UUIDbackpack == null) return;
         saveInventory(player, inventory);
 
-        //remove the backpack from the hashmap
-        backpacks.remove(player.getUniqueId().toString());
+
 
 
 

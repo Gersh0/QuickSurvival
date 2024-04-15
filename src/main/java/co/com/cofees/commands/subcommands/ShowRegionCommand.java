@@ -1,4 +1,5 @@
 package co.com.cofees.commands.subcommands;
+import co.com.cofees.QuickSurvival;
 import co.com.cofees.tools.Region;
 import co.com.cofees.tools.Regions;
 import org.bukkit.Particle;
@@ -6,6 +7,8 @@ import org.bukkit.World;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scheduler.BukkitRunnable;
 import org.jetbrains.annotations.NotNull;
 import org.bukkit.Location;
 
@@ -44,60 +47,46 @@ public class ShowRegionCommand implements CommandExecutor {
 
     //method that will make a cube of particles to show the region
 
-    private List<Location> getRegionParticles(Region region) {
-
-        Location corner1 = region.getLocation1();
-        Location corner2 = region.getLocation2();
-
-            List<Location> result = new ArrayList<Location>();
-            World world = corner1.getWorld();
-            double minX = Math.min(corner1.getX(), corner2.getX());
-            double minY = Math.min(corner1.getY(), corner2.getY());
-            double minZ = Math.min(corner1.getZ(), corner2.getZ());
-            double maxX = Math.max(corner1.getX(), corner2.getX());
-            double maxY = Math.max(corner1.getY(), corner2.getY());
-            double maxZ = Math.max(corner1.getZ(), corner2.getZ());
-
-            // 2 areas
-            for (double x = minX; x <= maxX; x+=0.2D) {
-                for (double z = minZ; z <= maxZ; z+=0.2D) {
-                    result.add(new Location(world, x, minY, z));
-                    result.add(new Location(world, x, maxY, z));
-                }
-            }
-
-            // 2 sides (front & back)
-            for (double x = minX; x <= maxX; x+=0.2D) {
-                for (double y = minY; y <= maxY; y+=0.2D) {
-                    result.add(new Location(world, x, y, minZ));
-                    result.add(new Location(world, x, y, maxZ));
-                }
-            }
-
-            // 2 sides (left & right)
-            for (double z = minZ; z <= maxZ; z+=0.2D) {
-                for (double y = minY; y <= maxY; y+=0.2D) {
-                    result.add(new Location(world, minX, y, z));
-                    result.add(new Location(world, maxX, y, z));
-                }
-            }
-
-            return result;
-        }
-
-
-
-    //method that will show the particles
     private void showParticles(Region region) {
-        List<Location> locations = new ArrayList<Location>();
-        locations = getRegionParticles(region);
+        new BukkitRunnable() {
+            int counter = 0; // Counter to keep track of ticks
 
-        for (Location location : locations) {
-            location.getWorld().spawnParticle(Particle.ENCHANTMENT_TABLE, location, 1, 0, 0, 0, 0);
-        }
+            @Override
+            public void run() {
+                if (counter >= 40) { // 40 ticks = 2 seconds
+                    cancel(); // Stop the runnable
+                    return;
+                }
+
+                Location corner1 = region.getLocation1();
+                Location corner2 = region.getLocation2();
+
+                World world = corner1.getWorld();
+
+                double minX = Math.min(corner1.getX(), corner2.getX());
+                double minY = Math.min(corner1.getY(), corner2.getY());
+                double minZ = Math.min(corner1.getZ(), corner2.getZ());
+                double maxX = Math.max(corner1.getX(), corner2.getX());
+                double maxY = Math.max(corner1.getY(), corner2.getY());
+                double maxZ = Math.max(corner1.getZ(), corner2.getZ());
+
+                // Generate particles along the edges of the region
+                for (double x = minX; x <= maxX; x++) {
+                    for (double y = minY; y <= maxY; y++) {
+                        for (double z = minZ; z <= maxZ; z++) {
+                            // Check if the current location is on the edge of the region
+                            if (x == minX || x == maxX || y == minY || y == maxY || z == minZ || z == maxZ) {
+                                Location location = new Location(world, x, y, z);
+                                world.spawnParticle(Particle.COMPOSTER, location, 1, 0, 0, 0, 0);
+                            }
+                        }
+                    }
+                }
+
+                counter++; // Increment the counter
+            }
+        }.runTaskTimer(QuickSurvival.getInstance(), 0L, 1L); // Run the task every tick
     }
-
-
 
     }
 
