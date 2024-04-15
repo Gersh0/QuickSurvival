@@ -24,7 +24,7 @@ import java.util.*;
 
 public class BackpackInteract implements Listener {
 
-    private static HashMap<String, String> backpacks = new HashMap<>();
+    private static final HashMap<String, String> backpacks = new HashMap<>();
 
     @EventHandler
     public void onPlayerInteract(PlayerInteractEvent event) throws IOException {
@@ -32,71 +32,43 @@ public class BackpackInteract implements Listener {
         Block b = event.getClickedBlock();
         if (b != null && b.getState() instanceof TileState) return;
 
-
         Player player = event.getPlayer();
         ItemStack handItem = player.getInventory().getItemInMainHand();
 
         if (handItem.getItemMeta() == null) return;
 
-        player.sendMessage("Objeto:" + Objects.requireNonNull(handItem.getItemMeta()).getPersistentDataContainer().getKeys());
-
+        //player.sendMessage("Item:" + Objects.requireNonNull(handItem.getItemMeta()).getPersistentDataContainer().getKeys());
 
         PersistentDataContainer container = handItem.getItemMeta().getPersistentDataContainer();
-        backpacks.put(player.getUniqueId().toString(), container.get(Keys.BACKPACK_CODE, PersistentDataType.STRING));
 
-        // Verificar si el jugador interactuó con un "Backpack lv1"
-        if (event.getAction().name().contains("RIGHT")) {
-            if (container.has(Keys.BACKPACKLV1, PersistentDataType.STRING)) {
-                // Abrir el inventario de la mochila
-                openBackpackInventory(player, 1);
-                event.setCancelled(true);
-            } else if (container.has(Keys.BACKPACKLV2, PersistentDataType.STRING)) {
-                openBackpackInventory(player, 2);
-                event.setCancelled(true);
-            } else if (container.has(Keys.BACKPACKLV3, PersistentDataType.STRING)) {
-                openBackpackInventory(player, 3);
-                event.setCancelled(true);
-            } else if (container.has(Keys.BACKPACKLV4, PersistentDataType.STRING)) {
-                // Abrir el inventario de la mochila
-                openBackpackInventory(player, 4);
-                event.setCancelled(true);
-            } else if (container.has(Keys.BACKPACKLV5, PersistentDataType.STRING)) {
-                // Abrir el inventario de la mochila
-                openBackpackInventory(player, 6);
-                event.setCancelled(true);
-            }
+        // Check if the player is right-clicking with a backpack
+        if (!event.getAction().name().contains("RIGHT")) return;
+
+        for (int i = 1; i <= 5; i++) {
+            if (!container.has(Keys.valueOf("BackpackLv" + i), PersistentDataType.STRING)) continue;
+            backpacks.put(player.getUniqueId().toString(), container.get(Keys.BACKPACK_CODE, PersistentDataType.STRING));
+            openBackpackInventory(player, i != 5 ? i : 6);
+            event.setCancelled(true);
+            break;
         }
     }
 
     private int roundInventorySize(int size) {
         if (size == 0) return 9;
-        // Redondear hacia arriba al múltiplo de 9 más cercano
+        // Round up to the nearest multiple of 9
         return (int) Math.ceil((double) size / 9) * 9;
     }
 
     private void openBackpackInventory(Player player, int backpackLevel) throws IOException {
         int inventorySize = roundInventorySize(9 * backpackLevel);
 
-
         Inventory backpackInventory = Bukkit.createInventory(null, inventorySize, "Backpack");
-        // Crear el inventario de la mochila
-        if (restoreInventory(player) != null) {
-            backpackInventory = restoreInventory(player);
-        }
+        // Create a new backpack inventory if the player doesn't have one
+        if (restoreInventory(player) != null) backpackInventory = restoreInventory(player);
 
-
-        // Verificar si el jugador tiene un inventario guardado para esta mochila
-
-
-        // Duplicar el inventario si el nivel es mayor que 1
-        if (backpackLevel > 1) {
-            Inventory duplicateInventory = Bukkit.createInventory(null, inventorySize, "Backpack");
-            duplicateInventory.setContents(backpackInventory.getContents());
-            player.openInventory(duplicateInventory);
-        } else {
-            // Abrir el inventario para el jugador
-            player.openInventory(backpackInventory);
-        }
+        Inventory inventoryToOpen = backpackLevel > 1 ? Bukkit.createInventory(null, inventorySize, "Backpack") : backpackInventory;
+        if (backpackLevel > 1) inventoryToOpen.setContents(backpackInventory.getContents());
+        player.openInventory(inventoryToOpen);
 
         player.sendMessage(org.bukkit.ChatColor.GREEN + "Mochila abierta");
     }
@@ -106,23 +78,45 @@ public class BackpackInteract implements Listener {
     public void onInventoryClick(InventoryClickEvent event) {
         if (!event.getView().getTitle().equalsIgnoreCase("Backpack")) return;
 
-        if (event.getCurrentItem() == null) {
-            event.getWhoClicked().sendMessage("Item nulo");
-            return;
-        }
-        event.getWhoClicked().sendMessage(event.getCurrentItem().toString());
-        event.getWhoClicked().sendMessage(event.getWhoClicked().getOpenInventory().getTopInventory().getType().toString());
+        if (event.getCurrentItem() == null) return;
 
         if (event.getCurrentItem().getItemMeta() == null) return;
+
         PersistentDataContainer container = event.getCurrentItem().getItemMeta().getPersistentDataContainer();
 
         //si(backpack clikeado == backpack abierto) entonces cancelar evento
-        String UUIDbackpack = event.getCurrentItem().getItemMeta().getPersistentDataContainer().get(Keys.BACKPACK_CODE, PersistentDataType.STRING);
+        String UUIDbackpack = container.get(Keys.BACKPACK_CODE, PersistentDataType.STRING);
+        String UUIDPlayer = event.getWhoClicked().getUniqueId().toString();
 
-        if (backpacks.containsKey(event.getWhoClicked().getUniqueId().toString()) && backpacks.get(event.getWhoClicked().getUniqueId().toString()).equals(UUIDbackpack)) {
+        event.getWhoClicked().sendMessage(event.getAction().toString());
+        // Check if the opened backpack is the same as the clicked backpack or applied other actions
+        if (backpacks.get(UUIDPlayer).equals(UUIDbackpack)) {
+            event.getWhoClicked().sendMessage(event.getAction().toString());
             event.setCancelled(true);
         }
+
+
     }
+
+    /*@EventHandler
+    public void onItemMove(InventoryMoveItemEvent event) {
+        Optional<HumanEntity> player = event.getDestination().getViewers().stream().findFirst();
+        if (player.isEmpty()) return;
+        String UUUIDPlayer = player.get().getUniqueId().toString();
+        player.get().sendMessage("UUUIDPlayer: " + UUUIDPlayer);
+
+        if (event.getItem().getItemMeta() == null) return;
+        PersistentDataContainer container = event.getItem().getItemMeta().getPersistentDataContainer();
+        String UUIDbackpack = container.get(Keys.BACKPACK_CODE, PersistentDataType.STRING);
+
+        player.get().sendMessage("UUIDbackpack: " + UUIDbackpack + " UUUIDPlayer: " + UUUIDPlayer);
+
+
+        // Check if the backpack is being moved to another inventory
+        if (backpacks.get(UUUIDPlayer).equals(UUIDbackpack)) {
+            event.setCancelled(true);
+        }
+    }*/
 
     //SECCION DE GUARDADO
     @EventHandler
@@ -136,41 +130,12 @@ public class BackpackInteract implements Listener {
 
         Player player = (Player) event.getPlayer();
         Inventory inventory = event.getInventory();
+        String UUIDbackpack = backpacks.get(player.getUniqueId().toString());
 
-        ItemStack handItem = player.getInventory().getItemInMainHand();
+        if (UUIDbackpack == null) return;
+        saveInventory(player, inventory);
 
-        if (handItem.getItemMeta() == null) return;
-
-        PersistentDataContainer container = handItem.getItemMeta().getPersistentDataContainer();
-
-        if (container.has(Keys.BACKPACK_CODE, PersistentDataType.STRING)) {
-
-            saveInventory(player, inventory);
-
-            player.sendMessage("tipo de inventario cerrado: " + event.getInventory().getType().name());
-
-            player.sendMessage("nombre de la clase: " + inventory.getClass().getName());
-
-            player.sendMessage("holder: " + inventory.getHolder());
-
-        }
     }
-
-  /*  @EventHandler
-    public void onInventoryOpen(InventoryOpenEvent event) throws IOException {
-
-        Player player = (Player) event.getPlayer();
-        Inventory inventory = event.getInventory();
-
-        ItemStack handItem = player.getInventory().getItemInMainHand();
-
-        PersistentDataContainer container = Objects.requireNonNull(handItem.getItemMeta()).getPersistentDataContainer();
-        player.sendMessage("inventario abierto");
-        // Cargar el inventario al abrir la mochila
-        if (container.has(Keys.BACKPACK_CODE, PersistentDataType.STRING)) {
-            restoreInventory(player);
-        }
-    }*/
 
     private File getInventoryFolder() {
         File pluginFolder = QuickSurvival.getInstance().getDataFolder();
@@ -189,11 +154,10 @@ public class BackpackInteract implements Listener {
         PersistentDataContainer container = Objects.requireNonNull(player.getInventory().getItemInMainHand().getItemMeta()).getPersistentDataContainer();
 
         String UUIDbackpack;
-        if (container.has(Keys.BACKPACK_CODE, PersistentDataType.STRING)) {
-            UUIDbackpack = player.getInventory().getItemInMainHand().getItemMeta().getPersistentDataContainer().get(Keys.BACKPACK_CODE, PersistentDataType.STRING);
-        } else {
-            return null;
-        }
+        if (!container.has(Keys.BACKPACK_CODE, PersistentDataType.STRING)) return null;
+
+        UUIDbackpack = player.getInventory().getItemInMainHand().getItemMeta().getPersistentDataContainer().get(Keys.BACKPACK_CODE, PersistentDataType.STRING);
+
         return UUIDbackpack;
     }
 
@@ -224,7 +188,6 @@ public class BackpackInteract implements Listener {
         p.sendMessage("Inventario guardado exitosamente en: " + f.getAbsolutePath());
     }
 
-
     public Inventory restoreInventory(Player p) throws IOException {
 
         String UUIDbackpack = getBackpackUUID(p);
@@ -250,25 +213,4 @@ public class BackpackInteract implements Listener {
 
         return null; // O manejar de otra manera si no se pudo cargar el inventario
     }
-
-
-/*    public void saveInventory(Player p, Inventory inventory) throws IOException {
-
-        File f = new File(getInventoryFolder(), p.getName() + "BInventory" + ".yml");
-        FileConfiguration c = YamlConfiguration.loadConfiguration(f);
-        c.set("inventory.backpack", inventory);
-        c.save(f);
-
-        p.sendMessage("inventario guardado exitosamente en:" + f.getAbsolutePath());
-    }
-
-    @SuppressWarnings("unchecked")
-    public void restoreInventory(Player p, Inventory inventory) throws IOException {
-        File f = new File(getInventoryFolder(), p.getName() + "BInventory" + ".yml");
-        FileConfiguration c = YamlConfiguration.loadConfiguration(f);
-        ItemStack[] content = ((List<ItemStack>) Objects.requireNonNull(c.get("inventory.backpack"))).toArray(new ItemStack[0]);
-        inventory.setContents(content);
-        p.sendMessage("inventario Cargado exitosamente desde:" + f.getAbsolutePath());
-    }*/
-
 }
