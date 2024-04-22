@@ -41,7 +41,7 @@ public class RegionAddPlayerCommand implements CommandExecutor {
             sender.sendMessage("§8[§a✔§8] §7Player added to region!");
             return true;
         }
-            sender.sendMessage(ChatColor.RED + "You cannot add a player, playes is already in this region or does not exists in this region or is not online.");
+            sender.sendMessage(ChatColor.RED + "You cannot add a player, player is already in this region or does not exists in this region or is not online.");
             return false;
     }
 }

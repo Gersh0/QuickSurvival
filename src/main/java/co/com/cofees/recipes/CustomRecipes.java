@@ -13,7 +13,7 @@ public class CustomRecipes {
         waystones();
         enderGems();
         warpScrolls();
-        regionScrolls();
+        //regionScrolls(); //region scrolls are disabled
     }
 
     private static void backpacks() {

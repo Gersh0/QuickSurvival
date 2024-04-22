@@ -234,6 +234,7 @@ public class WaystoneInteract implements Listener {
         player.playSound(player.getLocation(), Sound.BLOCK_PORTAL_AMBIENT, 1.2f, 1.0f);
 
 
+        player.sendTitle("Teleporting", "to " + ChatColor.GOLD + waystone.getName(), 10, 40, 10);
 
         generateParticleEffect(player);
 

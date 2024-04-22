@@ -2,8 +2,9 @@ package co.com.cofees.commands;
 
 import co.com.cofees.commands.subcommands.*;
 import co.com.cofees.completers.RegionAddPlayerCompleter;
-import co.com.cofees.completers.RegionDeleteCompleter;
+import co.com.cofees.completers.ShowAllRegionsCompleter;
 import co.com.cofees.completers.RegionDeletePlayerCompleter;
+import co.com.cofees.completers.ShowAllRegionsCompleter;
 import co.com.cofees.tools.Region;
 import co.com.cofees.tools.Regions;
 import co.com.cofees.tools.Tuple;
@@ -32,8 +33,14 @@ public final class RegionCommand implements CommandExecutor, TabCompleter {
         register("save", new RegionSaveCommand(), null);
         register("list", new RegionListCommand(), null);
         register("current", new RegionCurrentCommand(), null);
-        register("delete", new RegionDeleteCommand(), new RegionDeleteCompleter());
-        register("show", new ShowRegionCommand(), null);
+        register("delete", new RegionDeleteCommand(), new ShowAllRegionsCompleter());
+        register("show", new ShowRegionCommand(), new ShowAllRegionsCompleter());
+        register("scroll", new RegionScrollCommand(), null);
+    }
+
+    public void register(String name, CommandExecutor cmd, TabCompleter completer) {
+        subCommands.put(name, cmd);
+        subCommandCompleters.put(name, completer);
     }
 
     // TODO Move into PlayerCache
@@ -80,8 +87,7 @@ public final class RegionCommand implements CommandExecutor, TabCompleter {
         if (!(sender instanceof Player)) return null; //Clauses the case if is not a player.
         if (command.getName().equalsIgnoreCase("region") && args.length == 1) {
             List<String> completions = new ArrayList<>();
-            completions.add("pos1");
-            completions.add("pos2");
+            completions.add("pos");
             completions.add("list");
             completions.add("addPlayer");
             completions.add("deletePlayer");
@@ -89,34 +95,15 @@ public final class RegionCommand implements CommandExecutor, TabCompleter {
             completions.add("delete");
             completions.add("save");
             completions.add("show");
-            //add the Region names
-            completions.addAll(Regions.getInstance().getRegionsNames());
+            completions.add("scroll");
             return completions;
         }
-        if (args.length > 1 && args[0].equalsIgnoreCase("delete")) {
-            Regions regions = Regions.getInstance();
-            return regions.getRegions().stream().map(Region::getName).collect(Collectors.toList());
-        }
+
 
         if (args.length > 1 && args[0].equalsIgnoreCase("save")) {
             return Collections.singletonList("<name>");
         }
 
-        if (args.length > 1 && args[0].equalsIgnoreCase("addPlayer")) {
-            Regions regions = Regions.getInstance();
-            return regions.getPlayersInRegion(args[1]);
-        }
-
-        if (args.length == 2 && args[0].equalsIgnoreCase("deletePlayer")) {
-            Regions regions = Regions.getInstance();
-            //show the players in the region
-            return regions.getRegions().stream().map(Region::getName).collect(Collectors.toList());
-        }
-
-        if (args.length > 2 && args[0].equalsIgnoreCase("deletePlayer")) {
-            Regions regions = Regions.getInstance();
-            return regions.getPlayersInRegion(args[1]);
-        }
 
 
         return null;
@@ -124,10 +111,7 @@ public final class RegionCommand implements CommandExecutor, TabCompleter {
 
 
     // Register a subcommand with its executor and completer
-    public void register(String name, CommandExecutor cmd, TabCompleter completer) {
-        subCommands.put(name, cmd);
-        subCommandCompleters.put(name, completer);
-    }
+
 
 
 }

@@ -21,7 +21,7 @@ public class RegionScrollRecipe extends RecipesCustom {
         this.shape = shape;
     }
 
-    private ItemStack createRegionScrollItem() {
+    public static ItemStack createRegionScrollItem() {
         ItemStack regionScroll = new ItemStack(Material.PAPER);
         ItemMeta regionScrollMeta = regionScroll.getItemMeta();
         if (regionScrollMeta == null) return null;
@@ -38,11 +38,14 @@ public class RegionScrollRecipe extends RecipesCustom {
         return regionScroll;
     }
 
-    private List<String> getLore() {
-        return List.of("A scroll to Make region");
+    //the lore will explain what the item does
+    private static List<String> getLore() {
+        return List.of("A scroll to Make region",
+                "Right click to instance a corner",
+                "Shift right click to reset the region corners");
     }
 
-    private String getName() {
+    private static String getName() {
         return ChatColor.DARK_PURPLE + "Region Scroll";
     }
 
