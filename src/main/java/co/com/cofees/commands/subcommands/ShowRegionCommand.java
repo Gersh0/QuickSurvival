@@ -1,19 +1,16 @@
 package co.com.cofees.commands.subcommands;
+
 import co.com.cofees.QuickSurvival;
 import co.com.cofees.tools.Region;
 import co.com.cofees.tools.Regions;
+import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.World;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.jetbrains.annotations.NotNull;
-import org.bukkit.Location;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class ShowRegionCommand implements CommandExecutor {
 
@@ -76,7 +73,7 @@ public class ShowRegionCommand implements CommandExecutor {
                         for (double z = minZ; z <= maxZ; z++) {
                             // Check if the current location is on the edge of the region
                             if (x == minX || x == maxX || y == minY || y == maxY || z == minZ || z == maxZ) {
-                                Location location = new Location(world, x, y, z);
+                                Location location = new Location(world, x, y, z+1);
                                 world.spawnParticle(Particle.COMPOSTER, location, 1, 0, 0, 0, 0);
                             }
                         }
