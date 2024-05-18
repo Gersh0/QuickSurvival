@@ -56,7 +56,6 @@ public class QuickSurvival extends JavaPlugin {
             Regions regions = Regions.getInstance();
             regions.load();
         }, 1);
-
     }
 
     @Override

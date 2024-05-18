@@ -61,7 +61,7 @@ public class ControlMenuGUI {
 
 
         player.openInventory(mainMenu);
-        player.sendMessage("MainMenu was opened");
+        //player.sendMessage("MainMenu was opened");//debug
 
     }
 
@@ -145,7 +145,7 @@ public class ControlMenuGUI {
 
 
         player.openInventory(generalMenu);
-        player.sendMessage("GeneralMenu was opened");
+        //player.sendMessage("GeneralMenu was opened");//debug
     }
 
     public void openSleepEventMenu(Player player){
@@ -194,7 +194,7 @@ public class ControlMenuGUI {
         }
 
         player.openInventory(sleepMenu);
-        player.sendMessage("SleepMenu was opened");
+        //player.sendMessage("SleepMenu was opened");//debug
     }
 
     public ItemStack createDecorativePane(){

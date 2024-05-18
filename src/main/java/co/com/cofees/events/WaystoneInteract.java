@@ -68,10 +68,10 @@ public class WaystoneInteract implements Listener {
             // Just debugging
             {
                 if (waystone == null) {
-                    p.sendMessage("Waystone Fail: " + name);
+                    Bukkit.getServer().getLogger().warning("Waystone Fail: " + name);
                     return;
                 }
-                p.sendMessage("Clicked Waystone Name: " + name);
+                //p.sendMessage("Clicked Waystone Name: " + name);//debug
             }
 
             if (!waystone.containsPlayer(p.getName())) {
@@ -80,11 +80,11 @@ public class WaystoneInteract implements Listener {
                 WaystonePlacement.saveWaystone(waystone, QuickSurvival.waystonesConfig, name);
                 p.playSound(p.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1.0f, 1.0f);
             } else {
-                p.sendMessage("Ya estás en la lista de este waystone");
+                //p.sendMessage("Ya estás en la lista de este waystone");//debug
             }
 
             openWaystoneInventory(p);
-            p.sendMessage("menu abierto correctamente");
+            //p.sendMessage("menu abierto correctamente");//debug
         }
     }
 
@@ -121,7 +121,7 @@ public class WaystoneInteract implements Listener {
         if (e.getAction().name().contains("RIGHT") && container.has(Keys.WARP_SCROLL, PersistentDataType.STRING)) {
 
             openWaystoneInventory(p);
-            p.sendMessage("menu de warp scroll abierto correctamente");
+            //p.sendMessage("menu de warp scroll abierto correctamente");//debug
             p.playSound(p.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 1.0f, 1.0f);
 
         }
@@ -196,7 +196,7 @@ public class WaystoneInteract implements Listener {
 
             WaystoneMenuGui.openWaystoneOptionMenu((Player) e.getWhoClicked(), waystone);
             //send message to player
-            e.getWhoClicked().sendMessage("Menu de " + ChatColor.GOLD + " " + waystone.getName() + " " + ChatColor.RESET + "abierto correctamente");
+            //e.getWhoClicked().sendMessage("Menu de " + ChatColor.GOLD + " " + waystone.getName() + " " + ChatColor.RESET + "abierto correctamente");//debug
             return;
         }
 
@@ -216,7 +216,7 @@ public class WaystoneInteract implements Listener {
         // Add the items to the inventory
         itemStacks.forEach(waystoneInventory::addItem);
         //send message to player
-        player.sendMessage("Inventario cargado correctamente");
+        //player.sendMessage("Inventario cargado correctamente");//debug
         // Open the inventory
         player.openInventory(waystoneInventory);
     }

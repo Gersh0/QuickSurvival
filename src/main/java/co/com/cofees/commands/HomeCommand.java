@@ -45,6 +45,7 @@ public class HomeCommand implements CommandExecutor, TabCompleter {
             sender.sendMessage("Only players can use this command");
             return false;
         }
+
         // Get the list of homes for the player /home <subcommand> or /home <homeName>
         HashMap<String, Location> playerHomes = QuickSurvival.homes.get(player.getName());
 
@@ -85,9 +86,7 @@ public class HomeCommand implements CommandExecutor, TabCompleter {
         List<String> completions = new ArrayList<>(subCommands.keySet());
 
         // And add the home names to the completions list, if the player has any homes
-        if (!QuickSurvival.homes.get(sender.getName()).isEmpty()) {
-            completions.addAll(QuickSurvival.homes.get(sender.getName()).keySet());
-        }
+        if (!QuickSurvival.homes.get(sender.getName()).isEmpty()) completions.addAll(QuickSurvival.homes.get(sender.getName()).keySet());
 
         // Now we will check if the player has entered a subcommand and if so, we will call the tab completer of that subcommand
         if (args.length > 1) {

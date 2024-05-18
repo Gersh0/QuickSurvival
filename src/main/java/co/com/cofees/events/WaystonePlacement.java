@@ -56,7 +56,7 @@ public class WaystonePlacement implements Listener {
         //open anvil gui to rename the waystone
         WaystoneMenuGui.makeAnvilGuiFirstRename(player);
 
-        player.sendMessage(ChatColor.GREEN + "Se ha colocado un nuevo Waystone correctamente.");
+        player.sendMessage(ChatColor.GREEN + "Waystone placed!");
         event.setCancelled(true);
     }
 
@@ -93,7 +93,7 @@ public class WaystonePlacement implements Listener {
         };
         PersistentDataContainer container = tileState.getPersistentDataContainer();
         //debug message
-        event.getPlayer().sendMessage(container.toString());
+        //event.getPlayer().sendMessage(container.toString());
         if (!container.has(Keys.WAYSTONE, PersistentDataType.STRING)) return;
         //debug message
         event.getPlayer().sendMessage("Waystone has been broken");

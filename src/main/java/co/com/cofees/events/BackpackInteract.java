@@ -70,7 +70,7 @@ public class BackpackInteract implements Listener {
         if (backpackLevel > 1) inventoryToOpen.setContents(backpackInventory.getContents());
         player.openInventory(inventoryToOpen);
 
-        player.sendMessage(org.bukkit.ChatColor.GREEN + "Mochila abierta");
+        //player.sendMessage(org.bukkit.ChatColor.GREEN + "Backpack opened successfully!");//debug
     }
 
     //Evitar que ponga el backpack dentro de sí mismo
@@ -88,10 +88,10 @@ public class BackpackInteract implements Listener {
         String UUIDbackpack = container.get(Keys.BACKPACK_CODE, PersistentDataType.STRING);
         String UUIDPlayer = event.getWhoClicked().getUniqueId().toString();
 
-        event.getWhoClicked().sendMessage(event.getAction().toString());
+        //event.getWhoClicked().sendMessage(event.getAction().toString()); //debug
         // Check if the opened backpack is the same as the clicked backpack or applied other actions
         if (backpacks.get(UUIDPlayer).equals(UUIDbackpack)) {
-            event.getWhoClicked().sendMessage(event.getAction().toString());
+            //event.getWhoClicked().sendMessage(event.getAction().toString());//debug
             event.setCancelled(true);
         }
 
@@ -185,7 +185,7 @@ public class BackpackInteract implements Listener {
         c.set("inventory.backpack", items);
         c.save(f);
 
-        p.sendMessage("Inventario guardado exitosamente en: " + f.getAbsolutePath());
+       // p.sendMessage("Inventario guardado exitosamente en: " + f.getAbsolutePath());
     }
 
     public Inventory restoreInventory(Player p) throws IOException {
@@ -207,7 +207,7 @@ public class BackpackInteract implements Listener {
                 inventory.setItem(i, itemStack);
             }
 
-            p.sendMessage("Inventario cargado exitosamente desde: " + f.getAbsolutePath());
+            //p.sendMessage("Inventario cargado exitosamente desde: " + f.getAbsolutePath());
             return inventory;
         }
 

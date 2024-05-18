@@ -87,7 +87,7 @@ public class WaystoneCommand implements CommandExecutor, Listener, TabCompleter 
             //abrir inventario
             player.openInventory(inv);
 
-            player.sendMessage(text("&b&Waypoint Entregado&b"));
+            player.sendMessage(text("&b&Waystone given&b"));
         } else {
             noArgs(player);
         }

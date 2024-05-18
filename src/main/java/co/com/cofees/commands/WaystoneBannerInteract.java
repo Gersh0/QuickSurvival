@@ -38,20 +38,20 @@ public class WaystoneBannerInteract implements CommandExecutor, TabCompleter {
             case "open":
                 Block b = player.getTargetBlockExact(5);
                 if (b == null) {
-                    player.sendMessage("Apunta a un bloque");
+                    player.sendMessage("You must look at any block");
                     return true;
                 }
 
                 if (!(b.getState() instanceof TileState tileState)) {
-                    player.sendMessage("Este bloque no es una Waystone");
+                    player.sendMessage("This block is not a Waystone");
                     return true;
                 }
 
-                player.sendMessage("este bloque si es un tilestate");
+                //player.sendMessage("It is a tilestate block");//debug
                 PersistentDataContainer container = tileState.getPersistentDataContainer();
 
                 if (!container.has(Keys.WAYSTONE, PersistentDataType.STRING)) {
-                    player.sendMessage("Este bloque no tiene Key: WAYSTONE");
+                    Bukkit.getServer().getLogger().warning("Player "+player.getName()+" is trying to interact with a tilestate block without Key: WAYSTONE");
                     return true;
                 }
 
@@ -61,19 +61,19 @@ public class WaystoneBannerInteract implements CommandExecutor, TabCompleter {
             case "set":
                 Block block = player.getTargetBlockExact(5);
                 if (block == null) {
-                    player.sendMessage("Apunta a un bloque");
+                    player.sendMessage("You must look at any block");
                     return true;
                 }
 
                 if (!(block.getState() instanceof TileState tileStateSet)) {
-                    player.sendMessage("Este bloque no tiene Tilestate");
+                    player.sendMessage("Block without tilestate");
                     return true;
                 }
 
-                player.sendMessage("este bloque si es un tilestate");
+                //player.sendMessage("este bloque si es un tilestate");//debug
                 tileStateSet.getPersistentDataContainer().set(Keys.WAYSTONE, PersistentDataType.STRING, "true");
                 tileStateSet.update();
-                player.sendMessage("Bloque asignado como Waystone");
+                player.sendMessage("Block added as Waystone");
                 break;
 
             default:

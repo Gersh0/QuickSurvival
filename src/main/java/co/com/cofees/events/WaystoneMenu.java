@@ -30,7 +30,7 @@ public class WaystoneMenu implements Listener {
 
                 // Verifica si hicieron clic en la casilla 20
                 if (event.getRawSlot() == 20) {
-                    event.getWhoClicked().sendMessage(text("&abuenas"));
+//                    event.getWhoClicked().sendMessage(text("&abuenas"));//debug
                 }
 
                 if (event.getRawSlot() == 22) {
@@ -50,7 +50,7 @@ public class WaystoneMenu implements Listener {
 
 
                     Player player = (Player) event.getWhoClicked();
-                    player.sendMessage(ChatColor.RED + "¡Waystone creado!");
+                    player.sendMessage(ChatColor.RED + "¡Waystone created!");
 
                     giveBeacon(player.getLocation(),player);
 
@@ -82,12 +82,12 @@ public class WaystoneMenu implements Listener {
         if (player.getInventory().firstEmpty() != -1) {
             // Hay espacio en el inventario
             player.getInventory().addItem(waystoneItem);
-            player.sendMessage(ChatColor.GREEN + "Has recibido un Waystone en tu inventario.");
+            player.sendMessage(ChatColor.GREEN + "Waystone placed in your inventory.");
         } else {
             // El inventario está lleno, dejar caer el ítem al suelo
             Item item = player.getWorld().dropItemNaturally(player.getLocation(), waystoneItem);
             item.setInvulnerable(true); // Evitar que otros jugadores lo recojan
-            player.sendMessage(ChatColor.GREEN + "No hay espacio en tu inventario. Se ha dejado caer un Waystone al suelo.");
+            player.sendMessage(ChatColor.GREEN + "There is no space in your inventory. It has been dropped on the ground.");
 
             // Obtener el bloque del Beacon
             Block block = item.getLocation().getBlock();
@@ -105,7 +105,7 @@ public class WaystoneMenu implements Listener {
                 tileState.getPersistentDataContainer().set(Keys.WAYSTONE, PersistentDataType.STRING, waystoneItemItemMeta.getDisplayName());
                 tileState.update(); // Actualizar el estado para aplicar los cambios
 
-                player.sendMessage(ChatColor.GREEN + "Se creó Waystone correctamente.");
+                player.sendMessage(ChatColor.GREEN + "Waystone created successfully.");
             }
         }
         // Reproducir el sonido de activación
