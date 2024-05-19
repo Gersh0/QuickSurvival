@@ -62,13 +62,12 @@ public class HomeCommand implements CommandExecutor, TabCompleter {
         String subCommandName = args[0];// Get the possible subcommand name, it may also be a home name
         CommandExecutor subCommand = subCommands.get(subCommandName);//Try to get the subcommand, if it exists it will not be null
 
-        if (subCommand == null) {// If the subcommand does not exist, it may be a home name or an invalid command
+        if (subCommand == null) {
             if (!playerHomes.containsKey(subCommandName)) {
-                player.sendMessage("Home " + subCommandName + " does not exist or is an invalid command");
+                player.sendMessage(String.format("Home %s does not exist or is an invalid command", subCommandName));
                 return false;
             }
-            // Teleport the player to the home location after checking that it exists
-            TextTools.sendMessage(player, "Teleporting to home " + subCommandName, "", QuickSurvival.getPlugin(QuickSurvival.class));
+            TextTools.sendMessage(player, String.format("Teleporting to home %s", subCommandName), "", QuickSurvival.getPlugin(QuickSurvival.class));
             player.teleport(playerHomes.get(subCommandName));
             return true;
         }
@@ -86,7 +85,8 @@ public class HomeCommand implements CommandExecutor, TabCompleter {
         List<String> completions = new ArrayList<>(subCommands.keySet());
 
         // And add the home names to the completions list, if the player has any homes
-        if (!QuickSurvival.homes.get(sender.getName()).isEmpty()) completions.addAll(QuickSurvival.homes.get(sender.getName()).keySet());
+        if (!QuickSurvival.homes.get(sender.getName()).isEmpty())
+            completions.addAll(QuickSurvival.homes.get(sender.getName()).keySet());
 
         // Now we will check if the player has entered a subcommand and if so, we will call the tab completer of that subcommand
         if (args.length > 1) {
