@@ -20,7 +20,13 @@ import org.bukkit.persistence.PersistentDataType;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 public class BackpackInteract implements Listener {
 
@@ -162,55 +168,36 @@ public class BackpackInteract implements Listener {
     }
 
     public void saveInventory(Player p, Inventory inventory) throws IOException {
-
         //Guard clause if the player is looking at a tilestate block
-        Block b = p.getTargetBlockExact(5);
-        if (b != null && b.getState() instanceof TileState) return;
-
+        if (p.getTargetBlockExact(5) instanceof TileState) return;
 
         String UUIDbackpack = getBackpackUUID(p);
-
-        File f = new File(getInventoryFolder(), p.getName() + UUIDbackpack + "BInventory" + ".yml");
+        File f = new File(getInventoryFolder(), p.getName() + UUIDbackpack + "BInventory.yml");
         FileConfiguration c = YamlConfiguration.loadConfiguration(f);
 
-        List<Map<String, Object>> items = new ArrayList<>();
-        for (ItemStack item : inventory.getContents()) {
-            if (item != null) {
-                items.add(item.serialize());
-            } else {
-                items.add(null);
-            }
-        }
+        List<Map<String, Object>> items = Stream.of(inventory.getContents())
+                .map(item -> item != null ? item.serialize() : null)
+                .collect(Collectors.toList());
 
         c.set("inventory.backpack", items);
         c.save(f);
-
-       // p.sendMessage("Inventario guardado exitosamente en: " + f.getAbsolutePath());
     }
 
     public Inventory restoreInventory(Player p) throws IOException {
-
         String UUIDbackpack = getBackpackUUID(p);
-
-        File f = new File(getInventoryFolder(), p.getName() + UUIDbackpack + "BInventory" + ".yml");
+        File f = new File(getInventoryFolder(), p.getName() + UUIDbackpack + "BInventory.yml");
         FileConfiguration c = YamlConfiguration.loadConfiguration(f);
 
         List<Map<String, Object>> items = (List<Map<String, Object>>) c.get("inventory.backpack");
-        if (items != null) {
-            // Ajustar el tamaño para que sea un múltiplo de 9
-            int adjustedSize = roundInventorySize(items.size());
-            Inventory inventory = Bukkit.createInventory(null, adjustedSize, "Backpack");
+        if (items == null) return null;
 
-            for (int i = 0; i < items.size(); i++) {
-                if (items.get(i) == null) continue;
-                ItemStack itemStack = ItemStack.deserialize(items.get(i));
-                inventory.setItem(i, itemStack);
-            }
+        int adjustedSize = roundInventorySize(items.size());
+        Inventory inventory = Bukkit.createInventory(null, adjustedSize, "Backpack");
 
-            //p.sendMessage("Inventario cargado exitosamente desde: " + f.getAbsolutePath());
-            return inventory;
-        }
+        IntStream.range(0, items.size())
+                .filter(i -> items.get(i) != null)
+                .forEach(i -> inventory.setItem(i, ItemStack.deserialize(items.get(i))));
 
-        return null; // O manejar de otra manera si no se pudo cargar el inventario
+        return inventory;
     }
 }
