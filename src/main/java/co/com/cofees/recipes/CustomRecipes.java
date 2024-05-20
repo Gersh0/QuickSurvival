@@ -13,7 +13,8 @@ public class CustomRecipes {
         waystones();
         enderGems();
         warpScrolls();
-        //regionScrolls(); //region scrolls are disabled
+        protectionBlocks();
+        //regionScrolls();
     }
 
     private static void backpacks() {
@@ -60,5 +61,32 @@ public class CustomRecipes {
         String[] shape = {"SPS", "PEP", "SPS"};
         RegionScrollRecipe regionScrollRecipe = new RegionScrollRecipe(ingredients, shape);
         regionScrollRecipe.registerRecipe();
+    }
+
+    private static void protectionBlocks() {
+        registerIronProtectionRecipe();
+        registerDiamondProtectionRecipe();
+        registerNetheriteProtectionRecipe();
+    }
+
+    private static void registerIronProtectionRecipe(){
+        Map<Character, Material> ingredients = Map.of('I', Material.IRON_BLOCK, 'L', Material.LAPIS_LAZULI);
+        String[] shape = {"LLL", "LIL", "LLL"};
+        ProtectionBlockRecipe ironProtectionBlock = new ProtectionBlockRecipe(1, ingredients, shape);
+        ironProtectionBlock.registerRecipe();
+    }
+
+    private static void registerDiamondProtectionRecipe(){
+        Map<Character, Material> ingredients = Map.of('D', Material.DIAMOND_BLOCK, 'G', Material.GOLD_INGOT, 'O', Material.CRYING_OBSIDIAN);
+        String[] shape = {"OGO", "GDG", "OGO"};
+        ProtectionBlockRecipe diamondProtectionBlock = new ProtectionBlockRecipe(2, ingredients, shape);
+        diamondProtectionBlock.registerRecipe();
+    }
+
+    private static void registerNetheriteProtectionRecipe(){
+        Map<Character, Material> ingredients = Map.of('N', Material.NETHERITE_INGOT, 'D', Material.DIAMOND_BLOCK, 'I', Material.IRON_BLOCK);
+        String[] shape = {"INI", "NDN", "INI"};
+        ProtectionBlockRecipe netheriteProtectionBlock = new ProtectionBlockRecipe(3, ingredients, shape);
+        netheriteProtectionBlock.registerRecipe();
     }
 }

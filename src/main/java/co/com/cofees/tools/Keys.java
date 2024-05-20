@@ -29,7 +29,12 @@ public class Keys {
     public static NamespacedKey valueOf(String s) {
         return new NamespacedKey(QuickSurvival.getInstance(), s);
     }
+
     public static final NamespacedKey REGION_SCROLL = new NamespacedKey(QuickSurvival.getInstance(), "RegionScroll");
+
+    public static final NamespacedKey IRON_PROTECTION_BLOCK = new NamespacedKey(QuickSurvival.getInstance(), "ProtectionBlock");
+    public static final NamespacedKey DIAMOND_PROTECTION_BLOCK = new NamespacedKey(QuickSurvival.getInstance(), "DiamondProtectionBlock");
+    public static final NamespacedKey NETHERITE_PROTECTION_BLOCK = new NamespacedKey(QuickSurvival.getInstance(), "NetheriteProtectionBlock");
 
     public static final NamespacedKey RSPOS1 = new NamespacedKey(QuickSurvival.getInstance(), "RSPOS1");
 

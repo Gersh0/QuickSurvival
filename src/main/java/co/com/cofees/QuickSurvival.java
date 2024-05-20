@@ -93,7 +93,7 @@ public class QuickSurvival extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new WaystoneMenuHandler(), this);
         getServer().getPluginManager().registerEvents(new RegionListener(), this);
         getServer().getPluginManager().registerEvents(new RegionScrollInteract(), this);
-
+        getServer().getPluginManager().registerEvents(new ProtectionBlockEvents(), this);
     }
 
     public void registerConfigFiles() {

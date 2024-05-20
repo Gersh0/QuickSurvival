@@ -1,7 +1,6 @@
 package co.com.cofees.tools;
 
 import co.com.cofees.QuickSurvival;
-import co.com.cofees.events.WaystonePlacement;
 import net.wesjd.anvilgui.AnvilGUI;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
