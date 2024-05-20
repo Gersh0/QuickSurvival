@@ -15,8 +15,21 @@ public class RegionDeletePlayerCompleter implements TabCompleter {
     @Nullable
     @Override
     public List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
+        //return players that are in the region
         Regions regions = Regions.getInstance();
 
-        return regions.getRegions().stream().map(Region::getName).collect(Collectors.toList());
+        if (args.length == 0){
+            return regions.getRegions().stream().map(Region::getName).collect(Collectors.toList());
+        }
+
+
+        String regionName = args[0];
+        if (regions.findRegion(regionName) == null) {
+            return null;
+        }
+
+        return regions.getPlayersInRegion(regionName);
+
+
     }
 }

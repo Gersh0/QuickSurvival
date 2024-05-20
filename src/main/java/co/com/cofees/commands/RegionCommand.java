@@ -2,8 +2,10 @@ package co.com.cofees.commands;
 
 import co.com.cofees.commands.subcommands.*;
 import co.com.cofees.completers.RegionAddPlayerCompleter;
-import co.com.cofees.completers.RegionDeleteCompleter;
+import co.com.cofees.completers.ShowAllRegionsCompleter;
 import co.com.cofees.completers.RegionDeletePlayerCompleter;
+import co.com.cofees.completers.ShowAllRegionsCompleter;
+import co.com.cofees.tools.Region;
 import co.com.cofees.tools.Regions;
 import co.com.cofees.tools.Tuple;
 import org.bukkit.ChatColor;
@@ -16,8 +18,10 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public final class RegionCommand implements CommandExecutor, TabCompleter {
+
 
     private final Map<String, CommandExecutor> subCommands = new HashMap<>();
     private final Map<String, TabCompleter> subCommandCompleters = new HashMap<>();
@@ -29,9 +33,17 @@ public final class RegionCommand implements CommandExecutor, TabCompleter {
         register("save", new RegionSaveCommand(), null);
         register("list", new RegionListCommand(), null);
         register("current", new RegionCurrentCommand(), null);
-        register("delete", new RegionDeleteCommand(), new RegionDeleteCompleter());
+        register("delete", new RegionDeleteCommand(), new ShowAllRegionsCompleter());
+        register("show", new ShowRegionCommand(), new ShowAllRegionsCompleter());
+        register("scroll", new RegionScrollCommand(), null);
     }
 
+    public void register(String name, CommandExecutor cmd, TabCompleter completer) {
+        subCommands.put(name, cmd);
+        subCommandCompleters.put(name, completer);
+    }
+
+    // TODO Move into PlayerCache
     public static final Map<UUID, Tuple<Location, Location>> selections = new HashMap<>();
 
     @Override

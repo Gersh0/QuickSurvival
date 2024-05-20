@@ -13,6 +13,7 @@ public class CustomRecipes {
         waystones();
         enderGems();
         warpScrolls();
+        //regionScrolls(); //region scrolls are disabled
     }
 
     private static void backpacks() {
@@ -52,5 +53,12 @@ public class CustomRecipes {
         String[] shape = {" B ", "BGB", "OOO"};
         WaystoneRecipe waystoneRecipe = new WaystoneRecipe(ingredients, shape);
         waystoneRecipe.registerRecipe();
+    }
+
+    private static void regionScrolls() {
+        Map<Character, Material> ingredients = Map.of('E', Material.ENDER_EYE, 'P', Material.PAPER, 'S', Material.STICK);
+        String[] shape = {"SPS", "PEP", "SPS"};
+        RegionScrollRecipe regionScrollRecipe = new RegionScrollRecipe(ingredients, shape);
+        regionScrollRecipe.registerRecipe();
     }
 }

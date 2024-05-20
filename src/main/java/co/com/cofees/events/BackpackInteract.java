@@ -100,29 +100,7 @@ public class BackpackInteract implements Listener {
             //event.getWhoClicked().sendMessage(event.getAction().toString());//debug
             event.setCancelled(true);
         }
-
-
     }
-
-    /*@EventHandler
-    public void onItemMove(InventoryMoveItemEvent event) {
-        Optional<HumanEntity> player = event.getDestination().getViewers().stream().findFirst();
-        if (player.isEmpty()) return;
-        String UUUIDPlayer = player.get().getUniqueId().toString();
-        player.get().sendMessage("UUUIDPlayer: " + UUUIDPlayer);
-
-        if (event.getItem().getItemMeta() == null) return;
-        PersistentDataContainer container = event.getItem().getItemMeta().getPersistentDataContainer();
-        String UUIDbackpack = container.get(Keys.BACKPACK_CODE, PersistentDataType.STRING);
-
-        player.get().sendMessage("UUIDbackpack: " + UUIDbackpack + " UUUIDPlayer: " + UUUIDPlayer);
-
-
-        // Check if the backpack is being moved to another inventory
-        if (backpacks.get(UUUIDPlayer).equals(UUIDbackpack)) {
-            event.setCancelled(true);
-        }
-    }*/
 
     //SECCION DE GUARDADO
     @EventHandler
