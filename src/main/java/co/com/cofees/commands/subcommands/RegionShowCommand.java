@@ -9,6 +9,7 @@ import org.bukkit.World;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.jetbrains.annotations.NotNull;
 
@@ -20,8 +21,16 @@ public class RegionShowCommand implements CommandExecutor {
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
         if (args.length == 0) {
-            sender.sendMessage("You need to specify a region name");
-            return false;
+
+            Player player =(Player) sender;
+            Location location= player.getLocation();
+            Region region = regions.findRegion(location);
+            if (region==null){
+                return false;
+            }
+            showParticles(region);
+
+            return true;
         }
 
         if (args.length > 1) {

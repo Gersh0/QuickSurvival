@@ -1,5 +1,6 @@
 package co.com.cofees.commands.subcommands;
 
+import co.com.cofees.QuickSurvival;
 import co.com.cofees.tools.Regions;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;

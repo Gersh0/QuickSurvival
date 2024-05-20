@@ -77,6 +77,7 @@ public final class Regions {
     public void deleteRegion(String name) {
         QuickSurvival.regionsConfig.set("Regions." + name, null);
         QuickSurvival.regions.remove(findRegion(name));
+        QuickSurvival.regionsConfig.set(name, null);
         try {
             QuickSurvival.regionsConfig.save(new File (QuickSurvival.getInstance().getDataFolder(), "regions.yml"));
         } catch (IOException e) {

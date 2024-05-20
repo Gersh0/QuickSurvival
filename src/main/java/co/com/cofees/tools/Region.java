@@ -1,6 +1,8 @@
 package co.com.cofees.tools;
 
+import co.com.cofees.QuickSurvival;
 import org.bukkit.Location;
+import org.bukkit.entity.Player;
 
 import java.util.HashMap;
 import java.util.List;
@@ -10,16 +12,19 @@ public class Region {
     private final String name;
     private final Location location1;
     private final Location location2;
-
+    //private final Player owner;
     private final List<String> players;
 
     //private final List<String> players;
+
+    //
 
 
     public Region(String name, Location location1, Location location2, List<String> players) {
         this.name = name;
         this.location1 = location1;
         this.location2 = location2;
+        //this.owner = QuickSurvival.getInstance().getServer().getPlayer(players.get(0));
         //this.players = players;
         this.players = players;
     }
