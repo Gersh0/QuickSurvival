@@ -13,52 +13,10 @@ import java.io.File;
 public final class Regions {
 
     private static final Regions instance = new Regions();
-    private final File file;
-    private final YamlConfiguration config;
-    private final Set<Region> regions = new HashSet<>();
+    private final Set<Region> regions = QuickSurvival.regions;
 
 
     public Regions() {
-        this.file = new File(QuickSurvival.getInstance().getDataFolder(), "regions.yml");
-        this.config = YamlConfiguration.loadConfiguration(file);
-    }
-
-    public void load() {
-        try {
-            if (!file.exists())
-                file.createNewFile();
-
-            config.load(file);
-
-
-        } catch (Exception ex) {
-            ex.printStackTrace();
-
-        }
-
-        regions.clear();
-
-        if (config.isSet("Regions")) {
-
-            for (Map<?, ?> rawRegion : config.getMapList("Regions"))
-                regions.add(Region.deserialize((Map<String, Object>) rawRegion));
-
-            Bukkit.getConsoleSender().sendMessage("Loaded regions: " + getRegionsNames());
-        }
-    }
-
-    public void save() {
-        List<Map<String, Object>> serializedRegions = new ArrayList<>();
-        for (Region region : regions)
-            serializedRegions.add(region.serialize());
-
-        config.set("Regions", serializedRegions);
-
-        try {
-            config.save(file);
-        } catch (IOException ex) {
-            ex.printStackTrace();
-        }
     }
 
     @Nullable
@@ -99,17 +57,33 @@ public final class Regions {
         return Collections.unmodifiableSet(names);
     }
 
-    public void saveRegion(String name, Location primary, Location secondary, List<String> players) {
-        this.regions.add(new Region(name, primary, secondary, players));
-        save();
+    public void saveRegion(Region region, YamlConfiguration config, String path) {
+        this.regions.add(region);
+        config.set(path + ".players", region.getPlayers());
+        config.set(path + ".name", region.getName());
+        LocationHandler.serializeLocation(region.getLocation1(), config, path + ".location1");
+        LocationHandler.serializeLocation(region.getLocation2(), config, path + ".location2");
+
+        try {
+            config.save(new File(QuickSurvival.getInstance().getDataFolder(), "regions.yml"));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        QuickSurvival.getInstance().getServer().getLogger().info("Region saved: " + region.getName());
+
     }
 
     public void deleteRegion(String name) {
-        Region region = findRegion(name);
-        if (region != null) {
-            regions.remove(region);
-            save();
+        QuickSurvival.regionsConfig.set("Regions." + name, null);
+        QuickSurvival.regions.remove(findRegion(name));
+        try {
+            QuickSurvival.regionsConfig.save(new File (QuickSurvival.getInstance().getDataFolder(), "regions.yml"));
+        } catch (IOException e) {
+            e.printStackTrace();
         }
+
+        QuickSurvival.getInstance().getServer().getLogger().info("Region deleted: " + name);
     }
 
     public static Regions getInstance() {

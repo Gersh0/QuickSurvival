@@ -2,11 +2,8 @@ package co.com.cofees.commands;
 
 import co.com.cofees.commands.subcommands.*;
 import co.com.cofees.completers.RegionAddPlayerCompleter;
-import co.com.cofees.completers.ShowAllRegionsCompleter;
 import co.com.cofees.completers.RegionDeletePlayerCompleter;
 import co.com.cofees.completers.ShowAllRegionsCompleter;
-import co.com.cofees.tools.Region;
-import co.com.cofees.tools.Regions;
 import co.com.cofees.tools.Tuple;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -18,7 +15,6 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 public final class RegionCommand implements CommandExecutor, TabCompleter {
 
@@ -34,13 +30,8 @@ public final class RegionCommand implements CommandExecutor, TabCompleter {
         register("list", new RegionListCommand(), null);
         register("current", new RegionCurrentCommand(), null);
         register("delete", new RegionDeleteCommand(), new ShowAllRegionsCompleter());
-        register("show", new ShowRegionCommand(), new ShowAllRegionsCompleter());
+        register("show", new RegionShowCommand(), new ShowAllRegionsCompleter());
         register("scroll", new RegionScrollCommand(), null);
-    }
-
-    public void register(String name, CommandExecutor cmd, TabCompleter completer) {
-        subCommands.put(name, cmd);
-        subCommandCompleters.put(name, completer);
     }
 
     // TODO Move into PlayerCache
@@ -80,10 +71,16 @@ public final class RegionCommand implements CommandExecutor, TabCompleter {
         if (!(sender instanceof Player)) return null;
 
         if (command.getName().equalsIgnoreCase("region") && args.length == 1) {
-            List<String> completions = new ArrayList<>(subCommands.keySet());
-            completions.addAll(Regions.getInstance().getRegionsNames());
-            return completions;
+            //completions.addAll(Regions.getInstance().getRegionsNames());
+            return new ArrayList<>(subCommands.keySet());
         }
+        /* todo: add the completions for the subcommands
+        1. addplayer: /region addPlayer <region> <player>
+        2. show: /region show <region>
+        3. pos: /region pos <1|2>
+        4. deleteplayer: /region deletePlayer <region> <player>
+        5. delete: /region delete <region>
+         */
 
         if (args.length > 1) {
             String subCommandName = args[0];

@@ -1,6 +1,9 @@
 package co.com.cofees.commands.subcommands;
 
+import co.com.cofees.QuickSurvival;
 import co.com.cofees.commands.RegionCommand;
+import co.com.cofees.tools.LocationHandler;
+import co.com.cofees.tools.Region;
 import co.com.cofees.tools.Regions;
 import co.com.cofees.tools.Tuple;
 import org.bukkit.ChatColor;
@@ -8,6 +11,7 @@ import org.bukkit.Location;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
@@ -39,7 +43,7 @@ public class RegionSaveCommand implements CommandExecutor {
         List<String> players = new ArrayList<>();
         players.add(player.getName());
 
-        regions.saveRegion(name, selection.getFirst(), selection.getSecond(), players);
+        regions.saveRegion(new Region(name, selection.getFirst(), selection.getSecond(), players), QuickSurvival.regionsConfig, name);
 
         //delete the selections after saving
 
@@ -49,4 +53,5 @@ public class RegionSaveCommand implements CommandExecutor {
         sender.sendMessage("§8[§a✔§8] §8Region saved!");
         return true;
     }
+
 }

@@ -43,7 +43,7 @@
                 <artifactId>maven-jar-plugin</artifactId>
                 <version>3.3.0</version>
                 <configuration>
-                    <outputDirectory>C:\Users\vorte\Downloads\UNIVERSIDAD\SERVERQUICKSURVIVAL\plugins</outputDirectory>
+                    <outputDirectory>E:\Proyecto2\Server\plugins</outputDirectory>
                 </configuration>
             </plugin>
 

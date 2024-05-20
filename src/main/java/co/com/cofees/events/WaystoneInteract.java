@@ -323,56 +323,45 @@ public class WaystoneInteract implements Listener {
     //method that generate a plarticle effect
     private void generateParticleEffect(Player player) {
 
-                // Ejecutar el anillo de partículas cada tick (20 veces por segundo)
-                new BukkitRunnable() {
-                    double t = 0; // Variable para el ángulo
-                    double radius = 1.0; // Radio del anillo
-                    double duration = 3.0; // Duración en segundos
+        // Ejecutar el anillo de partículas cada tick (20 veces por segundo)
+        new BukkitRunnable() {
+            double t = 0; // Variable para el ángulo
+            double radius = 1.0; // Radio del anillo
+            double duration = 3.0; // Duración en segundos
 
-                    //
+            //
 
 
+            @Override
+            public void run() {
+                if (t >= 0.25 * Math.PI) {
+                    // Cancelar la tarea después de 3 segundos
+                    cancel();
+                    return;
+                }
 
-                    @Override
-                    public void run() {
-                        if (t >= 0.25 * Math.PI) {
-                            // Cancelar la tarea después de 3 segundos
-                            cancel();
-                            return;
-                        }
+                double x = player.getLocation().getX() + radius * Math.cos(t);
 
-                        double x = player.getLocation().getX() + radius * Math.cos(t);
+                Location playerLocation = player.getLocation();
+                // Calcular la posición del anillo
+                //summonCircle(playerLocation, 1);
+                summonCircle(0.75, 0.75, 000.1, Color.PURPLE, player, 4);
+                summonCircle(3, 1, 000.1, Color.BLACK, player, 3);
+                //summonCircle2(1, 3, 000.1,Color.BLACK, player);
+                summonCircle(0.25, 0.25, 0.1, Color.WHITE, player, 5);
 
-                        Location playerLocation = player.getLocation();
-                        // Calcular la posición del anillo
-                        //summonCircle(playerLocation, 1);
-                        summonCircle2(0.75, 0.75, 000.1,Color.PURPLE ,player,4);
-                        summonCircle2(3, 1, 000.1,Color.BLACK, player,3);
-                        //summonCircle2(1, 3, 000.1,Color.BLACK, player);
-                        summonCircle2(0.25,0.25,0.1,Color.WHITE,player,5);
-
-                        // Incrementar el ángulo para la siguiente iteración
-                        t += Math.PI / 16; // Ajusta la velocidad del anillo según tus preferencias
-                    }
-                }.runTaskTimer(QuickSurvival.getInstance(), 0, 1); // Ejecutar cada tick (20 veces por segundo)
+                // Incrementar el ángulo para la siguiente iteración
+                t += Math.PI / 16; // Ajusta la velocidad del anillo según tus preferencias
             }
-
-
-    public void summonCircle(Location location, int size,Color particleColor) {
-        for (int d = 0; d <= 90; d += 1) {
-            Location particleLoc = new Location(location.getWorld(), location.getX(), location.getY(), location.getZ());
-            particleLoc.setX(location.getX() + Math.cos(d) * size);
-            particleLoc.setZ(location.getZ() + Math.sin(d) * size);
-            location.getWorld().spawnParticle(Particle.SOUL_FIRE_FLAME, particleLoc, 1, new Particle.DustOptions(particleColor, 5));
-        }
+        }.runTaskTimer(QuickSurvival.getInstance(), 0, 1); // Ejecutar cada tick (20 veces por segundo)
     }
 
-    public void summonCircle2(double scaleX, double scaleY, double density,Color particleColor,Player player,float size){
+    public void summonCircle(double scaleX, double scaleY, double density, Color particleColor, Player player, float size) {
         //int scaleX = 1;  // use these to tune the size of your circle
         //int scaleY = 1;
-       // double density = 0.1;  // smaller numbers make the particles denser
+        // double density = 0.1;  // smaller numbers make the particles denser
 
-        for (double i=0; i < 2 * Math.PI ; i +=density) {
+        for (double i = 0; i < 2 * Math.PI; i += density) {
             double x = Math.cos(i) * scaleX;
             double y = Math.sin(i) * scaleY;
 
@@ -383,9 +372,7 @@ public class WaystoneInteract implements Listener {
     }
 
 
-
-
-    }
+}
 
 
 

@@ -1,8 +1,8 @@
 package co.com.cofees.commands;
 
 import co.com.cofees.QuickSurvival;
-import co.com.cofees.commands.subcommands.DeleteHomeCommand;
-import co.com.cofees.commands.subcommands.SetHomeCommand;
+import co.com.cofees.commands.subcommands.HomeDeleteCommand;
+import co.com.cofees.commands.subcommands.HomeSetCommand;
 import co.com.cofees.completers.DeleteHomeCompleter;
 import co.com.cofees.completers.SetHomeCompleter;
 import co.com.cofees.tools.TextTools;
@@ -23,8 +23,8 @@ public class HomeCommand implements CommandExecutor, TabCompleter {
     private final Map<String, TabCompleter> subCommandCompleters = new HashMap<>();
 
     public HomeCommand() {
-        register("set", new SetHomeCommand(), new SetHomeCompleter());//home set <name>
-        register("delete", new DeleteHomeCommand(), new DeleteHomeCompleter());//home delete <name>
+        register("set", new HomeSetCommand(), new SetHomeCompleter());//home set <name>
+        register("delete", new HomeDeleteCommand(), new DeleteHomeCompleter());//home delete <name>
     }
 
     public void register(String name, CommandExecutor cmd, TabCompleter completer) {

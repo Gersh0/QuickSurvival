@@ -12,7 +12,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.jetbrains.annotations.NotNull;
 
-public class ShowRegionCommand implements CommandExecutor {
+public class RegionShowCommand implements CommandExecutor {
 
     Regions regions = Regions.getInstance();
 

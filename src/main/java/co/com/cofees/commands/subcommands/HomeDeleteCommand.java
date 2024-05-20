@@ -12,7 +12,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 
-public class DeleteHomeCommand implements CommandExecutor {
+public class HomeDeleteCommand implements CommandExecutor {
     @Override
     public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
         /*

@@ -1,5 +1,6 @@
 package co.com.cofees.commands.subcommands;
 
+import co.com.cofees.QuickSurvival;
 import co.com.cofees.tools.Region;
 import co.com.cofees.tools.Regions;
 import org.bukkit.ChatColor;
@@ -40,7 +41,7 @@ public class RegionDeletePlayerCommand implements CommandExecutor {
         }
 
         region.deletePlayer(playerName);
-        regions.save();
+        regions.saveRegion(region, QuickSurvival.regionsConfig, region.getName());
 
         sender.sendMessage("§8[§a✔§8] §7Player removed from region!");
         return true;

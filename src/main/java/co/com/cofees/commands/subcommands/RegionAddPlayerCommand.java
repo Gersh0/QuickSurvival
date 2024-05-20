@@ -36,7 +36,7 @@ public class RegionAddPlayerCommand implements CommandExecutor {
 
         if ((players == null || !players.contains(playerName)) && QuickSurvival.getInstance().getServer().getPlayer(playerName) != null) {
             region.addPlayer(playerName);
-            regions.save();
+            regions.saveRegion(region, QuickSurvival.regionsConfig, region.getName());
 
             sender.sendMessage("§8[§a✔§8] §7Player added to region!");
             return true;

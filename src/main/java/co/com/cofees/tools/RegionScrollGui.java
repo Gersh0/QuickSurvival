@@ -69,7 +69,7 @@ public class RegionScrollGui {
         players.add(player.getName());
 
 
-        regions.saveRegion(name,location1,location2, players);
+        regions.saveRegion(new Region(name, location1, location2, players), QuickSurvival.regionsConfig, name);
 
 
 

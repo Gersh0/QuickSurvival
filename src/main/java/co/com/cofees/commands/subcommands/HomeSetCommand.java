@@ -13,7 +13,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 
-public class SetHomeCommand implements CommandExecutor {
+public class HomeSetCommand implements CommandExecutor {
     @Override
     public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
         if (args.length == 0) {

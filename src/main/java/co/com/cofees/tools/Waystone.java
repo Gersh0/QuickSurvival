@@ -28,10 +28,8 @@ public class Waystone {
         icon.setItemMeta(defaultMeta);
         defaultMeta.getPersistentDataContainer().set(Keys.WAYSTONE, PersistentDataType.STRING, name);
 
-
         //set the icon to a default icon
         this.icon = icon;
-
     }
 
     public Location getLocation() {
@@ -78,21 +76,5 @@ public class Waystone {
     public boolean containsPlayer(String player) {
         return players.contains(player);
     }
-
-    private void saveWaystone() {
-        //save the waystone to a file
-
-    }
-
-    public Waystone loadWaystone() {
-        //load the waystone from a file
-        return null;
-    }
-
-    //make a to string of a location
-    public String locationToString(Location location) {
-        return location.getWorld().getName() + "\n" + location.getBlockX() + "\n" + location.getBlockY() + "\n" + location.getBlockZ();
-    }
-
 
 }

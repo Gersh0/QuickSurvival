@@ -14,6 +14,7 @@ import co.com.cofees.commands.*;
 import co.com.cofees.events.*;
 import co.com.cofees.recipes.CustomRecipes;
 import co.com.cofees.tools.LocationHandler;
+import co.com.cofees.tools.Region;
 import co.com.cofees.tools.Regions;
 import co.com.cofees.tools.Waystone;
 import org.bukkit.Bukkit;
@@ -27,14 +28,17 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.function.Consumer;
 
 public class QuickSurvival extends JavaPlugin {
     public static final String PREFIX = ChatColor.translateAlternateColorCodes('&', "&b[QuickSurvival] ");
-    public static YamlConfiguration homesConfig, backpackConfig, waystonesConfig;
+    public static YamlConfiguration homesConfig, backpackConfig, waystonesConfig, regionsConfig;
     public static HashMap<String, HashMap<String, Location>> homes = new HashMap<>();
     public static HashMap<String, Waystone> waystones = new HashMap<>();
+    public static Set<Region> regions = new HashSet<>();
     private static QuickSurvival plugin;
     private static VacaNagasaki cowEvent = new VacaNagasaki();
     private static VeinMiner veinMiner = new VeinMiner();
@@ -52,10 +56,10 @@ public class QuickSurvival extends JavaPlugin {
         registerEvents();
         Bukkit.getConsoleSender().sendMessage(ChatColor.translateAlternateColorCodes('&', PREFIX + "&bPlugin enabled."));//Versión, Prefix PluginName
 
-        Bukkit.getScheduler().runTaskLater(this, () -> {
-            Regions regions = Regions.getInstance();
-            regions.load();
-        }, 1);
+//        Bukkit.getScheduler().runTaskLater(this, () -> {
+//            Regions regions = Regions.getInstance();
+//            regions.load();
+//        }, 1);
     }
 
     @Override
@@ -97,12 +101,15 @@ public class QuickSurvival extends JavaPlugin {
         homesConfig = getConfigFile("homes.yml", this);
         backpackConfig = getConfigFile("backpacks.yml", this);
         waystonesConfig = getConfigFile("waystones.yml", this);
+        //make the same for regions
+        regionsConfig = getConfigFile("regions.yml", this);
     }
 
     public void registerMaps() {
         //Fill the information from the configuration files to the maps
         fillInfoFromYML(homesConfig, getHomes());
         fillInfoFromYML(waystonesConfig, getWaystones());
+        fillInfoFromYML(regionsConfig, getRegions());
     }
 
     public void changeSleepingPlayers(String percentage) {
@@ -123,6 +130,31 @@ public class QuickSurvival extends JavaPlugin {
                                 .forEach(function),
                         3);
     }
+
+    public void fillInfoFromYML(ConfigurationSection config, Consumer<String> function) {
+        Bukkit.getScheduler()
+                .runTaskLater(this,
+                        () -> config.getKeys(false)
+                                .forEach(function),
+                        3);
+    }
+
+    public Consumer<String> getRegions() {
+    this.getLogger().warning("Loading regions");
+    return (regionName) -> {
+        ConfigurationSection regionSection = regionsConfig.getConfigurationSection(regionName);
+        if (regionSection == null) {
+            getLogger().warning("Region " + regionName + " not found in config");
+            return;
+        }
+        Location location1 = LocationHandler.createLocationFromConfig(regionSection, "location1", this);
+        Location location2 = LocationHandler.createLocationFromConfig(regionSection, "location2", this);
+        List<String> players = regionSection.getStringList("players");
+        Region region = new Region(regionName, location1, location2, players);
+        regions.add(region);
+        this.getServer().getLogger().info("Loaded region: " + ChatColor.GREEN + " " + regionName);
+    };
+}
 
     public Consumer<String> getHomes() {
         //Load the homes for each player and add them to the homes map
