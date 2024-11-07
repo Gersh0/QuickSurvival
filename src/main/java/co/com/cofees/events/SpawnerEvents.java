@@ -62,6 +62,6 @@ public class SpawnerEvents implements Listener {
 
     private boolean hasSilkTouchPickaxe(Player player) {
         ItemStack mainHandItem = player.getInventory().getItemInMainHand();
-        return mainHandItem != null && mainHandItem.getItemMeta() != null && mainHandItem.getItemMeta().hasEnchant(Enchantment.SILK_TOUCH);
+        return !mainHandItem.getType().isAir() && mainHandItem.getItemMeta() != null && mainHandItem.getItemMeta().hasEnchant(Enchantment.SILK_TOUCH);
     }
 }
