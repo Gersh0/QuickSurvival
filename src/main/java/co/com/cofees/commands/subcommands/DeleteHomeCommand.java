@@ -69,7 +69,7 @@ public class DeleteHomeCommand implements CommandExecutor {
             return true; // Return true if deletion is successful
         } catch (IOException e) {
             player.sendMessage("An error occurred while saving the homes file.");
-            e.printStackTrace();
+            System.out.println(e.getMessage());
             return false;
         }
     }

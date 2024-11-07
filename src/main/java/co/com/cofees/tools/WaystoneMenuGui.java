@@ -11,7 +11,6 @@ import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.TileState;
 import org.bukkit.entity.Player;
-import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -34,6 +33,7 @@ public class WaystoneMenuGui {
 
         ItemStack iconSelect = new ItemStack(Material.BOOK);
         ItemMeta iconSelectMeta = iconSelect.getItemMeta();
+        if (iconSelectMeta == null) return;
         iconSelectMeta.setDisplayName(ChatColor.GREEN + "Select Icon");
         iconSelect.setItemMeta(iconSelectMeta);
         waystoneOptionMenu.setItem(2, iconSelect);
@@ -41,13 +41,15 @@ public class WaystoneMenuGui {
         if (!WaystoneMenuHandler.isPlayerLookingAtTheSameWaystone(player, waystone)) {
             ItemStack nameChange = new ItemStack(Material.DAMAGED_ANVIL);
             ItemMeta nameChangeMeta = nameChange.getItemMeta();
-            nameChangeMeta.setDisplayName(ChatColor.RED + " "+ ChatColor.BOLD + "Cannot Change Name");
+            if (nameChangeMeta == null) return;
+            nameChangeMeta.setDisplayName(ChatColor.RED + " " + ChatColor.BOLD + "Cannot Change Name");
             nameChangeMeta.setLore(Collections.singletonList(ChatColor.RED + "You are not looking at the same waystone"));
             nameChange.setItemMeta(nameChangeMeta);
             waystoneOptionMenu.setItem(4, nameChange);
         } else {
             ItemStack nameChange = new ItemStack(Material.NAME_TAG);
             ItemMeta nameChangeMeta = nameChange.getItemMeta();
+            if (nameChangeMeta == null) return;
             nameChangeMeta.setDisplayName(ChatColor.GREEN + "Change Name");
             nameChange.setItemMeta(nameChangeMeta);
             waystoneOptionMenu.setItem(4, nameChange);
@@ -55,12 +57,14 @@ public class WaystoneMenuGui {
 
         ItemStack deleteWaystone = new ItemStack(Material.REDSTONE);
         ItemMeta deleteWaystoneMeta = deleteWaystone.getItemMeta();
+        if (deleteWaystoneMeta == null) return;
         deleteWaystoneMeta.setDisplayName(ChatColor.RED + "Delete Waystone");
         deleteWaystone.setItemMeta(deleteWaystoneMeta);
         waystoneOptionMenu.setItem(6, deleteWaystone);
 
         ItemStack close = new ItemStack(Material.BARRIER);
         ItemMeta closeMeta = close.getItemMeta();
+        if (closeMeta == null) return;
         closeMeta.setDisplayName(ChatColor.RED + "Close");
         close.setItemMeta(closeMeta);
         waystoneOptionMenu.setItem(8, close);
@@ -130,6 +134,7 @@ public class WaystoneMenuGui {
 
         ItemStack close = new ItemStack(Material.BARRIER);
         ItemMeta closeMeta = close.getItemMeta();
+        if (closeMeta == null) return;
         closeMeta.setDisplayName(ChatColor.RED + "Close");
         PersistentDataContainer closeContainer = closeMeta.getPersistentDataContainer();
         closeContainer.set(Keys.MENUOBJECT, PersistentDataType.STRING, "MenuObject");
@@ -138,6 +143,7 @@ public class WaystoneMenuGui {
         //add a blackStained glass pane on 45 to 53 slot
         ItemStack blackStainedGlassPane = new ItemStack(Material.BLACK_STAINED_GLASS_PANE);
         ItemMeta blackStainedGlassPaneMeta = blackStainedGlassPane.getItemMeta();
+        if (blackStainedGlassPaneMeta == null) return;
         blackStainedGlassPaneMeta.setDisplayName(" ");
         PersistentDataContainer glassContainer = blackStainedGlassPaneMeta.getPersistentDataContainer();
         glassContainer.set(Keys.MENUOBJECT, PersistentDataType.STRING, "MenuObject");
@@ -149,6 +155,7 @@ public class WaystoneMenuGui {
         //add the current waystone icon
         ItemStack currentIcon = new ItemStack(waystone.getIcon());
         ItemMeta currentIconMeta = currentIcon.getItemMeta();
+        if (currentIconMeta == null) return;
         PersistentDataContainer currentIconContainer = currentIconMeta.getPersistentDataContainer();
         currentIconContainer.set(Keys.MENUOBJECT, PersistentDataType.STRING, "MenuObject");
         currentIcon.setItemMeta(currentIconMeta);
@@ -206,6 +213,7 @@ public class WaystoneMenuGui {
         //paper that says rename name
         ItemStack paper = new ItemStack(Material.PAPER);
         ItemMeta paperMeta = paper.getItemMeta();
+        if (paperMeta == null) return;
         paperMeta.setDisplayName(ChatColor.GREEN + "Set A Name");
         paper.setItemMeta(paperMeta);
 
@@ -265,33 +273,14 @@ public class WaystoneMenuGui {
         tileState.update();
     }
 
-    //set the new name to the item
-    public static void changeItemName(String newName, Player player, ItemStack item) {
-        ItemMeta itemMeta = item.getItemMeta();
-        assert itemMeta != null;
-        itemMeta.setDisplayName(newName);
-        item.setItemMeta(itemMeta);
-
-        //give the item to the player if is full drop it
-        if (player.getInventory().firstEmpty() == -1) {
-            player.getWorld().dropItemNaturally(player.getLocation(), item);
-            player.sendMessage("The item has been dropped on the floor");
-            return;
-        } else {
-            player.getInventory().addItem(item);
-        }
-
-        player.sendMessage("The new name is: " + newName);
-    }
-
 
     //method that shows the waystone information of an item with persistent data container WAYSTONE(Location and Players with access)
 
     public static ItemStack showWaystoneInfo(ItemStack waystoneItem, Waystone waystone) {
 
         ItemMeta itemMeta = waystoneItem.getItemMeta();
-        PersistentDataContainer container = itemMeta.getPersistentDataContainer();
         if (!QuickSurvival.waystones.containsKey(waystone.getName())) return waystoneItem;
+        if (itemMeta == null) return waystoneItem;
         itemMeta.setLore(Arrays.asList(
                 ChatColor.GREEN + "Location: ",
                 ChatColor.WHITE + "World: " + Objects.requireNonNull(waystone.getLocation().getWorld()).getName(),
@@ -313,6 +302,7 @@ public class WaystoneMenuGui {
     //clear the lore of an item
     public static void clearLore(ItemStack item) {
         ItemMeta itemMeta = item.getItemMeta();
+        if (itemMeta == null) return;
         itemMeta.setLore(null);
         item.setItemMeta(itemMeta);
     }

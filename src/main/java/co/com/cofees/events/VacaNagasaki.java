@@ -7,8 +7,6 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
-import org.bukkit.plugin.Plugin;
-import org.bukkit.plugin.java.JavaPlugin;
 
 public class VacaNagasaki implements Listener {
 
@@ -25,14 +23,13 @@ public class VacaNagasaki implements Listener {
         }
     }
 
-    public boolean toggleExplosiveCows(){
+    public void toggleExplosiveCows(){
         isActive = !isActive;
         if(isActive){
             Bukkit.broadcastMessage(ChatColor.RED+"Cows are now dangerous!!!");
         } else{
             Bukkit.broadcastMessage("Cows aren't dangerous anymore");
         }
-        return isActive;
     }
 
     public boolean areCowsExplosive(){

@@ -6,10 +6,8 @@ import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.TileState;
-import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
-import org.bukkit.event.EventException;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -21,40 +19,39 @@ import org.bukkit.persistence.PersistentDataType;
 public class WaystoneMenu implements Listener {
 
     @EventHandler
-    public void onWaystoneMenuClick(InventoryClickEvent event) throws EventException {
+    public void onWaystoneMenuClick(InventoryClickEvent event) {
         if (event.getInventory().getHolder() == null) {
-            // Verifica si el inventario es el que abriste
+            // Check if the inventory is the one you opened
             if (event.getView().getTitle().equals(ChatColor.translateAlternateColorCodes('&', "&2Inventario Prueba"))) {
-                // Cancela el evento para que no se pueda editar el inventario
+                // Cancel the event so the inventory cannot be edited
                 event.setCancelled(true);
 
-                // Verifica si hicieron clic en la casilla 20
+                // Check if they clicked on slot 20
                 if (event.getRawSlot() == 20) {
                     event.getWhoClicked().sendMessage(text("&abuenas"));
                 }
 
                 if (event.getRawSlot() == 22) {
-                    // Verificar si hicieron clic en la casilla 22 (botón para abrir otro inventario)
+                    // Check if they clicked on slot 22 (button to open another inventory)
                     event.setCancelled(true);
 
-                    // Abrir otro inventario
+                    // Open another inventory
                     Player player = (Player) event.getWhoClicked();
                     Inventory otroInventario = Bukkit.createInventory(null, 27, "Ajustes");
-                    // Configurar el otro inventario
+                    // Configure the other inventory
                     player.openInventory(otroInventario);
                 }
 
                 if (event.getRawSlot() == 24) {
-                    // Botón "Crear Waypoint"
+                    // "Create Waypoint" button
                     event.setCancelled(true);
 
-
                     Player player = (Player) event.getWhoClicked();
-                    player.sendMessage(ChatColor.RED + "¡Waystone creado!");
+                    player.sendMessage(ChatColor.RED + "Waystone created!");
 
-                    giveBeacon(player.getLocation(),player);
+                    giveBeacon(player);
 
-                    // Obtener la ubicación del jugador y lanzar el rayo de luz
+                    // Get the player's location and launch the light beam
                     player.getWorld().strikeLightningEffect(player.getLocation());
                     player.spawnParticle(Particle.END_ROD, player.getLocation(), 100, 0.5, 1, 0.5, 0.1);
                     player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1.0f, 1.0f);
@@ -63,36 +60,38 @@ public class WaystoneMenu implements Listener {
         }
     }
 
-    //metodo auxiliar
-    private void giveBeacon(Location location, Player player) {
-        // Crear un ítem Beacon
+    // Auxiliary method
+    private void giveBeacon(Player player) {
+        // Create a Beacon item
         ItemStack waystoneItem = new ItemStack(Material.BLACK_BANNER);
 
-        // Obtener o crear el ItemMeta del ítem
+        // Get or create the ItemMeta of the item
         ItemMeta waystoneItemItemMeta = waystoneItem.getItemMeta();
 
-        // Almacenar el nombre "Waystone" en el ItemMeta
-        waystoneItemItemMeta.setDisplayName("Waystone");
+        if (waystoneItemItemMeta != null) {
+            // Store the name "Waystone" in the ItemMeta
+            waystoneItemItemMeta.setDisplayName("Waystone");
 
-        waystoneItemItemMeta.getPersistentDataContainer().set(Keys.WAYSTONE, PersistentDataType.STRING, "true");
+            waystoneItemItemMeta.getPersistentDataContainer().set(Keys.WAYSTONE, PersistentDataType.STRING, "true");
 
-        waystoneItem.setItemMeta(waystoneItemItemMeta);
+            waystoneItem.setItemMeta(waystoneItemItemMeta);
+        }
 
-        // Añadir el ítem al inventario del jugador o soltarlo al suelo
+        // Add the item to the player's inventory or drop it on the ground
         if (player.getInventory().firstEmpty() != -1) {
-            // Hay espacio en el inventario
+            // There is space in the inventory
             player.getInventory().addItem(waystoneItem);
-            player.sendMessage(ChatColor.GREEN + "Has recibido un Waystone en tu inventario.");
+            player.sendMessage(ChatColor.GREEN + "You have received a Waystone in your inventory.");
         } else {
-            // El inventario está lleno, dejar caer el ítem al suelo
+            // The inventory is full, drop the item on the ground
             Item item = player.getWorld().dropItemNaturally(player.getLocation(), waystoneItem);
-            item.setInvulnerable(true); // Evitar que otros jugadores lo recojan
-            player.sendMessage(ChatColor.GREEN + "No hay espacio en tu inventario. Se ha dejado caer un Waystone al suelo.");
+            item.setInvulnerable(true); // Prevent other players from picking it up
+            player.sendMessage(ChatColor.GREEN + "There is no space in your inventory. A Waystone has been dropped on the ground.");
 
-            // Obtener el bloque del Beacon
+            // Get the Beacon block
             Block block = item.getLocation().getBlock();
 
-            // Obtener el TileState asociado al bloque
+            // Get the TileState associated with the block
             TileState tileState = null;
             if (block.getState() instanceof TileState) {
                 tileState = (TileState) block.getState();
@@ -101,30 +100,19 @@ public class WaystoneMenu implements Listener {
             }
 
             if (tileState != null) {
-                // Almacenar el NamespacedKey en el PersistentDataContainer
-                tileState.getPersistentDataContainer().set(Keys.WAYSTONE, PersistentDataType.STRING, waystoneItemItemMeta.getDisplayName());
-                tileState.update(); // Actualizar el estado para aplicar los cambios
+                // Store the NamespacedKey in the PersistentDataContainer
+                tileState.getPersistentDataContainer().set(Keys.WAYSTONE, PersistentDataType.STRING, waystoneItemItemMeta != null ? waystoneItemItemMeta.getDisplayName() : "Waystone");
+                tileState.update(); // Update the state to apply the changes
 
-                player.sendMessage(ChatColor.GREEN + "Se creó Waystone correctamente.");
+                player.sendMessage(ChatColor.GREEN + "Waystone created successfully.");
             }
         }
-        // Reproducir el sonido de activación
+        // Play the activation sound
         player.playSound(player.getLocation(), Sound.BLOCK_BEACON_ACTIVATE, 1.0f, 1.0f);
-
-    }
-
-
-    public void noArgs(CommandSender sender) {
-        sender.sendMessage(text("&4&lUse &r/test help &4&lfor usage of command"));
     }
 
     public String text(String text) {
         return TextTools.coloredText(text);
     }
-
-
-    //make a method that gives a random name to the waystone literally a random name
-
-
 
 }

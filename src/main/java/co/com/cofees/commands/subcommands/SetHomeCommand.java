@@ -42,7 +42,7 @@ public class SetHomeCommand implements CommandExecutor {
             try {
                 QuickSurvival.homesConfig.save(new File(QuickSurvival.getPlugin(QuickSurvival.class).getDataFolder(), "homes.yml"));
             } catch (IOException e) {
-                e.printStackTrace();
+                System.out.println(e.getMessage());
             }
             commandSender.sendMessage("Home set");
             return true;

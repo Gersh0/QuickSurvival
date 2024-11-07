@@ -5,6 +5,7 @@ import org.bukkit.World;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.UUID;
@@ -30,8 +31,13 @@ public final class LocationHandler {
         return homes;
     }
 
+    @Nullable
     public static Location createLocationFromConfig(ConfigurationSection section, String locationName, JavaPlugin core) {
         String worldUUIDString = section.getString(locationName + ".worldUUID");
+        if (worldUUIDString == null) {
+            core.getLogger().warning("Invalid world UUID for: " + locationName);
+            return null;
+        }
         UUID worldUUID = UUID.fromString(worldUUIDString); // Convert the string to UUID
         World world = core.getServer().getWorld(worldUUID);
 
@@ -45,6 +51,9 @@ public final class LocationHandler {
     }
 
     public static void serializeLocation(Location home, YamlConfiguration config, String path) {
+        if (home.getWorld() == null) {
+            return;
+        }
         config.set(path + ".worldUUID", home.getWorld().getUID().toString()); // Store the UUID as a string
         config.set(path + ".x", home.getX());
         config.set(path + ".y", home.getY());

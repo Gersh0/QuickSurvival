@@ -27,7 +27,7 @@ public class BackpackInteract implements Listener {
     private static final HashMap<String, String> backpacks = new HashMap<>();
 
     @EventHandler
-    public void onPlayerInteract(PlayerInteractEvent event) throws IOException {
+    public void onPlayerInteract(PlayerInteractEvent event) {
         //Guard Clause if the player is looking at a tilestate block and if is null we will open the backpack anyway
         Block b = event.getClickedBlock();
         if (b != null && b.getState() instanceof TileState) return;
@@ -59,7 +59,7 @@ public class BackpackInteract implements Listener {
         return (int) Math.ceil((double) size / 9) * 9;
     }
 
-    private void openBackpackInventory(Player player, int backpackLevel) throws IOException {
+    private void openBackpackInventory(Player player, int backpackLevel) {
         int inventorySize = roundInventorySize(9 * backpackLevel);
 
         Inventory backpackInventory = Bukkit.createInventory(null, inventorySize, "Backpack");
@@ -95,28 +95,7 @@ public class BackpackInteract implements Listener {
             event.setCancelled(true);
         }
 
-
     }
-
-    /*@EventHandler
-    public void onItemMove(InventoryMoveItemEvent event) {
-        Optional<HumanEntity> player = event.getDestination().getViewers().stream().findFirst();
-        if (player.isEmpty()) return;
-        String UUUIDPlayer = player.get().getUniqueId().toString();
-        player.get().sendMessage("UUUIDPlayer: " + UUUIDPlayer);
-
-        if (event.getItem().getItemMeta() == null) return;
-        PersistentDataContainer container = event.getItem().getItemMeta().getPersistentDataContainer();
-        String UUIDbackpack = container.get(Keys.BACKPACK_CODE, PersistentDataType.STRING);
-
-        player.get().sendMessage("UUIDbackpack: " + UUIDbackpack + " UUUIDPlayer: " + UUUIDPlayer);
-
-
-        // Check if the backpack is being moved to another inventory
-        if (backpacks.get(UUUIDPlayer).equals(UUIDbackpack)) {
-            event.setCancelled(true);
-        }
-    }*/
 
     //SECCION DE GUARDADO
     @EventHandler
@@ -141,11 +120,11 @@ public class BackpackInteract implements Listener {
         File pluginFolder = QuickSurvival.getInstance().getDataFolder();
         File inventoryFolder = new File(pluginFolder, "inventory");
 
-        if (!inventoryFolder.exists()) {
-            inventoryFolder.mkdir();
-        }
+        boolean saved = false;
 
-        return inventoryFolder;
+        if (!inventoryFolder.exists()) saved  = inventoryFolder.mkdir();
+
+        return (saved)? inventoryFolder : null;
     }
 
 
@@ -188,7 +167,7 @@ public class BackpackInteract implements Listener {
         p.sendMessage("Inventario guardado exitosamente en: " + f.getAbsolutePath());
     }
 
-    public Inventory restoreInventory(Player p) throws IOException {
+    public Inventory restoreInventory(Player p) {
 
         String UUIDbackpack = getBackpackUUID(p);
 

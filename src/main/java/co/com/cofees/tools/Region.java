@@ -87,13 +87,6 @@ public class Region {
         return new Region(name, location1, location2, players);
     }
 
-    public List<String> getPlayersOf(String regionName) {
-        if (this.name.equals(regionName)) {
-            return this.players;
-        }
-        return null;
-    }
-
     public List<String> getPlayers() {
         return players;
     }
@@ -109,18 +102,5 @@ public class Region {
     public String getName() {
         return name;
     }
-
-    public Location getLocation1() {
-        return location1;
-    }
-
-    public Location getLocation2() {
-        return location2;
-    }
-
-//    public List<String> getPlayers() {
-//        return players;
-//    }
-
 
 }

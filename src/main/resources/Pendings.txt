@@ -1,6 +1,5 @@
 - Shared Backpacks
 - Teams
-- Demo world
 - Adapt commands
     - Alias /qs
     - Add home, waystone, and backpacks to /qs

@@ -1,7 +1,6 @@
 package co.com.cofees.events;
 
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
@@ -11,7 +10,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.Damageable;
-import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -39,13 +37,13 @@ public class VeinMiner implements Listener {
                 assert meta != null;
                 int dur = tool.getType().getMaxDurability() - 1 - meta.getDamage();
 
-                //Aqui se cambia si se le va a aplicar config al ignoreDurability
+                //Here you can change if you want to apply config to ignoreDurability
                 if(ores.size()>dur){
                     ores = ores.subList(0,dur);
                 }
 
                 meta.setDamage(meta.getDamage() + ores.size());
-                tool.setItemMeta((ItemMeta) meta);
+                tool.setItemMeta(meta);
 
                 for(Block ore: ores){
                     ore.breakNaturally(tool);
@@ -94,14 +92,13 @@ public class VeinMiner implements Listener {
         return ores;
     }
 
-    public boolean toggleVeinMiner(){
+    public void toggleVeinMiner(){
         isActive = !isActive;
         if(isActive){
             Bukkit.broadcastMessage("VeinMiner is now active!");
         } else{
             Bukkit.broadcastMessage("VeinMiner was turned off!");
         }
-        return isActive;
     }
 
     public boolean isActive() {

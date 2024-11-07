@@ -1,15 +1,12 @@
 package co.com.cofees.completers;
 
-import co.com.cofees.QuickSurvival;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
-import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Collections;
 import java.util.List;
 
 public class RegionAddPlayerCompleter implements TabCompleter {
@@ -28,10 +25,6 @@ public class RegionAddPlayerCompleter implements TabCompleter {
         sender.getServer().getLogger().warning("An error occurred while trying to tab complete the command");
         return null;
     }
-    //make a completer for the RegionAddPlayerCommand
-    //this completer will return a list of players that are online
-
-
-
+    //this completer will return a list of online players
 
 }

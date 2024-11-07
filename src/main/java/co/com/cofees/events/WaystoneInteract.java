@@ -36,10 +36,10 @@ public class WaystoneInteract implements Listener {
 
     @EventHandler
     public void onPlayerWaystoneClick(PlayerInteractEvent e) {
-//guard clause that sees if the event is cancelled
-        if (e instanceof Cancellable && ((Cancellable) e).isCancelled()) {
+        if (e == null) return;
+        //guard clause that sees if the event is cancelled
+        if (((Cancellable) e).isCancelled()) {
             ((Cancellable) e).setCancelled(false);
-            // e.setCancelled(false);
         }
 
         Player p = e.getPlayer();
@@ -102,9 +102,10 @@ public class WaystoneInteract implements Listener {
     //event that if the player uses a warp scroll
     @EventHandler
     public void onPlayerWarpScrollUse(PlayerInteractEvent e) {
+        if (e == null) return;
         //guard clause that sees if the event is cancelled
-        if (e instanceof Cancellable && ((Cancellable) e).isCancelled()) {
-            e.setCancelled(false);
+        if (((Cancellable) e).isCancelled()) {
+            ((Cancellable) e).setCancelled(false);
         }
 
         Player p = e.getPlayer();
@@ -130,8 +131,9 @@ public class WaystoneInteract implements Listener {
     //Event to check if the player break a waystone
     @EventHandler
     public void onPlayerWaystoneBreak(BlockBreakEvent e) {
-        if (e instanceof Cancellable && ((Cancellable) e).isCancelled()) {
-            e.setCancelled(false);
+        if (e == null) return;
+        if (((Cancellable) e).isCancelled()) {
+            ((Cancellable) e).setCancelled(false);
         }
 
         Player p = e.getPlayer();
@@ -196,7 +198,7 @@ public class WaystoneInteract implements Listener {
 
             WaystoneMenuGui.openWaystoneOptionMenu((Player) e.getWhoClicked(), waystone);
             //send message to player
-            e.getWhoClicked().sendMessage("Menu de " + ChatColor.GOLD + " " + waystone.getName() + " " + ChatColor.RESET + "abierto correctamente");
+            e.getWhoClicked().sendMessage("Menu de " + ChatColor.GOLD + " " + waystone.getName() + " " + ChatColor.RESET + "Successfully opened");
             return;
         }
 
@@ -216,7 +218,7 @@ public class WaystoneInteract implements Listener {
         // Add the items to the inventory
         itemStacks.forEach(waystoneInventory::addItem);
         //send message to player
-        player.sendMessage("Inventario cargado correctamente");
+        player.sendMessage("Inventory loaded successfully");
         // Open the inventory
         player.openInventory(waystoneInventory);
     }
@@ -234,7 +236,6 @@ public class WaystoneInteract implements Listener {
         player.playSound(player.getLocation(), Sound.BLOCK_PORTAL_AMBIENT, 1.2f, 1.0f);
 
 
-
         generateParticleEffect(player);
 
     }
@@ -247,8 +248,8 @@ public class WaystoneInteract implements Listener {
         PlayerInventory inventory = player.getInventory();
         //get the item in the main hand
         ItemStack item = inventory.getItemInMainHand();
-        //guard clause that sees if the item is null
-        if (item == null) return;
+        //guard clause to check if the player has no item in the main hand
+        if (item.getType().equals(Material.AIR)) return;
         //get the item meta
         ItemMeta meta = item.getItemMeta();
         //guard clause that sees if the item meta is null
@@ -264,7 +265,7 @@ public class WaystoneInteract implements Listener {
 
 
     private static Queue<ItemStack> loadWaystoneItems(Player player) {
-        // Cargar los elementos del inventario
+        //Load the items in the inventory
         Queue<ItemStack> itemStacks = new LinkedList<>();
 
         HashMap<String, Waystone> waystoneHashMap = QuickSurvival.waystones;
@@ -274,15 +275,17 @@ public class WaystoneInteract implements Listener {
             if (waystone.containsPlayer(player.getName())) {
                 ItemStack icon = waystone.getIcon();
                 ItemMeta meta = icon.getItemMeta();
-                meta.setLore(Arrays.asList("Click derecho para abrir el menú", "Click izquierdo para teletransportarte"));
-                if (isCurrentWaystone(player, waystone)) {
-                    meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
-                    meta.addEnchant(Enchantment.DURABILITY, 1, true);
-                } else {
-                    meta.removeEnchant(Enchantment.DURABILITY);
+                if (meta != null) {
+                    meta.setLore(Arrays.asList("Right click to open the menu", "Left click to teleport"));
+                    if (isCurrentWaystone(player, waystone)) {
+                        meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
+                        meta.addEnchant(Enchantment.DURABILITY, 1, true);
+                    } else {
+                        meta.removeEnchant(Enchantment.DURABILITY);
+                    }
+                    icon.setItemMeta(meta);
+                    itemStacks.add(icon);
                 }
-                icon.setItemMeta(meta);
-                itemStacks.add(icon);
             }
         });
 
@@ -313,78 +316,51 @@ public class WaystoneInteract implements Listener {
         //compare the waystone name with the block name
         if (!container.has(Keys.WAYSTONE, PersistentDataType.STRING)) return false;
 
-        if (container.get(Keys.WAYSTONE, PersistentDataType.STRING).equals(waystoneName)) {
-            return true;
-        }
-        return false;
+        String containerWaystoneName = container.get(Keys.WAYSTONE, PersistentDataType.STRING);
+        return containerWaystoneName != null && containerWaystoneName.equals(waystoneName);
     }
 
-    //method that generate a plarticle effect
+    //method to generate a plarticle effect
     private void generateParticleEffect(Player player) {
 
-                // Ejecutar el anillo de partículas cada tick (20 veces por segundo)
-                new BukkitRunnable() {
-                    double t = 0; // Variable para el ángulo
-                    double radius = 1.0; // Radio del anillo
-                    double duration = 3.0; // Duración en segundos
-
-                    //
+        // Execute the task every tick (20 times per second)
+        new BukkitRunnable() {
+            double t = 0; // Variable to store the angle of the circle
 
 
+            @Override
+            public void run() {
+                if (t >= 0.25 * Math.PI) {
+                    // Cancel task after 3 seconds
+                    cancel();
+                    return;
+                }
+                // Calculate the location of the circle
+                summonCircle2(0.75, 0.75, 000.1, Color.PURPLE, player, 4);
+                summonCircle2(3, 1, 000.1, Color.BLACK, player, 3);
+                //summonCircle2(1, 3, 000.1,Color.BLACK, player);
+                summonCircle2(0.25, 0.25, 0.1, Color.WHITE, player, 5);
 
-                    @Override
-                    public void run() {
-                        if (t >= 0.25 * Math.PI) {
-                            // Cancelar la tarea después de 3 segundos
-                            cancel();
-                            return;
-                        }
-
-                        double x = player.getLocation().getX() + radius * Math.cos(t);
-
-                        Location playerLocation = player.getLocation();
-                        // Calcular la posición del anillo
-                        //summonCircle(playerLocation, 1);
-                        summonCircle2(0.75, 0.75, 000.1,Color.PURPLE ,player,4);
-                        summonCircle2(3, 1, 000.1,Color.BLACK, player,3);
-                        //summonCircle2(1, 3, 000.1,Color.BLACK, player);
-                        summonCircle2(0.25,0.25,0.1,Color.WHITE,player,5);
-
-                        // Incrementar el ángulo para la siguiente iteración
-                        t += Math.PI / 16; // Ajusta la velocidad del anillo según tus preferencias
-                    }
-                }.runTaskTimer(QuickSurvival.getInstance(), 0, 1); // Ejecutar cada tick (20 veces por segundo)
+                // Increment the angle for the next tick
+                t += Math.PI / 16; // Adjust the speed of the circle
             }
-
-
-    public void summonCircle(Location location, int size,Color particleColor) {
-        for (int d = 0; d <= 90; d += 1) {
-            Location particleLoc = new Location(location.getWorld(), location.getX(), location.getY(), location.getZ());
-            particleLoc.setX(location.getX() + Math.cos(d) * size);
-            particleLoc.setZ(location.getZ() + Math.sin(d) * size);
-            location.getWorld().spawnParticle(Particle.SOUL_FIRE_FLAME, particleLoc, 1, new Particle.DustOptions(particleColor, 5));
-        }
+        }.runTaskTimer(QuickSurvival.getInstance(), 0, 1); // Execute the task every tick (20 times per second)
     }
 
-    public void summonCircle2(double scaleX, double scaleY, double density,Color particleColor,Player player,float size){
-        //int scaleX = 1;  // use these to tune the size of your circle
-        //int scaleY = 1;
-       // double density = 0.1;  // smaller numbers make the particles denser
+    public void summonCircle2(double scaleX, double scaleY, double density, Color particleColor, Player player, float size) {
 
-        for (double i=0; i < 2 * Math.PI ; i +=density) {
+        for (double i = 0; i < 2 * Math.PI; i += density) {
             double x = Math.cos(i) * scaleX;
             double y = Math.sin(i) * scaleY;
 
-            // spawn your particle here
+            // spawn particle
             player.getWorld().spawnParticle(Particle.REDSTONE, player.getLocation().add(x, 0, y), 1, new Particle.DustOptions(particleColor, size));
 
         }
     }
 
 
-
-
-    }
+}
 
 
 

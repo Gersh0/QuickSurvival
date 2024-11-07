@@ -1,14 +1,11 @@
 package co.com.cofees.tools;
 
 import co.com.cofees.QuickSurvival;
-import jdk.jfr.Percentage;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
-import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataType;
@@ -18,193 +15,92 @@ import java.util.List;
 
 public class ControlMenuGUI {
 
-    public void openMainMenu(Player player){
-
-        Inventory mainMenu = Bukkit.createInventory(null, 9, "Main Menu");
-
-        //      opciones en el menu principal:
-
-        // Item para cerrar el inventario:
-        ItemStack close =  new ItemStack(Material.BARRIER);
-        ItemMeta closeMeta = close.getItemMeta();
-        assert closeMeta != null;
-        closeMeta.setCustomModelData(10);
-        closeMeta.setDisplayName(ChatColor.RED + "Close menu");
-        close.setItemMeta(closeMeta);
-        mainMenu.setItem(3, close);
-
-        // Item para abrir el menu de eventos general:
-        ItemStack generalMenu =  new ItemStack(Material.GRASS_BLOCK);
-        ItemMeta generalMenuMeta = generalMenu.getItemMeta();
-        assert generalMenuMeta != null;
-        generalMenuMeta.setCustomModelData(10);
-        generalMenuMeta.setDisplayName(ChatColor.GREEN + "Open general events menu");
-        generalMenu.setItemMeta(generalMenuMeta);
-        mainMenu.setItem(4, generalMenu);
-
-        // Item para abrir el menu de eventos UHC:
-        ItemStack uhcMenu =  new ItemStack(Material.GOLDEN_APPLE);
-        ItemMeta uhcMenuMeta = uhcMenu.getItemMeta();
-        assert uhcMenuMeta != null;
-        uhcMenuMeta.setCustomModelData(10);
-        uhcMenuMeta.setDisplayName(ChatColor.GOLD + "Open UHC events menu");
-        uhcMenu.setItemMeta(uhcMenuMeta);
-        mainMenu.setItem(5, uhcMenu);
-
-        // Items para decorar el inventario:
-        ItemStack deco =  createDecorativePane();
-        for(int i=0; i<9;i++){
-            if(i<3 || i>5){
-                mainMenu.setItem(i, deco);
-            }
-        }
-
-
+    public void openMainMenu(Player player) {
+        Inventory mainMenu = createMenu("Main Menu", 9);
+        mainMenu.setItem(3, createMenuItem(Material.BARRIER, ChatColor.RED + "Close menu"));
+        mainMenu.setItem(4, createMenuItem(Material.GRASS_BLOCK, ChatColor.GREEN + "Open general events menu"));
+        mainMenu.setItem(5, createMenuItem(Material.GOLDEN_APPLE, ChatColor.GOLD + "Open UHC events menu"));
+        fillDecorativePanes(mainMenu, 9, new int[]{3, 4, 5});
         player.openInventory(mainMenu);
         player.sendMessage("MainMenu was opened");
-
     }
 
-    public void openGeneralMenu(Player player){
-        Inventory generalMenu = Bukkit.createInventory(null, 36, "General Menu");
-
-        // item para cerrar el inventario
-        ItemStack close =  new ItemStack(Material.BARRIER);
-        ItemMeta closeMeta = close.getItemMeta();
-        assert closeMeta != null;
-        closeMeta.setCustomModelData(10);
-        closeMeta.setDisplayName(ChatColor.RED + "Close menu");
-        close.setItemMeta(closeMeta);
-        generalMenu.setItem(31, close);
-
-        // item para volver al menu principal:
-        ItemStack back =  new ItemStack(Material.GRASS_BLOCK);
-        ItemMeta backMeta = back.getItemMeta();
-        assert backMeta != null;
-        backMeta.setCustomModelData(10);
-        backMeta.setDisplayName(ChatColor.GREEN + "Back to the main menu");
-        back.setItemMeta(backMeta);
-        generalMenu.setItem(4, back);
-
-        //Item para configurar cuantos jugadores deben de dormir
-        ItemStack sleep =  new ItemStack(Material.RED_BED);
-        ItemMeta sleepMeta = sleep.getItemMeta();
-        assert sleepMeta != null;
-        sleepMeta.setCustomModelData(10);
-        sleepMeta.setDisplayName(ChatColor.GREEN + "Config % of players that need to sleep");
-        sleep.setItemMeta(sleepMeta);
-        generalMenu.setItem(10, sleep);
-
-        // item para activar/desactivar las vacas explosivas
-        ItemStack cows = new ItemStack(Material.COW_SPAWN_EGG);
-        ItemMeta cowMeta = cows.getItemMeta();
-        assert cowMeta != null;
-        cowMeta.setCustomModelData(10);
-        cowMeta.setDisplayName(ChatColor.RED + "Toggles Explosive cows");
-        cowMeta.setLore(Arrays.asList(ChatColor.BLUE+"Currently " + ((QuickSurvival.areCowsExplosive())? "On": "Off")
-                , ChatColor.WHITE+"Cows will explode when right clicked!"));
-        cows.setItemMeta(cowMeta);
-        generalMenu.setItem(25, cows);
-
-        // item para activar/desactivar veinMiner
-        ItemStack veinMiner = new ItemStack(Material.IRON_PICKAXE);
-        ItemMeta veinMinerMeta = veinMiner.getItemMeta();
-        assert veinMinerMeta != null;
-        veinMinerMeta.setCustomModelData(10);
-        veinMinerMeta.setDisplayName(ChatColor.GRAY+"Toggles veinMiner");
-        veinMinerMeta.setLore(Arrays.asList(ChatColor.BLUE+"Currently " + ((QuickSurvival.isVeinMinerActive())? "On": "Off")
-                , ChatColor.WHITE+"When breaking an ore while crouching,"
-                , ChatColor.WHITE+"all of the surrounding ore of the same type will break."));
-        veinMiner.setItemMeta(veinMinerMeta);
-        generalMenu.setItem(11, veinMiner);
-
-        // item para activar/desactivar treeCapitator
-        ItemStack treeCapitator = new ItemStack(Material.IRON_AXE);
-        ItemMeta treeCapitatorMeta = treeCapitator.getItemMeta();
-        assert treeCapitatorMeta != null;
-        treeCapitatorMeta.setCustomModelData(10);
-        treeCapitatorMeta.setDisplayName(ChatColor.GRAY+"Toggles TreeCapitator");
-        treeCapitatorMeta.setLore(Arrays.asList(ChatColor.BLUE+"Currently " + ((QuickSurvival.isTreeCapitatorActive())? "On": "Off")
-                , ChatColor.WHITE+"When breaking a tree while crouching,"
-                , ChatColor.WHITE+"all of the logs in the tree will break."
-                , ChatColor.WHITE+"Only works if it still has leaves touching the log!"));
-        treeCapitator.setItemMeta(treeCapitatorMeta);
-        generalMenu.setItem(12, treeCapitator);
-
-        // item para activar/desactivar poder romper spawners
-
-        // Para decorar el inventario:
-        ItemStack deco =  createDecorativePane();
-        for(int i=0; i<36;i++){
-
-            if((i!=4 && i!=31) && !(i<17 && i>9) && !(i<26 && i>18)){
-                generalMenu.setItem(i, deco);
-            }
-        }
-
-
-
+    public void openGeneralMenu(Player player) {
+        Inventory generalMenu = createMenu("General Menu", 36);
+        generalMenu.setItem(31, createMenuItem(Material.BARRIER, ChatColor.RED + "Close menu"));
+        generalMenu.setItem(4, createMenuItem(Material.GRASS_BLOCK, ChatColor.GREEN + "Back to the main menu"));
+        generalMenu.setItem(10, createMenuItem(Material.RED_BED, ChatColor.GREEN + "Config % of players that need to sleep"));
+        generalMenu.setItem(25, createToggleItem(Material.COW_SPAWN_EGG, ChatColor.RED + "Toggles Explosive cows", QuickSurvival.areCowsExplosive()));
+        generalMenu.setItem(11, createToggleItem(Material.IRON_PICKAXE, ChatColor.GRAY + "Toggles veinMiner", QuickSurvival.isVeinMinerActive()));
+        generalMenu.setItem(12, createToggleItem(Material.IRON_AXE, ChatColor.GRAY + "Toggles TreeCapitator", QuickSurvival.isTreeCapitatorActive()));
+        fillDecorativePanes(generalMenu, 36, new int[]{4, 31, 10, 11, 12, 25});
         player.openInventory(generalMenu);
         player.sendMessage("GeneralMenu was opened");
     }
 
-    public void openSleepEventMenu(Player player){
-        Inventory sleepMenu = Bukkit.createInventory(null, 27, "Sleep Menu");
-
-        // item para cerrar el inventario
-        ItemStack close =  new ItemStack(Material.BARRIER);
-        ItemMeta closeMeta = close.getItemMeta();
-        assert closeMeta != null;
-        closeMeta.setCustomModelData(10);
-        closeMeta.setDisplayName(ChatColor.RED + "Close menu");
-        close.setItemMeta(closeMeta);
-        sleepMenu.setItem(22, close);
-
-        // item para volver al menu general:
-        ItemStack back =  new ItemStack(Material.GRASS_BLOCK);
-        ItemMeta backMeta = back.getItemMeta();
-        assert backMeta != null;
-        backMeta.setCustomModelData(10);
-        backMeta.setDisplayName(ChatColor.GREEN + "Back to the general menu");
-        back.setItemMeta(backMeta);
-        sleepMenu.setItem(4, back);
-
-        // items para setear el porcentaje:
-        int[] porcentajes = {1,25,33,50,66,75,100};
-        for(int i=0;i<7;i++){
-            ItemStack percentage =  new ItemStack(Material.WHITE_BED);
-            if(porcentajes[i] == QuickSurvival.getSleepingPercentage()){
-                percentage =  new ItemStack(Material.GREEN_BED);
-            }
-            ItemMeta percentageMeta = percentage.getItemMeta();
-            assert percentageMeta != null;
-            percentageMeta.setCustomModelData(10);
-            percentageMeta.getPersistentDataContainer().set(Keys.PERCENTAGE, PersistentDataType.INTEGER, porcentajes[i]);
-            percentageMeta.setDisplayName(ChatColor.BLUE+(porcentajes[i]+"%"));
-            percentage.setItemMeta(percentageMeta);
-            sleepMenu.setItem(10+i, percentage);
+    public void openSleepEventMenu(Player player) {
+        Inventory sleepMenu = createMenu("Sleep Menu", 27);
+        sleepMenu.setItem(22, createMenuItem(Material.BARRIER, ChatColor.RED + "Close menu"));
+        sleepMenu.setItem(4, createMenuItem(Material.GRASS_BLOCK, ChatColor.GREEN + "Back to the general menu"));
+        int[] percentages = {1, 25, 33, 50, 66, 75, 100};
+        for (int i = 0; i < percentages.length; i++) {
+            sleepMenu.setItem(10 + i, createPercentageItem(percentages[i]));
         }
-
-        //Items para decorar el menú:
-        ItemStack deco =  createDecorativePane();
-        for(int i=0; i<27;i++){
-            if((i!=4 && i!=22) && !(i<17 && i>9)){
-                sleepMenu.setItem(i, deco);
-            }
-        }
-
+        fillDecorativePanes(sleepMenu, 27, new int[]{4, 22, 10, 11, 12, 13, 14, 15, 16});
         player.openInventory(sleepMenu);
         player.sendMessage("SleepMenu was opened");
     }
 
-    public ItemStack createDecorativePane(){
-        ItemStack deco =  new ItemStack(Material.BLUE_STAINED_GLASS_PANE);
+    private Inventory createMenu(String title, int size) {
+        return Bukkit.createInventory(null, size, title);
+    }
+
+    private ItemStack createMenuItem(Material material, String displayName) {
+        ItemStack item = new ItemStack(material);
+        ItemMeta meta = item.getItemMeta();
+        assert meta != null;
+        meta.setDisplayName(displayName);
+        item.setItemMeta(meta);
+        return item;
+    }
+
+    private ItemStack createToggleItem(Material material, String displayName, boolean isActive) {
+        ItemStack item = new ItemStack(material);
+        ItemMeta meta = item.getItemMeta();
+        assert meta != null;
+        meta.setDisplayName(displayName);
+        meta.setLore(List.of(ChatColor.BLUE + "Currently " + (isActive ? "On" : "Off")));
+        item.setItemMeta(meta);
+        return item;
+    }
+
+    private ItemStack createPercentageItem(int percentage) {
+        Material material = (percentage == QuickSurvival.getSleepingPercentage()) ? Material.GREEN_BED : Material.WHITE_BED;
+        ItemStack item = new ItemStack(material);
+        ItemMeta meta = item.getItemMeta();
+        assert meta != null;
+        meta.setDisplayName(ChatColor.BLUE + (percentage + "%"));
+        meta.getPersistentDataContainer().set(Keys.PERCENTAGE, PersistentDataType.INTEGER, percentage);
+        item.setItemMeta(meta);
+        return item;
+    }
+
+    private void fillDecorativePanes(Inventory inventory, int size, int[] excludeSlots) {
+        final ItemStack deco = createDecorativePane();
+        for (int i = 0; i < size; i++) {
+            final int index = i;
+            if (Arrays.stream(excludeSlots).noneMatch(slot -> slot == index)) {
+                inventory.setItem(index, deco);
+            }
+        }
+    }
+
+    public ItemStack createDecorativePane() {
+        ItemStack deco = new ItemStack(Material.BLUE_STAINED_GLASS_PANE);
         ItemMeta decoMeta = deco.getItemMeta();
         assert decoMeta != null;
-        decoMeta.setCustomModelData(10);
         decoMeta.setDisplayName(" ");
         deco.setItemMeta(decoMeta);
         return deco;
     }
-
 }

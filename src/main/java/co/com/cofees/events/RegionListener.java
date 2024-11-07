@@ -31,7 +31,7 @@ public final class RegionListener implements Listener {
             event.setCancelled(true);
             return;
         }
-        player.sendMessage("you are allowed to break blocks in this region: " + standingIn.getName());
+        player.sendMessage("You are allowed to break blocks in this region: " + standingIn.getName());
 
     }
 
@@ -55,7 +55,7 @@ public final class RegionListener implements Listener {
             event.setCancelled(true);
             return;
         }
-        player.sendMessage("you are allowed to put blocks in this region: " + standingIn.getName());
+        player.sendMessage("You are allowed to put blocks in this region: " + standingIn.getName());
 
     }
 }

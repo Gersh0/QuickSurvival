@@ -24,6 +24,9 @@ public class Waystone {
         icon = icon == null ? new ItemStack(Material.GREEN_WOOL) : icon;
 
         ItemMeta defaultMeta = icon.getItemMeta();
+
+        if (defaultMeta == null) return;
+
         defaultMeta.setDisplayName(name);
         icon.setItemMeta(defaultMeta);
         defaultMeta.getPersistentDataContainer().set(Keys.WAYSTONE, PersistentDataType.STRING, name);
@@ -62,10 +65,6 @@ public class Waystone {
         this.players = players;
     }
 
-    public void setIcon(ItemStack icon) {
-        this.icon = icon;
-    }
-
     public void addPlayer(String player) {
 
         players.add(player);
@@ -78,21 +77,5 @@ public class Waystone {
     public boolean containsPlayer(String player) {
         return players.contains(player);
     }
-
-    private void saveWaystone() {
-        //save the waystone to a file
-
-    }
-
-    public Waystone loadWaystone() {
-        //load the waystone from a file
-        return null;
-    }
-
-    //make a to string of a location
-    public String locationToString(Location location) {
-        return location.getWorld().getName() + "\n" + location.getBlockX() + "\n" + location.getBlockY() + "\n" + location.getBlockZ();
-    }
-
-
+    
 }

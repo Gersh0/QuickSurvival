@@ -28,6 +28,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import java.io.File;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.Consumer;
 
 public class QuickSurvival extends JavaPlugin {
@@ -35,7 +36,6 @@ public class QuickSurvival extends JavaPlugin {
     public static YamlConfiguration homesConfig, backpackConfig, waystonesConfig;
     public static HashMap<String, HashMap<String, Location>> homes = new HashMap<>();
     public static HashMap<String, Waystone> waystones = new HashMap<>();
-    private static QuickSurvival plugin;
     private static VacaNagasaki cowEvent = new VacaNagasaki();
     private static VeinMiner veinMiner = new VeinMiner();
     private static TreeCapitator treeCapitator = new TreeCapitator();
@@ -43,7 +43,6 @@ public class QuickSurvival extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        plugin = this;
         //Register the custom recipes
         CustomRecipes.registerCustomCrafting();
         registerConfigFiles();
@@ -65,14 +64,14 @@ public class QuickSurvival extends JavaPlugin {
     }
 
     public void registerCommands() {
-        this.getCommand("explosivecows").setExecutor(new ExplosiveCows());
-        this.getCommand("test").setExecutor(new NewTestCommand(this));
-        this.getCommand("home").setExecutor(new HomeCommand());
-        this.getCommand("inventory").setExecutor(new WaystoneCommand());
-        this.getCommand("waystone").setExecutor(new WaystoneBannerInteract());
-        this.getCommand("backpack").setExecutor(new BackpackCommand());
-        this.getCommand("eventmenu").setExecutor(new ControlMenuCommand());
-        this.getCommand("region").setExecutor(new RegionCommand());
+        Objects.requireNonNull(this.getCommand("explosivecows")).setExecutor(new ExplosiveCows());
+        Objects.requireNonNull(this.getCommand("test")).setExecutor(new NewTestCommand(this));
+        Objects.requireNonNull(this.getCommand("home")).setExecutor(new HomeCommand());
+        Objects.requireNonNull(this.getCommand("inventory")).setExecutor(new WaystoneCommand());
+        Objects.requireNonNull(this.getCommand("waystone")).setExecutor(new WaystoneBannerInteract());
+        Objects.requireNonNull(this.getCommand("backpack")).setExecutor(new BackpackCommand());
+        Objects.requireNonNull(this.getCommand("eventmenu")).setExecutor(new ControlMenuCommand());
+        Objects.requireNonNull(this.getCommand("region")).setExecutor(new RegionCommand());
     }
 
     public void registerEvents() {
@@ -102,17 +101,6 @@ public class QuickSurvival extends JavaPlugin {
         //Fill the information from the configuration files to the maps
         fillInfoFromYML(homesConfig, getHomes());
         fillInfoFromYML(waystonesConfig, getWaystones());
-    }
-
-    public void changeSleepingPlayers(String percentage) {
-        Bukkit.getScheduler()
-                .runTaskLater(
-                        this,
-                        () -> Bukkit.dispatchCommand(
-                                Bukkit.getConsoleSender(),
-                                "gamerule playersSleepingPercentage " + percentage
-                        ),
-                        1);
     }
 
     public void fillInfoFromYML(YamlConfiguration config, Consumer<String> function) {
@@ -156,10 +144,6 @@ public class QuickSurvival extends JavaPlugin {
             plugin.saveResource(fileName, false);
         }
         return YamlConfiguration.loadConfiguration(configFile);
-    }
-
-    public static QuickSurvival getPlugin() {
-        return plugin;
     }
 
     public static QuickSurvival getInstance() {

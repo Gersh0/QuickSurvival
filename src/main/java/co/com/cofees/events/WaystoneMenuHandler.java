@@ -13,8 +13,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.event.inventory.InventoryType;
-import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataContainer;
@@ -39,7 +37,6 @@ public class WaystoneMenuHandler implements Listener {
 
         String WaystoneOptions = waystone.getName() + " Options";
         String IconSelectWaystone = waystone.getName() + " Icon Select";
-        final String WaystoneRename = "Rename Waystone";
 
 
         if (event.getView().getTitle().equalsIgnoreCase(WaystoneOptions)) {
@@ -50,8 +47,6 @@ public class WaystoneMenuHandler implements Listener {
             //disable change name if the player is not looking at the waystone
 
             player.sendMessage("You clicked on the main menu, on slot #" + event.getSlot());
-
-            Material waystoneMaterial = waystone.getIcon().getType();
 
             if (event.getCurrentItem() == null) return;
 
@@ -128,7 +123,6 @@ public class WaystoneMenuHandler implements Listener {
         }
 
 
-
     }
 
 
@@ -154,16 +148,15 @@ public class WaystoneMenuHandler implements Listener {
         return null;
     }
 
-    public static boolean isPlayerLookingAtTheSameWaystone (Player player, Waystone waystone) {
+    public static boolean isPlayerLookingAtTheSameWaystone(Player player, Waystone waystone) {
         //get the player target block
         Block block = player.getTargetBlockExact(5);
         if (block == null) return false;
         //get the block state
         BlockState blockState = block.getState();
         //get the tile state
-        if (!(blockState instanceof TileState) ) return false;
+        if (!(blockState instanceof TileState tileState)) return false;
 
-        TileState tileState = (TileState) blockState;
         //get the persistent data container
         PersistentDataContainer container = tileState.getPersistentDataContainer();
 
@@ -172,8 +165,8 @@ public class WaystoneMenuHandler implements Listener {
         //compare the waystone name with the block name
         if (!container.has(Keys.WAYSTONE, PersistentDataType.STRING)) return false;
 
-        return container.get(Keys.WAYSTONE, PersistentDataType.STRING).equals(waystoneName);
-
+        String containerWaystoneName = container.get(Keys.WAYSTONE, PersistentDataType.STRING);
+        return containerWaystoneName != null && containerWaystoneName.equals(waystoneName);
     }
 
     //delete waystone just from the menu, not from the file
@@ -188,7 +181,6 @@ public class WaystoneMenuHandler implements Listener {
 
         player.sendMessage(waystone.getName() + " Waystone was deleted for: " + player.getName());
     }
-
 
 
 }

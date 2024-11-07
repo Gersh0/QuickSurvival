@@ -23,16 +23,31 @@ public final class Regions {
         this.config = YamlConfiguration.loadConfiguration(file);
     }
 
+    /*
+    File pluginFolder = QuickSurvival.getInstance().getDataFolder();
+            File inventoryFolder = new File(pluginFolder, "inventory");
+
+            boolean saved = false;
+
+            if (!inventoryFolder.exists()) saved  = inventoryFolder.mkdir();
+
+            return (saved)? inventoryFolder : null;
+     */
     public void load() {
         try {
+            boolean created = false;
             if (!file.exists())
-                file.createNewFile();
+                created = file.createNewFile();
+
+            if (created) {
+                Bukkit.getConsoleSender().sendMessage("Created regions.yml");
+            }
 
             config.load(file);
 
 
         } catch (Exception ex) {
-            ex.printStackTrace();
+            System.out.println(ex.getMessage());
 
         }
 
@@ -57,7 +72,7 @@ public final class Regions {
         try {
             config.save(file);
         } catch (IOException ex) {
-            ex.printStackTrace();
+            System.out.println(ex.getMessage());
         }
     }
 
