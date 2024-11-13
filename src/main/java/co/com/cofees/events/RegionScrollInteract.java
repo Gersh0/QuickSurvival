@@ -1,7 +1,8 @@
 package co.com.cofees.events;
 
-import co.com.cofees.commands.RegionCommand;
-import co.com.cofees.tools.*;
+import co.com.cofees.tools.Keys;
+import co.com.cofees.tools.RegionScrollGui;
+import co.com.cofees.tools.Tuple;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
@@ -48,7 +49,6 @@ public class RegionScrollInteract implements Listener {
         }
 
 
-
         //get the block the player is clicking
         Block block = event.getClickedBlock();
         if (block == null) return;
@@ -61,60 +61,60 @@ public class RegionScrollInteract implements Listener {
         //check if the player is right clicking
         Tuple<Location, Location> selection = selections.getOrDefault(playerUUID, new Tuple<>(null, null));
 
-        if (event.getAction().toString().contains("RIGHT") && !player.isSneaking()&& container.has(Keys.REGION_SCROLL, PersistentDataType.STRING)) {
-                //check if the player is holding the region scroll
-                if (selection.getFirst() == null && selection.getSecond() == null) {
-                    //set the first position
+        if (event.getAction().toString().contains("RIGHT") && !player.isSneaking() && container.has(Keys.REGION_SCROLL, PersistentDataType.STRING)) {
+            //check if the player is holding the region scroll
+            if (selection.getFirst() == null && selection.getSecond() == null) {
+                //set the first position
 
 
-                    selection.setFirst(location);
-                    player.sendMessage("First position set");
-                    RegionScroll.setItemMeta(RegionScrollMeta);
+                selection.setFirst(location);
+                player.sendMessage("First position set");
+                RegionScroll.setItemMeta(RegionScrollMeta);
 
-                } else if (selection.getFirst() != null && selection.getSecond() == null) {
-                    //set the second position
+            } else if (selection.getFirst() != null && selection.getSecond() == null) {
+                //set the second position
 
-                    player.sendMessage("Second position set");
-                    selection.setSecond(location);
-                    RegionScroll.setItemMeta(RegionScrollMeta);
+                player.sendMessage("Second position set");
+                selection.setSecond(location);
+                RegionScroll.setItemMeta(RegionScrollMeta);
 
-                } else {
+            } else {
 
 
-                    Location pos1= selection.getFirst();
-                    Location pos2= selection.getSecond();
-                    //create the region
-                    RegionScrollGui.makeAnvilGuiFirstRename(player, pos1, pos2);
-                    //consume the region scroll just if is not in the creative mode
-                    if (!player.getGameMode().toString().contains("CREATIVE")){
+                Location pos1 = selection.getFirst();
+                Location pos2 = selection.getSecond();
+                //create the region
+                RegionScrollGui.makeAnvilGuiFirstRename(player, pos1, pos2);
+                //consume the region scroll just if is not in the creative mode
+                if (!player.getGameMode().toString().contains("CREATIVE")) {
                     RegionScroll.setAmount(RegionScroll.getAmount() - 1);
                     return;
-                    }
-
-                    //delete the selections after saving
-                    selection.setFirst(null);
-                    selection.setSecond(null);
-
                 }
 
-            }
-
-            //if the player performs a Right click with the main hand the selection will be reset
-            if (event.getAction().toString().contains("RIGHT") && player.isSneaking()){
-
-                RegionScroll.setItemMeta(RegionScrollMeta);
+                //delete the selections after saving
                 selection.setFirst(null);
                 selection.setSecond(null);
-                player.sendMessage("Selection reset");
-
 
             }
 
-            selections.put(player.getUniqueId(), selection);
-            lastInteractTimes.put(playerUUID, System.currentTimeMillis());
         }
 
+        //if the player performs a Right click with the main hand the selection will be reset
+        if (event.getAction().toString().contains("RIGHT") && player.isSneaking()) {
+            //check it the player is not holding the region scroll
+            if (!container.has(Keys.REGION_SCROLL, PersistentDataType.STRING)) return;
+            RegionScroll.setItemMeta(RegionScrollMeta);
+            selection.setFirst(null);
+            selection.setSecond(null);
+            player.sendMessage("Selection reset");
 
 
+        }
+
+        selections.put(player.getUniqueId(), selection);
+        lastInteractTimes.put(playerUUID, System.currentTimeMillis());
     }
+
+
+}
 

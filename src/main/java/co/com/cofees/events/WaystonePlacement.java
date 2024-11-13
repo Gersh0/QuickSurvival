@@ -93,10 +93,10 @@ public class WaystonePlacement implements Listener {
         };
         PersistentDataContainer container = tileState.getPersistentDataContainer();
         //debug message
-        event.getPlayer().sendMessage(container.toString());
+        //event.getPlayer().sendMessage(container.toString());
         if (!container.has(Keys.WAYSTONE, PersistentDataType.STRING)) return;
         //debug message
-        event.getPlayer().sendMessage("Waystone has been broken");
+        //event.getPlayer().sendMessage("Waystone has been broken");
         ItemStack item = new ItemStack(block.getType());
         ItemMeta itemMeta = item.getItemMeta();
         itemMeta.setDisplayName("Waystone");
@@ -231,7 +231,7 @@ public class WaystonePlacement implements Listener {
 
         if (block == null) return;
 
-        player.sendMessage(block.toString());
+        //player.sendMessage(block.toString());
         if (isPlayerLookingAtWaystone(player)) {
             //get the info of the block and assign the new name
             //send message

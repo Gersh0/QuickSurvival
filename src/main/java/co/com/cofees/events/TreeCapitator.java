@@ -34,14 +34,14 @@ public class TreeCapitator implements Listener {
                 // si el tipo de bloque es stripped, se utilizará solo la parte del nombre después del "Stripped_"
                 if(type.startsWith("STRIPPED_")){
                     type = type.substring(9);
-                    player.sendMessage("La madera del primer bloque es stripped");
+                    //player.sendMessage("La madera del primer bloque es stripped");
                 }
 
                 List<Block> logs = getLogs(block.getLocation(), type);
                 logs.remove(block);
 
                 if(hasLeaves(logs, type)){
-                    player.sendMessage("el arbol tiene hojas y se inicio el treecapitator");
+                    //player.sendMessage("el arbol tiene hojas y se inicio el treecapitator");
 
                     Damageable meta = (Damageable)tool.getItemMeta();
                     assert meta != null;

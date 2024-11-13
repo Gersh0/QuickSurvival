@@ -68,10 +68,10 @@ public class WaystoneInteract implements Listener {
             // Just debugging
             {
                 if (waystone == null) {
-                    p.sendMessage("Waystone Fail: " + name);
+                    //p.sendMessage("Waystone Fail: " + name);
                     return;
                 }
-                p.sendMessage("Clicked Waystone Name: " + name);
+                //p.sendMessage("Clicked Waystone Name: " + name);
             }
 
             if (!waystone.containsPlayer(p.getName())) {

@@ -43,7 +43,7 @@ public class ControlMenuHandler implements Listener {
                     if(Objects.requireNonNull(event.getCurrentItem().getItemMeta()).getCustomModelData() == 10){
                         //Se cierra el menu principal
                         player.closeInventory();
-                        player.sendMessage("main control menu was closed");
+                        //player.sendMessage("main control menu was closed");
                     }
                     break;
 
@@ -137,7 +137,7 @@ public class ControlMenuHandler implements Listener {
                     //Se cierra el menu general
                     if (Objects.requireNonNull(event.getCurrentItem().getItemMeta()).getCustomModelData() == 10) {
                         player.closeInventory();
-                        player.sendMessage("general control menu was closed");
+                        //player.sendMessage("general control menu was closed");
                     }
                     break;
 

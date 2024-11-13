@@ -38,7 +38,7 @@ public class BackpackInteract implements Listener {
 
         if (handItem.getItemMeta() == null) return;
 
-        player.sendMessage("Objeto:" + Objects.requireNonNull(handItem.getItemMeta()).getPersistentDataContainer().getKeys());
+        //player.sendMessage("Objeto:" + Objects.requireNonNull(handItem.getItemMeta()).getPersistentDataContainer().getKeys());
 
 
         PersistentDataContainer container = handItem.getItemMeta().getPersistentDataContainer();
@@ -98,7 +98,7 @@ public class BackpackInteract implements Listener {
             player.openInventory(backpackInventory);
         }
 
-        player.sendMessage(org.bukkit.ChatColor.GREEN + "Mochila abierta");
+        //player.sendMessage(org.bukkit.ChatColor.GREEN + "Mochila abierta");
     }
 
     //Evitar que ponga el backpack dentro de sí mismo
@@ -106,7 +106,7 @@ public class BackpackInteract implements Listener {
     public void onInventoryClick(InventoryClickEvent event) {
         if (!event.getView().getTitle().equalsIgnoreCase("Backpack")) return;
 
-        event.getWhoClicked().sendMessage(event.getWhoClicked().getOpenInventory().getTopInventory().getType().toString());
+        //event.getWhoClicked().sendMessage(event.getWhoClicked().getOpenInventory().getTopInventory().getType().toString());
 
         //si(backpack clikeado == backpack abierto) entonces cancelar evento
         String UUIDbackpack = event.getCurrentItem().getItemMeta().getPersistentDataContainer().get(Keys.BACKPACK_CODE, PersistentDataType.STRING);
@@ -114,7 +114,7 @@ public class BackpackInteract implements Listener {
         if (backpacks.containsKey(event.getWhoClicked().getUniqueId().toString()) && backpacks.get(event.getWhoClicked().getUniqueId().toString()).equals(UUIDbackpack)) {
             event.setCancelled(true);
         }
-          }
+    }
 
     //SECCION DE GUARDADO
     @EventHandler
@@ -132,9 +132,6 @@ public class BackpackInteract implements Listener {
 
         if (UUIDbackpack == null) return;
         saveInventory(player, inventory);
-
-
-
 
 
     }
@@ -204,7 +201,7 @@ public class BackpackInteract implements Listener {
         c.set("inventory.backpack", items);
         c.save(f);
 
-        p.sendMessage("Inventario guardado exitosamente en: " + f.getAbsolutePath());
+        //p.sendMessage("Inventario guardado exitosamente en: " + f.getAbsolutePath());
     }
 
 
@@ -227,7 +224,7 @@ public class BackpackInteract implements Listener {
                 inventory.setItem(i, itemStack);
             }
 
-            p.sendMessage("Inventario cargado exitosamente desde: " + f.getAbsolutePath());
+            //p.sendMessage("Inventario cargado exitosamente desde: " + f.getAbsolutePath());
             return inventory;
         }
 
