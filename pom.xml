@@ -9,7 +9,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
-                <version>3.3.0</version> <!-- The version must be at least 3.3.0 -->
+                <version>3.5.0</version> <!-- The version must be at least 3.3.0 -->
                 <executions>
                     <execution>
                         <phase>package</phase>
@@ -36,31 +36,24 @@
                     </execution>
                 </executions>
             </plugin>
-
-
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
                 <version>3.3.0</version>
                 <configuration>
-                    <outputDirectory>C:\Users\vorte\Downloads\UNIVERSIDAD\SERVERQUICKSURVIVAL\plugins</outputDirectory>
+                    <outputDirectory>E:\4.Personal\Minecraft\plugins</outputDirectory>
                 </configuration>
             </plugin>
-
         </plugins>
-
-
     </build>
-
 
 
     <groupId>co.com.cofees</groupId>
     <artifactId>QuickSurvival</artifactId>
     <version>1.0-SNAPSHOT</version>
-
     <properties>
-        <maven.compiler.source>17</maven.compiler.source>
-        <maven.compiler.target>17</maven.compiler.target>
+        <maven.compiler.source>21</maven.compiler.source>
+        <maven.compiler.target>21</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <dir>${project.build.directory}</dir>
     </properties>
@@ -98,7 +91,7 @@
         <dependency>
             <groupId>net.wesjd</groupId>
             <artifactId>anvilgui</artifactId>
-            <version>1.9.3-SNAPSHOT</version>
+            <version>1.10.3-SNAPSHOT</version>
         </dependency>
 
     </dependencies>
